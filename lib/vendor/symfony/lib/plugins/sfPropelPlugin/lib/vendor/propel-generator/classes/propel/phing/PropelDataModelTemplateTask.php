@@ -84,7 +84,7 @@ class PropelDataModelTemplateTask extends AbstractPropelDataModelTask {
 	 * @param      string $controlTemplate
 	 * @return     void
 	 */
-	public function setControlTemplate($controlTemplate) {
+	public function setControlTemplate ($controlTemplate) {
 		$this->controlTemplate = $controlTemplate;
 	}
 
@@ -107,26 +107,23 @@ class PropelDataModelTemplateTask extends AbstractPropelDataModelTask {
 	public function setTemplatePath($templatePath) {
 		$resolvedPath = "";
 		$tok = strtok($templatePath, ",");
-		while ($tok) {
+		while ( $tok ) {
 			// resolve relative path from basedir and leave
 			// absolute path untouched.
 			$fullPath = $this->project->resolveFile($tok);
 			$cpath = $fullPath->getCanonicalPath();
 			if ($cpath === false) {
-				$this
-						->log(
-								"Template directory does not exist: "
-										. $fullPath->getAbsolutePath());
+				$this->log("Template directory does not exist: " . $fullPath->getAbsolutePath());
 			} else {
 				$resolvedPath .= $cpath;
 			}
 			$tok = strtok(",");
-			if ($tok) {
+			if ( $tok ) {
 				$resolvedPath .= ",";
 			}
 		}
 		$this->templatePath = $resolvedPath;
-	}
+	 }
 
 	/**
 	 * Get the path where Velocity will look
@@ -151,10 +148,7 @@ class PropelDataModelTemplateTask extends AbstractPropelDataModelTask {
 		// then create it.
 		$outputDir = new PhingFile($this->outputDirectory);
 		if (!$outputDir->exists()) {
-			$this
-					->log(
-							"Output directory does not exist, creating: "
-									. $outputDir->getAbsolutePath());
+			$this->log("Output directory does not exist, creating: " . $outputDir->getAbsolutePath());
 			$outputDir->mkdirs();
 		}
 
@@ -183,11 +177,10 @@ class PropelDataModelTemplateTask extends AbstractPropelDataModelTask {
 	 * @param      Capsule $context
 	 * @see        GeneratorConfig::getBuildProperties()
 	 */
-	public function populateContextProperties(Capsule $context) {
+	public function populateContextProperties(Capsule $context)
+	{
 		foreach ($this->getGeneratorConfig()->getBuildProperties() as $key => $propValue) {
-			$this
-					->log('Adding property ${' . $key . '} to context',
-							Project::MSG_DEBUG);
+			$this->log('Adding property ${' . $key . '} to context', Project::MSG_DEBUG);
 			$context->put($key, $propValue);
 		}
 	}
@@ -196,13 +189,13 @@ class PropelDataModelTemplateTask extends AbstractPropelDataModelTask {
 	 * Performs validation for single-file mode.
 	 * @throws     BuildException - if there are any validation errors
 	 */
-	protected function singleFileValidate() {
+	protected function singleFileValidate()
+	{
 		parent::validate();
 
 		// Make sure the control template is set.
 		if ($this->controlTemplate === null) {
-			throw new BuildException(
-					"The control template needs to be defined!");
+			throw new BuildException("The control template needs to be defined!");
 		}
 		// Make sure there is an output file.
 		if ($this->outputFile === null) {
@@ -215,22 +208,21 @@ class PropelDataModelTemplateTask extends AbstractPropelDataModelTask {
 	 * Creates Capsule context and parses control template.
 	 * @return     void
 	 */
-	public function main() {
+	public function main()
+	{
 		$this->singleFileValidate();
 		$context = $this->createContext();
 
 		$context->put("dataModels", $this->getDataModels());
 
-		$path = $this->outputDirectory . DIRECTORY_SEPARATOR
-				. $this->outputFile;
+		$path = $this->outputDirectory . DIRECTORY_SEPARATOR . $this->outputFile;
 		$this->log("Generating to file " . $path);
 
 		try {
 			$this->log("Parsing control template: " . $this->controlTemplate);
 			$context->parse($this->controlTemplate, $path);
 		} catch (Exception $ioe) {
-			throw new BuildException(
-					"Cannot write parsed template: " . $ioe->getMessage());
+			throw new BuildException("Cannot write parsed template: ". $ioe->getMessage());
 		}
 	}
 }

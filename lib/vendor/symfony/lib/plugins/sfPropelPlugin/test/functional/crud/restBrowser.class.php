@@ -8,30 +8,29 @@
  * file that was distributed with this source code.
  */
 
-require_once(dirname(__FILE__) . '/crudBrowser.class.php');
+require_once(dirname(__FILE__).'/crudBrowser.class.php');
 
-class RestBrowser extends CrudBrowser {
-	protected $urlPrefix = 'articles';
+class RestBrowser extends CrudBrowser
+{
+  protected
+    $urlPrefix = 'articles';
 
-	public function setup($options) {
-		$this->projectDir = dirname(__FILE__) . '/../fixtures';
-		$this->cleanup();
+  public function setup($options)
+  {
+    $this->projectDir = dirname(__FILE__).'/../fixtures';
+    $this->cleanup();
 
-		chdir($this->projectDir);
-		$task = new sfPropelGenerateModuleForRouteTask(
-				new sfEventDispatcher(), new sfFormatter());
-		$options[] = 'env=test';
-		$options[] = '--non-verbose-templates';
-		$task->run(array('crud', 'articles'), $options);
+    chdir($this->projectDir);
+    $task = new sfPropelGenerateModuleForRouteTask(new sfEventDispatcher(), new sfFormatter());
+    $options[] = 'env=test';
+    $options[] = '--non-verbose-templates';
+    $task->run(array('crud', 'articles'), $options);
 
-		require_once($this->projectDir
-				. '/config/ProjectConfiguration.class.php');
-		sfContext::createInstance(
-				ProjectConfiguration::getApplicationConfiguration('crud',
-						'test', true, $this->projectDir));
+    require_once($this->projectDir.'/config/ProjectConfiguration.class.php');
+    sfContext::createInstance(ProjectConfiguration::getApplicationConfiguration('crud', 'test', true, $this->projectDir));
 
-		$options['with-show'] = true;
+    $options['with-show'] = true;
 
-		return $options;
-	}
+    return $options;
+  }
 }

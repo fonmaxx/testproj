@@ -23,6 +23,7 @@ abstract class BaseJobeetCategoryAffiliateForm extends BaseFormDoctrine
       'category_id'  => new sfValidatorChoice(array('choices' => array($this->getObject()->get('category_id')), 'empty_value' => $this->getObject()->get('category_id'), 'required' => false)),
       'affiliate_id' => new sfValidatorChoice(array('choices' => array($this->getObject()->get('affiliate_id')), 'empty_value' => $this->getObject()->get('affiliate_id'), 'required' => false)),
     ));
+
     $this->widgetSchema->setNameFormat('jobeet_category_affiliate[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
@@ -36,4 +37,5 @@ abstract class BaseJobeetCategoryAffiliateForm extends BaseFormDoctrine
   {
     return 'JobeetCategoryAffiliate';
   }
+
 }

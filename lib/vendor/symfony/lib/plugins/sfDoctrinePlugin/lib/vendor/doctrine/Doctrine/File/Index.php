@@ -30,30 +30,28 @@
  * @link        www.doctrine-project.org
  * @since       1.0
  */
-class Doctrine_File_Index extends Doctrine_Record {
-	public function setTableDefinition() {
-		$this
-				->hasColumn('keyword', 'string', 255,
-						array('notnull' => true, 'primary' => true));
+class Doctrine_File_Index extends Doctrine_Record
+{
+    public function setTableDefinition()
+    {
+        $this->hasColumn('keyword', 'string', 255, array('notnull' => true,
+                                                         'primary' => true));
+                                                         
+        $this->hasColumn('field', 'string', 50, array('notnull' => true,
+                                                      'primary' => true));
 
-		$this
-				->hasColumn('field', 'string', 50,
-						array('notnull' => true, 'primary' => true));
+        $this->hasColumn('position', 'string', 255, array('notnull' => true,
+                                                          'primary' => true));
+                                                          
+        $this->hasColumn('file_id', 'integer', 8, array('notnull' => true,
+                                                        'primary' => true));
+    }
 
-		$this
-				->hasColumn('position', 'string', 255,
-						array('notnull' => true, 'primary' => true));
-
-		$this
-				->hasColumn('file_id', 'integer', 8,
-						array('notnull' => true, 'primary' => true));
-	}
-
-	public function setUp() {
-		$this
-				->hasOne('Doctrine_File',
-						array('local' => 'file_id', 'foreign' => 'id',
-								'onDelete' => 'CASCADE',
-								'onUpdate' => 'CASCADE'));
-	}
+    public function setUp()
+    {
+        $this->hasOne('Doctrine_File', array('local' => 'file_id',
+                                             'foreign' => 'id',
+                                             'onDelete' => 'CASCADE',
+                                             'onUpdate' => 'CASCADE'));
+    }
 }

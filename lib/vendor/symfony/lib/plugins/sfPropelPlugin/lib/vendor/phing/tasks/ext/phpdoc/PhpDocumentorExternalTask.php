@@ -33,8 +33,9 @@ require_once 'phing/tasks/ext/phpdoc/PhpDocumentorTask.php';
  * @author Markus Fischer <markus@fischer.name>
  * @version $Id: PhpDocumentorExternalTask.php 352 2008-02-06 15:26:43Z mrook $
  * @package phing.tasks.ext.phpdoc
- */ 
-class PhpDocumentorExternalTask extends PhpDocumentorTask {
+ */	
+class PhpDocumentorExternalTask extends PhpDocumentorTask
+{
 	/**
 	 * The path to the executable for phpDocumentor
 	 */
@@ -42,212 +43,219 @@ class PhpDocumentorExternalTask extends PhpDocumentorTask {
 
 	protected $sourcepath = NULL;
 
-	/**
-	 * @var bool  ignore symlinks to other files or directories
-	 */
-	protected $ignoresymlinks = false;
+    /**
+     * @var bool  ignore symlinks to other files or directories
+     */
+    protected $ignoresymlinks = false;
 
 	/**
 	 * Sets the path to the phpDocumentor executable
 	 */
-	public function setProgramPath($programPath) {
+	public function setProgramPath($programPath)
+	{
 		$this->programPath = $programPath;
 	}
 
 	/**
 	 * Returns the path to the phpDocumentor executable
 	 */
-	public function getProgramPath() {
+	public function getProgramPath()
+	{
 		return $this->programPath;
 	}
 
 	/**
-	 * Set the source path. A directory or a comma separate list of directories.
+     * Set the source path. A directory or a comma separate list of directories.
 	 */
-	public function setSourcepath($sourcepath) {
-		$this->sourcepath = $sourcepath;
+	public function setSourcepath($sourcepath)
+	{
+        $this->sourcepath = $sourcepath;
 	}
 
-	/**
-	 * Ignore symlinks to other files or directories.
-	 * 
-	 * @param  bool  $bSet 
-	 */
-	public function setIgnoresymlinks($bSet) {
-		$this->ignoresymlinks = $bSet;
-	}
+    /**
+     * Ignore symlinks to other files or directories.
+     * 
+     * @param  bool  $bSet 
+     */
+    public function setIgnoresymlinks($bSet) {
+        $this->ignoresymlinks = $bSet;
+    }
 
 	/**
 	 * Main entrypoint of the task
 	 */
-	public function main() {
-		$this->validate();
+	public function main()
+	{
+        $this->validate();
 		$arguments = join(' ', $this->constructArguments());
 
 		$this->log("Running phpDocumentor...");
 
 		exec($this->programPath . " " . $arguments, $output, $return);
 
-		if ($return != 0) {
-			throw new BuildException(
-					"Could not execute phpDocumentor: " . implode(' ', $output));
+		if ($return != 0)
+		{
+			throw new BuildException("Could not execute phpDocumentor: " . implode(' ', $output));
 		}
-
-		foreach ($output as $line) {
-			if (strpos($line, 'ERROR') !== false) {
+		
+		foreach($output as $line)
+		{
+			if(strpos($line, 'ERROR') !== false)
+			{
 				$this->log($line, Project::MSG_ERR);
 				continue;
 			}
-
+			
 			$this->log($line, Project::MSG_VERBOSE);
 		}
 	}
 
 	/**
 	 * Constructs an argument string for phpDocumentor
-	 * @return  array
+     * @return  array
 	 */
-	protected function constructArguments() {
-		$aArgs = array();
-		if ($this->title) {
+	protected function constructArguments()
+	{
+        $aArgs = array();
+		if ($this->title)
+		{
 			$aArgs[] = '--title "' . $this->title . '"';
 		}
 
-		if ($this->destdir) {
+		if ($this->destdir)
+		{
 			$aArgs[] = '--target "' . $this->destdir->getAbsolutePath() . '"';
 		}
 
-		if ($this->sourcepath) {
+		if ($this->sourcepath)
+		{
 			$aArgs[] = '--directory "' . $this->sourcepath . '"';
 		}
 
-		if ($this->output) {
+		if ($this->output)
+		{
 			$aArgs[] = '--output ' . $this->output;
 		}
 
-		if ($this->linksource) {
+		if ($this->linksource)
+		{
 			$aArgs[] = '--sourcecode on';
 		}
 
-		if ($this->parseprivate) {
+		if ($this->parseprivate)
+		{
 			$aArgs[] = '--parseprivate on';
 		}
 
 		// append any files in filesets
 		$filesToParse = array();
-		foreach ($this->filesets as $fs) {
-			$files = $fs->getDirectoryScanner($this->project)
-					->getIncludedFiles();
-			foreach ($files as $filename) {
-				$f = new PhingFile($fs->getDir($this->project), $filename);
-				$filesToParse[] = $f->getAbsolutePath();
-			}
+		foreach($this->filesets as $fs) {		    
+	        $files = $fs->getDirectoryScanner($this->project)->getIncludedFiles();
+	        foreach($files as $filename) {
+	        	 $f = new PhingFile($fs->getDir($this->project), $filename);
+	        	 $filesToParse[] = $f->getAbsolutePath();
+	        }
 		}
-		if (count($filesToParse) > 0) {
-			$aArgs[] = '--filename "' . join(',', $filesToParse) . '"';
-		}
+        if (count($filesToParse) > 0) {
+            $aArgs[] = '--filename "' . join(',', $filesToParse) . '"';
+        }
 
 		// append any files in filesets
 		$ricFiles = array();
-		foreach ($this->projDocFilesets as $fs) {
-			$files = $fs->getDirectoryScanner($this->project)
-					->getIncludedFiles();
-			foreach ($files as $filename) {
-				$f = new PhingFile($fs->getDir($this->project), $filename);
-				$ricFiles[] = $f->getAbsolutePath();
-			}
+		foreach($this->projDocFilesets as $fs) {		    
+	        $files = $fs->getDirectoryScanner($this->project)->getIncludedFiles();
+	        foreach($files as $filename) {
+	        	 $f = new PhingFile($fs->getDir($this->project), $filename);
+	        	 $ricFiles[] = $f->getAbsolutePath();
+	        }
 		}
-		if (count($ricFiles) > 0) {
-			$aArgs[] = '--readmeinstallchangelog "' . join(',', $ricFiles)
-					. '"';
-		}
+        if (count($ricFiles) > 0) {
+            $aArgs[] = '--readmeinstallchangelog "' .
+                join(',', $ricFiles) . '"';
+        }
 
-		if ($this->javadocDesc) {
-			$aArgs[] = '--javadocdesc on';
-		}
+        if ($this->javadocDesc) {
+            $aArgs[] = '--javadocdesc on';
+        }
 
-		if ($this->quiet) {
-			$aArgs[] = '--quiet on';
-		}
+        if ($this->quiet) {
+            $aArgs[] = '--quiet on';
+        }
 
-		if ($this->packages) {
-			$aArgs[] = '--packageoutput "' . $this->packages . '"';
-		}
+        if ($this->packages) {
+            $aArgs[] = '--packageoutput "' . $this->packages . '"';
+        }
 
-		if ($this->ignoreTags) {
-			$aArgs[] = '--ignore-tags "' . $this->ignoreTags . '"';
-		}
+        if ($this->ignoreTags) {
+            $aArgs[] = '--ignore-tags "' . $this->ignoreTags . '"';
+        }
 
-		if ($this->defaultCategoryName) {
-			$aArgs[] = '--defaultcategoryname "' . $this->defaultCategoryName
-					. '"';
-		}
+        if ($this->defaultCategoryName) {
+            $aArgs[] = '--defaultcategoryname "' . $this->defaultCategoryName .
+                '"';
+        }
 
 		if ($this->examplesDir) {
-			$aArgs[] = '--examplesdir "'
-					. $this->examplesDir->getAbsolutePath() . '"';
+            $aArgs[] = '--examplesdir "' . $this->examplesDir->getAbsolutePath()
+                . '"';
 		}
 
 		if ($this->templateBase) {
-			$aArgs[] = '--templatebase "'
-					. $this->templateBase->getAbsolutePath() . '"';
+            $aArgs[] = '--templatebase "' . $this->templateBase->getAbsolutePath()
+                . '"';
 		}
 
-		if ($this->pear) {
-			$aArgs[] = '--pear on';
-		}
+        if ($this->pear) {
+            $aArgs[] = '--pear on';
+        }
 
-		if ($this->undocumentedelements) {
-			$aArgs[] = '--undocumentedelements on';
-		}
+        if ($this->undocumentedelements) {
+            $aArgs[] = '--undocumentedelements on';
+        }
 
-		if ($this->customtags) {
-			$aArgs[] = '--customtags "' . $this->customtags . '"';
-		}
+        if ($this->customtags) {
+            $aArgs[] = '--customtags "' . $this->customtags . '"';
+        }
 
-		if ($this->ignoresymlinks) {
-			$aArgs[] = '--ignoresymlinks on';
-		}
+        if ($this->ignoresymlinks) {
+            $aArgs[] = '--ignoresymlinks on';
+        }
 
-		var_dump($aArgs);
-		exit;
-		return $aArgs;
+        var_dump($aArgs);exit;
+        return $aArgs;
 	}
 
-	/**
-	 * Override PhpDocumentorTask::init() because they're specific to the phpdoc
-	 * API which we don't use.
-	 */
-	public function init() {
-	}
+    /**
+     * Override PhpDocumentorTask::init() because they're specific to the phpdoc
+     * API which we don't use.
+     */
+    public function init() {
+    }
 
-	/**
-	 * Validates that necessary minimum options have been set. Based on
-	 * PhpDocumentorTask::validate().
-	 */
-	protected function validate() {
+    /**
+     * Validates that necessary minimum options have been set. Based on
+     * PhpDocumentorTask::validate().
+     */
+    protected function validate() {
 		if (!$this->destdir) {
-			throw new BuildException("You must specify a destdir for phpdoc.",
-					$this->getLocation());
+            throw new BuildException("You must specify a destdir for phpdoc.",
+                $this->getLocation());
 		}
 		if (!$this->output) {
-			throw new BuildException(
-					"You must specify an output format for "
-							. "phpdoc (e.g. HTML:frames:default).",
-					$this->getLocation());
+            throw new BuildException("You must specify an output format for " .
+                "phpdoc (e.g. HTML:frames:default).", $this->getLocation());
 		}
 		if (empty($this->filesets) && !$this->sourcepath) {
-			throw new BuildException(
-					"You have not specified any files to "
-							. "include (<fileset> or sourcepath attribute) for phpdoc.",
-					$this->getLocation());
+            throw new BuildException("You have not specified any files to " .
+                "include (<fileset> or sourcepath attribute) for phpdoc.",
+                    $this->getLocation());
 		}
-		if ($this->configdir) {
-			$this
-					->log('Ignoring unsupported configdir-Attribute',
-							Project::MSG_VERBOSE);
-		}
-	}
-}
-;
+        if ($this->configdir) {
+            $this->log('Ignoring unsupported configdir-Attribute',
+                Project::MSG_VERBOSE);
+        }
+    }
+};
+
+
 

@@ -28,94 +28,94 @@
  */
 class BuildException extends Exception {
 
-	/**
+    /**
 	 * Location in the xml file.
 	 * @var Location
 	 */
-	protected $location;
-
-	/**
+    protected $location;
+            
+    /**
 	 * The nested "cause" exception.
 	 * @var Exception
 	 */
-	protected $cause;
+    protected $cause;
+    
+    /**
+     * Construct a BuildException.
+     * Supported signatures:
+     *         throw new BuildException($causeExc);
+     *         throw new BuildException($msg);
+     *         throw new Buildexception($causeExc, $loc);
+     *         throw new BuildException($msg, $causeExc);
+     *         throw new BuildException($msg, $loc);
+     *         throw new BuildException($msg, $causeExc, $loc);
+     */
+    function __construct($p1, $p2 = null, $p3 = null) {        
+        
+        $cause = null;
+        $loc = null;
+        $msg = "";
+        
+        if ($p3 !== null) {
+            $cause = $p2;
+            $loc = $p3;
+            $msg = $p1;
+        } elseif ($p2 !== null) {
+            if ($p2 instanceof Exception) {
+                $cause = $p2;
+                $msg = $p1;
+            } elseif ($p2 instanceof Location) {
+                $loc = $p2;
+                if ($p1 instanceof Exception) {
+                    $cause = $p1;
+                } else {
+                    $msg = $p1;
+                }
+            }
+        } elseif ($p1 instanceof Exception) {
+            $cause = $p1;
+        } else {
+            $msg = $p1;
+        }
+        
+        parent::__construct($msg);
+        
+        if ($cause !== null) {
+            $this->cause = $cause;
+            $this->message .= " [wrapped: " . $cause->getMessage() ."]";
+        }
+        
+        if ($loc !== null) {
+            $this->setLocation($loc);
+        }                
+    }
+    
+    /**
+     * Gets the cause exception.
+     *
+     * @return Exception
+     */
+    public function getCause() {
+        return $this->cause;
+    }
+    
+    /**
+     * Gets the location of error in XML file.
+     *
+     * @return Location
+     */
+    public function getLocation() {
+        return $this->location;
+    }
 
-	/**
-	 * Construct a BuildException.
-	 * Supported signatures:
-	 *         throw new BuildException($causeExc);
-	 *         throw new BuildException($msg);
-	 *         throw new Buildexception($causeExc, $loc);
-	 *         throw new BuildException($msg, $causeExc);
-	 *         throw new BuildException($msg, $loc);
-	 *         throw new BuildException($msg, $causeExc, $loc);
-	 */
-	function __construct($p1, $p2 = null, $p3 = null) {
-
-		$cause = null;
-		$loc = null;
-		$msg = "";
-
-		if ($p3 !== null) {
-			$cause = $p2;
-			$loc = $p3;
-			$msg = $p1;
-		} elseif ($p2 !== null) {
-			if ($p2 instanceof Exception) {
-				$cause = $p2;
-				$msg = $p1;
-			} elseif ($p2 instanceof Location) {
-				$loc = $p2;
-				if ($p1 instanceof Exception) {
-					$cause = $p1;
-				} else {
-					$msg = $p1;
-				}
-			}
-		} elseif ($p1 instanceof Exception) {
-			$cause = $p1;
-		} else {
-			$msg = $p1;
-		}
-
-		parent::__construct($msg);
-
-		if ($cause !== null) {
-			$this->cause = $cause;
-			$this->message .= " [wrapped: " . $cause->getMessage() . "]";
-		}
-
-		if ($loc !== null) {
-			$this->setLocation($loc);
-		}
-	}
-
-	/**
-	 * Gets the cause exception.
-	 *
-	 * @return Exception
-	 */
-	public function getCause() {
-		return $this->cause;
-	}
-
-	/**
-	 * Gets the location of error in XML file.
-	 *
-	 * @return Location
-	 */
-	public function getLocation() {
-		return $this->location;
-	}
-
-	/**
-	 * Sets the location of error in XML file.
-	 *
-	 * @param Locaiton $loc
-	 */
-	public function setLocation(Location $loc) {
-		$this->location = $loc;
-		$this->message = $loc->toString() . ': ' . $this->message;
-	}
+    /**
+     * Sets the location of error in XML file.
+     *
+     * @param Locaiton $loc
+     */
+    public function setLocation(Location $loc) {        
+        $this->location = $loc;
+        $this->message = $loc->toString() . ': ' . $this->message;
+    }
 
 }

@@ -30,5 +30,5 @@
  * @version     $Revision$
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Adapter_Exception extends Doctrine_Exception {
-}
+class Doctrine_Adapter_Exception extends Doctrine_Exception
+{ }

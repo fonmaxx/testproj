@@ -18,7 +18,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>.
- */
+*/
 
 /**
  * Interface indicating that a reader may be chained to another one.
@@ -27,15 +27,16 @@
  */
 interface ChainableReader {
 
-	/**
-	 * Returns a reader with the same configuration as this one,
-	 * but filtering input from the specified reader.
-	 * 
-	 * @param Reader $rdr the reader which the returned reader should be filtering
-	 * 
-	 * @return Reader A reader with the same configuration as this one, but
-	 *         filtering input from the specified reader
-	 */
-	public function chain(Reader $rdr);
+    /**
+     * Returns a reader with the same configuration as this one,
+     * but filtering input from the specified reader.
+     * 
+     * @param Reader $rdr the reader which the returned reader should be filtering
+     * 
+     * @return Reader A reader with the same configuration as this one, but
+     *         filtering input from the specified reader
+     */
+    public function chain(Reader $rdr);
 }
+
 

@@ -29,18 +29,18 @@ require_once 'phing/tasks/system/condition/ConditionBase.php';
  * 
  *  @author    Hans Lellelid <hans@xmpl.org>
  *  @author    Andreas Aderhold <andi@binarycloud.com>
- *  @copyright ï¿½ 2001,2002 THYRELL. All rights reserved
+ *  @copyright © 2001,2002 THYRELL. All rights reserved
  *  @version   $Revision: 1.7 $
  *  @package   phing.tasks.system.condition
  */
 class AndCondition extends ConditionBase implements Condition {
 
-	public function evaluate() {
-		foreach ($this as $c) { // ConditionBase implements IteratorAggregator
-			if (!$c->evaluate()) {
-				return false;
-			}
-		}
-		return true;
-	}
+    public function evaluate() {
+        foreach($this as $c) { // ConditionBase implements IteratorAggregator
+              if (!$c->evaluate()) {
+                return false;
+            }
+        }
+        return true;       
+    }
 }

@@ -17,7 +17,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>.
- */
+*/
 
 /**
  * Abstract class for reading character streams.
@@ -29,66 +29,63 @@
  */
 abstract class Reader {
 
-	/**
-	 * Read data from source.
-	 * 
-	 * If length is specified, then only that number of chars is read,
-	 * otherwise stream is read until EOF.
-	 * 
-	 * @param int $len
-	 */
-	abstract public function read($len = null);
+    /**
+     * Read data from source.
+     * 
+     * If length is specified, then only that number of chars is read,
+     * otherwise stream is read until EOF.
+     * 
+     * @param int $len
+     */
+    abstract public function read($len = null);
+            
+    /**
+     * Close stream.
+     * @throws IOException if there is an error closing stream
+     */
+    abstract public function close();
+    
+    /**
+     * Returns the filename, url, etc. that is being read from.
+     * This is critical for, e.g., ExpatParser's ability to know
+     * the filename that is throwing an ExpatParserException, etc.
+     * @return string
+     */
+    abstract function getResource();
 
-	/**
-	 * Close stream.
-	 * @throws IOException if there is an error closing stream
-	 */
-	abstract public function close();
+    /**
+     * Move stream position relative to current pos.
+     * @param int $n
+     */
+    public function skip($n) {}
+    
+    /**
+     * Reset the current position in stream to beginning or last mark (if supported).
+     */    
+    public function reset() {}
+        
+    /**
+     * If supported, places a "marker" (like a bookmark) at current stream position.
+     * A subsequent call to reset() will move stream position back
+     * to last marker (if supported).
+     */    
+    public function mark() {}
 
-	/**
-	 * Returns the filename, url, etc. that is being read from.
-	 * This is critical for, e.g., ExpatParser's ability to know
-	 * the filename that is throwing an ExpatParserException, etc.
-	 * @return string
-	 */
-	abstract function getResource();
-
-	/**
-	 * Move stream position relative to current pos.
-	 * @param int $n
-	 */
-	public function skip($n) {
-	}
-
-	/**
-	 * Reset the current position in stream to beginning or last mark (if supported).
-	 */ 
-	public function reset() {
-	}
-
-	/**
-	 * If supported, places a "marker" (like a bookmark) at current stream position.
-	 * A subsequent call to reset() will move stream position back
-	 * to last marker (if supported).
-	 */ 
-	public function mark() {
-	}
-
-	/**
-	 * Whether marking is supported.
-	 * @return boolean
-	 */
-	public function markSupported() {
-		return false;
-	}
-
-	/**
-	 * Is stream ready for reading.
-	 * @return boolean
-	 */
-	public function ready() {
-		return true;
-	}
+    /**
+     * Whether marking is supported.
+     * @return boolean
+     */
+    public function markSupported() {
+    	return false;
+    }
+    
+    /**
+     * Is stream ready for reading.
+     * @return boolean
+     */
+    public function ready() {
+    	return true;
+    }
 
 }
 

@@ -30,19 +30,18 @@ require_once 'phing/tasks/ext/svn/SvnBaseTask.php';
  * @package phing.tasks.ext.svn
  * @since 2.3.0
  */
-class SvnCheckoutTask extends SvnBaseTask {
+class SvnCheckoutTask extends SvnBaseTask
+{
 	/**
 	 * The main entry point
 	 *
 	 * @throws BuildException
 	 */
-	function main() {
+	function main()
+	{
 		$this->setup('checkout');
 
-		$this
-				->log(
-						"Checking out SVN repository to '" . $this->getToDir()
-								. "'");
+		$this->log("Checking out SVN repository to '" . $this->getToDir() . "'");
 
 		$this->run(array($this->getToDir()));
 	}

@@ -9,15 +9,17 @@
  */
 
 $app = 'frontend';
-require_once(dirname(__FILE__) . '/../../bootstrap/functional.php');
+require_once(dirname(__FILE__).'/../../bootstrap/functional.php');
 
 $t = new lime_test(1);
 
-class TestUserForm extends UserForm {
-	public function configure() {
-		parent::configure();
-		unset($this['test']);
-	}
+class TestUserForm extends UserForm
+{
+  public function configure()
+  {
+    parent::configure();
+    unset($this['test']);
+  }
 }
 
 $user = new User();
@@ -30,20 +32,14 @@ unset($user);
 
 $user = Doctrine_Core::getTable('User')->findOneByUsername('nullvaluetest');
 $userForm = new TestUserForm($user);
-$userForm
-		->bind(
-				array('id' => $user->id, 'username' => 'nullvaluetest',
-						'password' => 'changeme2'));
-if ($userForm->isValid()) {
-	$userForm->save();
+$userForm->bind(array('id' => $user->id, 'username' => 'nullvaluetest', 'password' => 'changeme2'));
+if ($userForm->isValid())
+{
+  $userForm->save();
 }
 
 $user->free();
 unset($user);
 
 $user = Doctrine_Core::getTable('User')->findOneByUsername('nullvaluetest');
-$t
-		->is($user->toArray(),
-				array('id' => 1, 'username' => 'nullvaluetest',
-						'password' => 'b0660f0b8b989971524762330aea5449',
-						'test' => 'test'));
+$t->is($user->toArray(), array('id' => 1, 'username' => 'nullvaluetest', 'password' => 'b0660f0b8b989971524762330aea5449', 'test' => 'test'));

@@ -27,11 +27,12 @@
  * configuration can also be retrieved as a nested arrays, flat array or as a
  * PropelConfiguration instance.
  *
- * @author     Veikko Mï¿½kinen <veikko@veikko.fi>
+ * @author     Veikko Mäkinen <veikko@veikko.fi>
  * @version    $Revision: 1262 $
  * @package    propel
  */
-class PropelConfiguration implements ArrayAccess {
+class PropelConfiguration implements ArrayAccess
+{
 	const TYPE_ARRAY = 1;
 
 	const TYPE_ARRAY_FLAT = 2;
@@ -39,8 +40,8 @@ class PropelConfiguration implements ArrayAccess {
 	const TYPE_OBJECT = 3;
 
 	/**
-	 * @var        array An array of parameters
-	 */
+	* @var        array An array of parameters
+	*/
 	protected $parameters = array();
 
 	/**
@@ -48,36 +49,40 @@ class PropelConfiguration implements ArrayAccess {
 	 *
 	 * @param      array $parameters
 	 */
-	public function __construct(array $parameters = array()) {
+	public function __construct(array $parameters = array())
+	{
 		$this->parameters = $parameters;
 	}
 
 	/**
 	 * @see        http://www.php.net/ArrayAccess
 	 */
-	public function offsetExists($offset) {
-		return isset($this->parameter[$offset])
-				|| array_key_exists($offset, $this->parameters);
+	public function offsetExists($offset)
+	{
+		return isset($this->parameter[$offset]) || array_key_exists($offset, $this->parameters);
 	}
 
 	/**
 	 * @see        http://www.php.net/ArrayAccess
 	 */
-	public function offsetSet($offset, $value) {
+	public function offsetSet($offset, $value)
+	{
 		$this->parameter[$offset] = $value;
 	}
 
 	/**
 	 * @see        http://www.php.net/ArrayAccess
 	 */
-	public function offsetGet($offset) {
+	public function offsetGet($offset)
+	{
 		return $this->parameters[$offset];
 	}
 
 	/**
 	 * @see        http://www.php.net/ArrayAccess
 	 */
-	public function offsetUnset($offset) {
+	public function offsetUnset($offset)
+	{
 		unset($this->parameters[$offset]);
 	}
 
@@ -89,7 +94,8 @@ class PropelConfiguration implements ArrayAccess {
 	 *                             requested value is not found
 	 * @return     mixed           Parameter value or the default
 	 */
-	public function getParameter($name, $default = null) {
+	public function getParameter($name, $default = null)
+	{
 		$ret = $this->parameters;
 		$parts = explode('.', $name); //name.space.name
 		while ($part = array_shift($parts)) {
@@ -108,7 +114,8 @@ class PropelConfiguration implements ArrayAccess {
 	 * @param      string $name Configuration item name (name.space.name)
 	 * @param      mixed $value Value to be stored
 	 */
-	public function setParameter($name, $value) {
+	public function setParameter($name, $value)
+	{
 		$param = &$this->parameters;
 		$parts = explode('.', $name); //name.space.name
 		while ($part = array_shift($parts)) {
@@ -123,33 +130,33 @@ class PropelConfiguration implements ArrayAccess {
 	 * @param      int $type
 	 * @return     mixed
 	 */
-	public function getParameters($type = PropelConfiguration::TYPE_ARRAY) {
+	public function getParameters($type = PropelConfiguration::TYPE_ARRAY)
+	{
 		switch ($type) {
-		case PropelConfiguration::TYPE_ARRAY:
-			return $this->parameters;
-		case PropelConfiguration::TYPE_ARRAY_FLAT:
-			return $this->toFlatArray();
-		case PropelConfiguration::TYPE_OBJECT:
-			return $this;
-		default:
-			throw new PropelException(
-					'Unknown configuration type: ' . var_export($type, true));
+			case PropelConfiguration::TYPE_ARRAY:
+				return $this->parameters;
+			case PropelConfiguration::TYPE_ARRAY_FLAT:
+				return $this->toFlatArray();
+			case PropelConfiguration::TYPE_OBJECT:
+				return $this;
+			default:
+				throw new PropelException('Unknown configuration type: '. var_export($type, true));
 		}
 
 	}
+
 
 	/**
 	 * Get the configuration as a flat array. ($array['name.space.item'] = 'value')
 	 *
 	 * @return     array
 	 */
-	protected function toFlatArray() {
+	protected function toFlatArray()
+	{
 		$result = array();
-		$it = new PropelConfigurationIterator(
-				new RecursiveArrayIterator($this->parameters),
-				RecursiveIteratorIterator::SELF_FIRST);
-		foreach ($it as $key => $value) {
-			$ns = $it->getDepth() ? $it->getNamespace() . '.' . $key : $key;
+		$it = new PropelConfigurationIterator(new RecursiveArrayIterator($this->parameters), RecursiveIteratorIterator::SELF_FIRST);
+		foreach($it as $key => $value) {
+			$ns = $it->getDepth() ? $it->getNamespace() . '.'. $key : $key;
 			if ($it->getNodeType() == PropelConfigurationIterator::NODE_ITEM) {
 				$result[$ns] = $value;
 			}

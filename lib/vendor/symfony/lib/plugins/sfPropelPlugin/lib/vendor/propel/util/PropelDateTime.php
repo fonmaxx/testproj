@@ -31,7 +31,8 @@
  * @author     Hans Lellelid
  * @package    propel.util
  */
-class PropelDateTime extends DateTime {
+class PropelDateTime extends DateTime
+{
 
 	/**
 	 * A string representation of the date, for serialization.
@@ -50,7 +51,8 @@ class PropelDateTime extends DateTime {
 	 * @param      string $date Date/time value.
 	 * @param      DateTimeZone $tz (optional) timezone
 	 */
-	public static function newInstance($date, DateTimeZone $tz = null) {
+	public static function newInstance($date, DateTimeZone $tz = null)
+	{
 		if ($tz) {
 			return new DateTime($date, $tz);
 		} else {
@@ -64,7 +66,8 @@ class PropelDateTime extends DateTime {
 	 * of class that should be serialized.
 	 * @return     array string[]
 	 */
-	function __sleep() {
+	function __sleep()
+	{
 		// We need to use a string without a time zone, due to
 		// PHP bug: http://bugs.php.net/bug.php?id=40743
 		$this->dateString = $this->format('Y-m-d H:i:s');
@@ -76,9 +79,9 @@ class PropelDateTime extends DateTime {
 	 * PHP "magic" function called when object is restored from serialized state.
 	 * Calls DateTime constructor with previously stored string value of date.
 	 */
-	function __wakeup() {
-		parent::__construct($this->dateString,
-				new DateTimeZone($this->tzString));
+	function __wakeup()
+	{
+		parent::__construct($this->dateString, new DateTimeZone($this->tzString));
 	}
 
 }

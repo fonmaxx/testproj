@@ -30,31 +30,33 @@
  * @version     $Revision: 7490 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-abstract class Doctrine_Query_Part {
-	/**
-	 * @var Doctrine_Query $query           the query object associated with this parser
-	 */
-	protected $query;
+abstract class Doctrine_Query_Part
+{
+    /**
+     * @var Doctrine_Query $query           the query object associated with this parser
+     */
+    protected $query;
+    
+    protected $_tokenizer;
 
-	protected $_tokenizer;
+    /**
+     * @param Doctrine_Query $query         the query object associated with this parser
+     */
+    public function __construct($query, Doctrine_Query_Tokenizer $tokenizer = null)
+    {
+        $this->query = $query;
 
-	/**
-	 * @param Doctrine_Query $query         the query object associated with this parser
-	 */
-	public function __construct($query,
-			Doctrine_Query_Tokenizer $tokenizer = null) {
-		$this->query = $query;
+        if ( ! $tokenizer) {
+            $tokenizer = new Doctrine_Query_Tokenizer();
+        }
+        $this->_tokenizer = $tokenizer;
+    }
 
-		if (!$tokenizer) {
-			$tokenizer = new Doctrine_Query_Tokenizer();
-		}
-		$this->_tokenizer = $tokenizer;
-	}
-
-	/**
-	 * @return Doctrine_Query $query        the query object associated with this parser
-	 */
-	public function getQuery() {
-		return $this->query;
-	}
+    /**
+     * @return Doctrine_Query $query        the query object associated with this parser
+     */
+    public function getQuery()
+    {
+        return $this->query;
+    }
 }

@@ -26,6 +26,7 @@ abstract class BaseJobeetCategoryAffiliateFormFilter extends BaseFormFilterDoctr
 
     parent::setup();
   }
+
   public function getModelName()
   {
     return 'JobeetCategoryAffiliate';

@@ -42,7 +42,8 @@ class Inheritance extends XMLElement {
 	 * Sets up the Inheritance object based on the attributes that were passed to loadFromXML().
 	 * @see        parent::loadFromXML()
 	 */
-	protected function setupObject() {
+	protected function setupObject()
+	{
 		$this->key = $this->getAttribute("key");
 		$this->className = $this->getAttribute("class");
 		$this->pkg = $this->getAttribute("package");
@@ -53,7 +54,8 @@ class Inheritance extends XMLElement {
 	 * Get the value of key.
 	 * @return     value of key.
 	 */
-	public function getKey() {
+	public function getKey()
+	{
 		return $this->key;
 	}
 
@@ -61,7 +63,8 @@ class Inheritance extends XMLElement {
 	 * Set the value of key.
 	 * @param      v  Value to assign to key.
 	 */
-	public function setKey($v) {
+	public function setKey($v)
+	{
 		$this->key = $v;
 	}
 
@@ -69,7 +72,8 @@ class Inheritance extends XMLElement {
 	 * Get the value of parent.
 	 * @return     value of parent.
 	 */
-	public function getColumn() {
+	public function getColumn()
+	{
 		return $this->parent;
 	}
 
@@ -77,7 +81,8 @@ class Inheritance extends XMLElement {
 	 * Set the value of parent.
 	 * @param      v  Value to assign to parent.
 	 */
-	public function setColumn(Column $v) {
+	public function setColumn(Column  $v)
+	{
 		$this->parent = $v;
 	}
 
@@ -85,7 +90,8 @@ class Inheritance extends XMLElement {
 	 * Get the value of className.
 	 * @return     value of className.
 	 */
-	public function getClassName() {
+	public function getClassName()
+	{
 		return $this->className;
 	}
 
@@ -93,7 +99,8 @@ class Inheritance extends XMLElement {
 	 * Set the value of className.
 	 * @param      v  Value to assign to className.
 	 */
-	public function setClassName($v) {
+	public function setClassName($v)
+	{
 		$this->className = $v;
 	}
 
@@ -101,7 +108,8 @@ class Inheritance extends XMLElement {
 	 * Get the value of package.
 	 * @return     value of package.
 	 */
-	public function getPackage() {
+	public function getPackage()
+	{
 		return $this->pkg;
 	}
 
@@ -109,7 +117,8 @@ class Inheritance extends XMLElement {
 	 * Set the value of package.
 	 * @param      v  Value to assign to package.
 	 */
-	public function setPackage($v) {
+	public function setPackage($v)
+	{
 		$this->pkg = $v;
 	}
 
@@ -117,7 +126,8 @@ class Inheritance extends XMLElement {
 	 * Get the value of ancestor.
 	 * @return     value of ancestor.
 	 */
-	public function getAncestor() {
+	public function getAncestor()
+	{
 		return $this->ancestor;
 	}
 
@@ -125,14 +135,16 @@ class Inheritance extends XMLElement {
 	 * Set the value of ancestor.
 	 * @param      v  Value to assign to ancestor.
 	 */
-	public function setAncestor($v) {
+	public function setAncestor($v)
+	{
 		$this->ancestor = $v;
 	}
 
 	/**
 	 * @see        XMLElement::appendXml(DOMNode)
 	 */
-	public function appendXml(DOMNode $node) {
+	public function appendXml(DOMNode $node)
+	{
 		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
 
 		$inherNode = $node->appendChild($doc->createElement('inheritance'));

@@ -37,7 +37,7 @@ require_once 'phing/types/selectors/FileSelector.php';
  * @package phing.types.selectors
  */
 interface ExtendFileSelector extends Parameterizable, FileSelector {
-	// No further methods necessary. This is just an amalgamation of two other
-	// interfaces.
+  // No further methods necessary. This is just an amalgamation of two other
+  // interfaces.
 }
 

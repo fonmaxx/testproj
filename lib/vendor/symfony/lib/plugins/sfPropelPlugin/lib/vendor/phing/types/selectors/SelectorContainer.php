@@ -20,6 +20,7 @@
  * <http://phing.info>.
  */
 
+
 /**
  * This is the interface for selectors that can contain other selectors.
  *
@@ -28,113 +29,113 @@
  */
 interface SelectorContainer {
 
-	/**
-	 * Indicates whether there are any selectors here.
-	 *
-	 * @return whether any selectors are in this container
-	 */
-	public function hasSelectors();
+    /**
+     * Indicates whether there are any selectors here.
+     *
+     * @return whether any selectors are in this container
+     */
+    public function hasSelectors();
 
-	/**
-	 * Gives the count of the number of selectors in this container
-	 *
-	 * @return the number of selectors in this container
-	 */
-	public function selectorCount();
+    /**
+     * Gives the count of the number of selectors in this container
+     *
+     * @return the number of selectors in this container
+     */
+    public function selectorCount();
 
-	/**
-	 * Returns a *copy* of the set of selectors as an array.
-	 *
-	 * @return an array of selectors in this container
-	 */
-	public function getSelectors(Project $p);
+    /**
+     * Returns a *copy* of the set of selectors as an array.
+     *
+     * @return an array of selectors in this container
+     */
+    public function getSelectors(Project $p);
 
-	/**
-	 * Returns an array for accessing the set of selectors.
-	 *
-	 * @return an enumerator that goes through each of the selectors
-	 */
-	public function selectorElements();
+    /**
+     * Returns an array for accessing the set of selectors.
+     *
+     * @return an enumerator that goes through each of the selectors
+     */
+    public function selectorElements();
 
-	/**
-	 * Add a new selector into this container.
-	 *
-	 * @param selector the new selector to add
-	 * @return the selector that was added
-	 */
-	public function appendSelector(FileSelector $selector);
+    /**
+     * Add a new selector into this container.
+     *
+     * @param selector the new selector to add
+     * @return the selector that was added
+     */
+    public function appendSelector(FileSelector $selector);
 
-	/* Methods below all add specific selectors */
+    /* Methods below all add specific selectors */
 
-	/**
-	 * add a "Select" selector entry on the selector list
-	 */
-	public function createSelector();
+    /**
+     * add a "Select" selector entry on the selector list
+     */
+    public function createSelector();
 
-	/**
-	 * add an "And" selector entry on the selector list
-	 */
-	public function createAnd();
+    /**
+     * add an "And" selector entry on the selector list
+     */
+    public function createAnd();
 
-	/**
-	 * add an "Or" selector entry on the selector list
-	 */
-	public function createOr();
+    /**
+     * add an "Or" selector entry on the selector list
+     */
+    public function createOr();
 
-	/**
-	 * add a "Not" selector entry on the selector list
-	 */
-	public function createNot();
+    /**
+     * add a "Not" selector entry on the selector list
+     */
+    public function createNot();
 
-	/**
-	 * add a "None" selector entry on the selector list
-	 */
-	public function createNone();
+    /**
+     * add a "None" selector entry on the selector list
+     */
+    public function createNone();
 
-	/**
-	 * add a majority selector entry on the selector list
-	 */
-	public function createMajority();
+    /**
+     * add a majority selector entry on the selector list
+     */
+    public function createMajority();
 
-	/**
-	 * add a selector date entry on the selector list
-	 */
-	public function createDate();
+    /**
+     * add a selector date entry on the selector list
+     */
+    public function createDate();
 
-	/**
-	 * add a selector size entry on the selector list
-	 */
-	public function createSize();
+    /**
+     * add a selector size entry on the selector list
+     */
+    public function createSize();
 
-	/**
-	 * add a selector filename entry on the selector list
-	 */
-	public function createFilename();
+    /**
+     * add a selector filename entry on the selector list
+     */
+    public function createFilename();
 
-	/**
-	 * add an extended selector entry on the selector list
-	 */
-	public function createCustom();
+    /**
+     * add an extended selector entry on the selector list
+     */
+    public function createCustom();
 
-	/**
-	 * add a contains selector entry on the selector list
-	 */
-	public function createContains();
+    /**
+     * add a contains selector entry on the selector list
+     */
+    public function createContains();
 
-	/**
-	 * add a present selector entry on the selector list
-	 */
-	public function createPresent();
+    /**
+     * add a present selector entry on the selector list
+     */
+    public function createPresent();
 
-	/**
-	 * add a depth selector entry on the selector list
-	 */
-	public function createDepth();
+    /**
+     * add a depth selector entry on the selector list
+     */
+    public function createDepth();
 
-	/**
-	 * add a depends selector entry on the selector list
-	 */
-	public function createDepend();
+    /**
+     * add a depends selector entry on the selector list
+     */
+    public function createDepend();
 
 }
 

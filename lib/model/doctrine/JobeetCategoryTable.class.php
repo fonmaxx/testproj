@@ -20,4 +20,26 @@ class JobeetCategoryTable extends Doctrine_Table
     	$q->andWhere('j.is_activated = ?', 1);
     	return $q->execute();
     }
+    public function getCategorySet()
+    {
+    	$q=$this->createQuery()->execute();
+    	foreach ($q as  $k)
+    	{
+    		$arr[$k->getSlug()]= $k->getName();
+    	}
+    	return $arr;
+    }
+    public function doSelectForSlug($parameters)
+    {
+    	return $this->findOneBySlugAndCulture($parameters['slug'], $parameters['sf_culture']);
+    }
+
+    public function findOneBySlugAndCulture($slug, $culture = 'en')
+    {
+    	$q = $this->createQuery('a')
+    	->leftJoin('a.Translation t')
+    	->andWhere('t.lang = ?', $culture)
+    	->andWhere('a.slug = ?', $slug);
+    	return $q->fetchOne();
+    }
 }

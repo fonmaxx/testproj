@@ -30,5 +30,5 @@
  * @link        www.doctrine-project.org
  * @since       0.9
  */
-class Doctrine_Pager_Exception extends Doctrine_Exception {
-}
+class Doctrine_Pager_Exception extends Doctrine_Exception
+{ }

@@ -5,9 +5,10 @@ include(dirname(__FILE__).'/../../bootstrap/functional.php');
 
 $browser = new JobeetTestFunctional(new sfBrowser());
 $browser->loadData();
+$browser->setTester('doctrine', 'sfTesterDoctrine');$browser->setTester('doctrine', 'sfTesterDoctrine');
 
 $browser->info('1 - The homepage')->
-  get('/')->
+  get('/en/')->
   with('request')->begin()->
     isParameter('module', 'job')->
     isParameter('action', 'index')->
@@ -27,10 +28,10 @@ $browser->info('1 - The homepage')->
 ;
 
 $browser->info('1 - The homepage')->
-  get('/')->
+  get('/en/')->
   info('  1.3 - A category has a link to the category page only if too many jobs')->
   with('response')->begin()->
-    checkElement('.category_design .more_jobs', false)->
+    checkElement('.category_design .more_jobs')->
     checkElement('.category_programming .more_jobs')->
   end()
 ;
@@ -45,7 +46,7 @@ $browser->info('1 - The homepage')->
 $job = $browser->getMostRecentProgrammingJob();
 
 $browser->info('2 - The job page')->
-  get('/')->
+  get('/en/')->
 
   info('  2.1 - Each job on the homepage is clickable and give detailed information')->
   click('Web Developer', array(), array('position' => 1))->
@@ -59,17 +60,17 @@ $browser->info('2 - The job page')->
   end()->
 
   info('  2.2 - A non-existent job forwards the user to a 404')->
-  get('/job/foo-inc/milano-italy/0/painter')->
+  get('/en/job/foo-inc/milano-italy/0/painter')->
   with('response')->isStatusCode(404)->
 
   info('  2.3 - An expired job page forwards the user to a 404')->
-  get(sprintf('/job/sensio-labs/paris-france/%d/web-developer', $browser->getExpiredJob()->getId()))->
+  get(sprintf('/en/job/sensio-labs/paris-france/%d/web-developer', $browser->getExpiredJob()->getId()))->
   with('response')->isStatusCode(404)
 ;
 $browser->info('3 - Post a Job page')->
 	info('  3.1 - Submit a Job')->
 
-	get('/job/new')->
+	get('/en/job/new')->
 	with('request')->begin()->
 	isParameter('module', 'job')->
 	isParameter('action', 'new')->
@@ -94,7 +95,7 @@ $browser->info('3 - Post a Job page')->
 $browser->
 	info('  3.2 - Submit a Job with invalid values')->
 
-	get('/job/new')->
+	get('/en/job/new')->
 	click('Preview your job', array('job' => array(
 		'company'      => 'Sensio Labs',
 		'position'     => 'Developer',
@@ -118,9 +119,10 @@ $browser->info('  3.3 - On the preview page, you can publish the job')->
 		'is_activated' => true,
 	))->
 	end();
-$browser->info('  3.5 - When a job is published, it cannot be edited anymore')->
+
+$browser->info('  3.4 - When a job is published, it cannot be edited anymore')->
 	createJob(array('position' => 'FOO3'), true)->
-	get(sprintf('/job/%s/edit', $browser->getJobByPosition('FOO3')->getToken()))->
+	get(sprintf('/en/job/%s/edit', $browser->getJobByPosition('FOO3')->getToken()))->
 
 	with('response')->begin()->
 	isStatusCode(404)->
@@ -133,17 +135,52 @@ loadData()->
 restart()->
 
 info('  4.1 - When the user access a job, it is added to its history')->
-get('/')->
+get('/en/')->
 click('Web Developer', array(), array('position' => 1))->
-get('/')->
+get('/en/')->
 with('user')->begin()->
 isAttribute('job_history', array($browser->getMostRecentProgrammingJob()->getId()))->
 end()->
 
 info('  4.2 - A job is not added twice in the history')->
 click('Web Developer', array(), array('position' => 1))->
-get('/')->
+get('/en/')->
 with('user')->begin()->
 isAttribute('job_history', array($browser->getMostRecentProgrammingJob()->getId()))->
-end()
+end();
+
+$browser->setHttpHeader('X_REQUESTED_WITH', 'XMLHttpRequest');
+$browser->
+info('5 - Live search')->
+
+get('/en/search?query=sens*')->
+with('response')->begin()->
+checkElement('table tr', 2)->
+end();
+
+$browser->setHttpHeader('ACCEPT_LANGUAGE', 'ru_RU,ru,en;q=0.7');
+$browser->
+info('6 - User culture')->
+
+restart()->
+
+info('  6.1 - For the first request, symfony guesses the best culture')->
+get('/')->
+with('response')->isRedirected()->
+followRedirect()->
+with('user')->isCulture('ru')->
+
+info('  6.2 - Available cultures are en and ru')->
+get('/it/')->
+with('response')->isStatusCode(404)
+;
+
+$browser->setHttpHeader('ACCEPT_LANGUAGE', 'en,ru;q=0.7');
+$browser->
+info('  6.3 - The culture guessing is only for the first request')->
+
+get('/')->
+with('response')->isRedirected()->
+followRedirect()->
+with('user')->isCulture('ru')
 ;

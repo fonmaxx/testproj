@@ -31,33 +31,37 @@
  * @since       1.0
  * @version     $Revision: 1298 $
  */
-abstract class Doctrine_Record_Filter {
-	protected $_table;
+abstract class Doctrine_Record_Filter
+{
+    protected $_table;
 
-	public function setTable(Doctrine_Table $table) {
-		$this->_table = $table;
-	}
+    public function setTable(Doctrine_Table $table)
+    {
+        $this->_table = $table;
+    }
 
-	public function getTable() {
-		return $this->_table;
-	}
+    public function getTable()
+    {
+        return $this->_table;
+    }
 
-	public function init() {
-	}
+    public function init()
+    {
+    }
 
-	/**
-	 * filterSet
-	 * defines an implementation for filtering the set() method of Doctrine_Record
-	 *
-	 * @param mixed $name                       name of the property or related component
-	 */
-	abstract public function filterSet(Doctrine_Record $record, $name, $value);
+    /**
+     * filterSet
+     * defines an implementation for filtering the set() method of Doctrine_Record
+     *
+     * @param mixed $name                       name of the property or related component
+     */
+    abstract public function filterSet(Doctrine_Record $record, $name, $value);
 
-	/**
-	 * filterGet
-	 * defines an implementation for filtering the get() method of Doctrine_Record
-	 *
-	 * @param mixed $name                       name of the property or related component
-	 */
-	abstract public function filterGet(Doctrine_Record $record, $name);
+    /**
+     * filterGet
+     * defines an implementation for filtering the get() method of Doctrine_Record
+     *
+     * @param mixed $name                       name of the property or related component
+     */
+    abstract public function filterGet(Doctrine_Record $record, $name);
 }

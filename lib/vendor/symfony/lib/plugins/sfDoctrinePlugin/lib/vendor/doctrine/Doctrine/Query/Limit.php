@@ -30,8 +30,10 @@
  * @version     $Revision: 1352 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Query_Limit extends Doctrine_Query_Part {
-	public function parse($limit) {
-		return (int) $limit;
-	}
+class Doctrine_Query_Limit extends Doctrine_Query_Part
+{
+    public function parse($limit) 
+    {
+        return (int) $limit;
+    }
 }

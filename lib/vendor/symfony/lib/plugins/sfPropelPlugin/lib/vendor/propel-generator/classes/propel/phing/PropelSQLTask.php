@@ -47,7 +47,8 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 	 * Set the sqldbmap.
 	 * @param      PhingFile $sqldbmap The db map.
 	 */
-	public function setSqlDbMap(PhingFile $sqldbmap) {
+	public function setSqlDbMap(PhingFile $sqldbmap)
+	{
 		$this->sqldbmap = $sqldbmap;
 	}
 
@@ -55,7 +56,8 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 	 * Get the sqldbmap.
 	 * @return     PhingFile $sqldbmap.
 	 */
-	public function getSqlDbMap() {
+	public function getSqlDbMap()
+	{
 		return $this->sqldbmap;
 	}
 
@@ -63,7 +65,8 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 	 * Set the database name.
 	 * @param      string $database
 	 */
-	public function setDatabase($database) {
+	public function setDatabase($database)
+	{
 		$this->database = $database;
 	}
 
@@ -71,7 +74,8 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 	 * Get the database name.
 	 * @return     string
 	 */
-	public function getDatabase() {
+	public function getDatabase()
+	{
 		return $this->database;
 	}
 
@@ -80,7 +84,8 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 	 *
 	 * @throws     IOException - if unable to store properties
 	 */
-	protected function createSqlDbMap() {
+	protected function createSqlDbMap()
+	{
 		if ($this->getSqlDbMap() === null) {
 			return;
 		}
@@ -100,9 +105,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 				foreach ($dataModel->getDatabases() as $database) {
 					$name = ($package ? $package . '.' : '') . 'schema.xml';
 					$sqlFile = $this->getMappedFile($name);
-					$sqldbmap
-							->setProperty($sqlFile->getName(),
-									$database->getName());
+					$sqldbmap->setProperty($sqlFile->getName(), $database->getName());
 				}
 			}
 		} else {
@@ -122,8 +125,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 		try {
 			$sqldbmap->store($this->getSqlDbMap(), "Sqlfile -> Database map");
 		} catch (IOException $e) {
-			throw new IOException(
-					"Unable to store properties: " . $e->getMessage());
+			throw new IOException("Unable to store properties: ". $e->getMessage());
 		}
 	}
 
@@ -132,8 +134,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 		$this->validate();
 
 		if (!$this->mapperElement) {
-			throw new BuildException(
-					"You must use a <mapper/> element to describe how names should be transformed.");
+			throw new BuildException("You must use a <mapper/> element to describe how names should be transformed.");
 		}
 
 		if ($this->packageObjectModel) {
@@ -172,19 +173,13 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 				$this->log("Writing to SQL file: " . $outFile->getPath());
 
 				// First add any "header" SQL
-				$ddl = call_user_func(
-						array($builderClazz, 'getDatabaseStartDDL'));
+				$ddl = call_user_func(array($builderClazz, 'getDatabaseStartDDL'));
 
 				foreach ($database->getTables() as $table) {
 
 					if (!$table->isSkipSql()) {
-						$builder = $generatorConfig
-								->getConfiguredBuilder($table, 'ddl');
-						$this
-								->log(
-										"\t+ " . $table->getName()
-												. " [builder: "
-												. get_class($builder) . "]");
+						$builder = $generatorConfig->getConfiguredBuilder($table, 'ddl');
+						$this->log("\t+ " . $table->getName() . " [builder: " . get_class($builder) . "]");
 						$ddl .= $builder->build();
 						foreach ($builder->getWarnings() as $warning) {
 							$this->log($warning, Project::MSG_WARN);
@@ -196,8 +191,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 				} // foreach database->getTables()
 
 				// Finally check to see if there is any "footer" SQL
-				$ddl .= call_user_func(
-						array($builderClazz, 'getDatabaseEndDDL'));
+				$ddl .= call_user_func(array($builderClazz, 'getDatabaseEndDDL'));
 
 				#var_dump($outFile->getAbsolutePath());
 				// Now we're done.  Write the file!
@@ -240,8 +234,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 						$ad->addDatabase($dbClone);
 						$packagedDataModels[$package] = $ad;
 					}
-					$packagedDataModels[$package]->getDatabase($db->getName())
-							->addTable($table);
+					$packagedDataModels[$package]->getDatabase($db->getName())->addTable($table);
 				}
 			}
 		}
@@ -251,13 +244,15 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 
 	protected function cloneDatabase($db) {
 
-		$attributes = array('name' => $db->getName(),
-				'baseClass' => $db->getBaseClass(),
-				'basePeer' => $db->getBasePeer(),
-				'defaultIdMethod' => $db->getDefaultIdMethod(),
-				'defaultPhpNamingMethod' => $db->getDefaultPhpNamingMethod(),
-				'defaultTranslateMethod' => $db->getDefaultTranslateMethod(),
-				'heavyIndexing' => $db->getHeavyIndexing(),);
+		$attributes = array (
+			'name' => $db->getName(),
+			'baseClass' => $db->getBaseClass(),
+			'basePeer' => $db->getBasePeer(),
+			'defaultIdMethod' => $db->getDefaultIdMethod(),
+			'defaultPhpNamingMethod' => $db->getDefaultPhpNamingMethod(),
+			'defaultTranslateMethod' => $db->getDefaultTranslateMethod(),
+			'heavyIndexing' => $db->getHeavyIndexing(),
+		);
 
 		$clone = new Database();
 		$clone->loadFromXML($attributes);

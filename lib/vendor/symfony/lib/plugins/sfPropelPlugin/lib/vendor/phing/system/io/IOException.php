@@ -24,5 +24,4 @@
  *
  * @package   phing.system.io
  */
-class IOException extends Exception {
-}
+class IOException extends Exception {}

@@ -30,16 +30,18 @@
  * @version     $Revision$
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Hydrator_SingleScalarDriver extends Doctrine_Hydrator_Abstract {
-	public function hydrateResultSet($stmt) {
-		$result = array();
-		while (($val = $stmt->fetchColumn()) !== false) {
-			$result[] = $val;
-		}
-		if (count($result) === 1) {
-			return $result[0];
-		} else {
-			return $result;
-		}
-	}
+class Doctrine_Hydrator_SingleScalarDriver extends Doctrine_Hydrator_Abstract
+{
+    public function hydrateResultSet($stmt)
+    {
+        $result = array();
+        while (($val = $stmt->fetchColumn()) !== false) {
+            $result[] = $val;
+        }
+        if (count($result) === 1) {
+            return $result[0];
+        } else {
+            return $result;
+        }
+    }
 }

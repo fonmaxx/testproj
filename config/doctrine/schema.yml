@@ -1,12 +1,11 @@
 JobeetCategory:
   actAs:
     Timestampable: ~
-    Sluggable:
+    I18n:
       fields: [name]
   columns:
-    name:
-      type: string(255)
-      notnull:  true
+    name: { type: string(255), notnull: true }
+    slug: { type: string(255), notnull: true }
 
 JobeetJob:
   actAs: { Timestampable: ~ }

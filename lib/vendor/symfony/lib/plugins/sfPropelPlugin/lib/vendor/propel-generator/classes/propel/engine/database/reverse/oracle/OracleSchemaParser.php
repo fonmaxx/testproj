@@ -48,22 +48,30 @@ class OracleSchemaParser extends BaseSchemaParser {
 	 *
 	 * @var        array
 	 */
-	private static $oracleTypeMap = array('BLOB' => PropelTypes::BLOB,
-			'CHAR' => PropelTypes::CHAR, 'CLOB' => PropelTypes::CLOB,
-			'DATE' => PropelTypes::DATE, 'DECIMAL' => PropelTypes::DECIMAL,
-			'DOUBLE' => PropelTypes::DOUBLE, 'FLOAT' => PropelTypes::FLOAT,
-			'LONG' => PropelTypes::LONGVARCHAR, 'NCHAR' => PropelTypes::CHAR,
-			'NCLOB' => PropelTypes::CLOB, 'NUMBER' => PropelTypes::BIGINT,
-			'NVARCHAR2' => PropelTypes::VARCHAR,
-			'TIMESTAMP' => PropelTypes::TIMESTAMP,
-			'VARCHAR2' => PropelTypes::VARCHAR,);
+	private static $oracleTypeMap = array(
+		'BLOB'		=> PropelTypes::BLOB,
+		'CHAR'		=> PropelTypes::CHAR,
+		'CLOB'		=> PropelTypes::CLOB,
+		'DATE'		=> PropelTypes::DATE,
+		'DECIMAL'	=> PropelTypes::DECIMAL,
+		'DOUBLE'	=> PropelTypes::DOUBLE,
+		'FLOAT'		=> PropelTypes::FLOAT,
+		'LONG'		=> PropelTypes::LONGVARCHAR,
+		'NCHAR'		=> PropelTypes::CHAR,
+		'NCLOB'		=> PropelTypes::CLOB,
+		'NUMBER'	=> PropelTypes::BIGINT,
+		'NVARCHAR2'	=> PropelTypes::VARCHAR,
+		'TIMESTAMP'	=> PropelTypes::TIMESTAMP,
+		'VARCHAR2'	=> PropelTypes::VARCHAR,
+	);
 
 	/**
 	 * Gets a type mapping from native types to Propel types
 	 *
 	 * @return     array
 	 */
-	protected function getTypeMapping() {
+	protected function getTypeMapping()
+	{
 		return self::$oracleTypeMap;
 	}
 
@@ -71,11 +79,10 @@ class OracleSchemaParser extends BaseSchemaParser {
 	 * Searches for tables in the database. Maybe we want to search also the views.
 	 * @param	Database $database The Database model class to add tables to.
 	 */
-	public function parse(Database $database) {
+	public function parse(Database $database)
+	{
 		$tables = array();
-		$stmt = $this->dbh
-				->query(
-						"SELECT OBJECT_NAME FROM USER_OBJECTS WHERE OBJECT_TYPE = 'TABLE'");
+		$stmt = $this->dbh->query("SELECT OBJECT_NAME FROM USER_OBJECTS WHERE OBJECT_TYPE = 'TABLE'");
 		/* @var stmt PDOStatement */
 		// First load the tables (important that this happen before filling out details of tables)
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -97,11 +104,9 @@ class OracleSchemaParser extends BaseSchemaParser {
 	 *
 	 * @param      Table $table The Table model class to add columns to.
 	 */
-	protected function addColumns(Table $table) {
-		$stmt = $this->dbh
-				->query(
-						"SELECT COLUMN_NAME, DATA_TYPE, NULLABLE, DATA_LENGTH, DATA_SCALE, DATA_DEFAULT FROM USER_TAB_COLS WHERE TABLE_NAME = '"
-								. $table->getName() . "'");
+	protected function addColumns(Table $table)
+	{
+		$stmt = $this->dbh->query("SELECT COLUMN_NAME, DATA_TYPE, NULLABLE, DATA_LENGTH, DATA_SCALE, DATA_DEFAULT FROM USER_TAB_COLS WHERE TABLE_NAME = '" . $table->getName() . "'");
 		/* @var stmt PDOStatement */
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 			$size = $row["DATA_LENGTH"];
@@ -112,7 +117,7 @@ class OracleSchemaParser extends BaseSchemaParser {
 			if ($type == "NUMBER" && $row["DATA_SCALE"] > 0) {
 				$type = "DECIMAL";
 			}
-			if ($type == "FLOAT" && $row["DATA_PRECISION"] == 126) {
+			if ($type == "FLOAT"&& $row["DATA_PRECISION"] == 126) {
 				$type = "DOUBLE";
 			}
 			if (strpos($type, 'TIMESTAMP(') !== false) {
@@ -126,17 +131,11 @@ class OracleSchemaParser extends BaseSchemaParser {
 				$size = null;
 				$scale = null;
 			}
-
+				
 			$propelType = $this->getMappedPropelType($type);
 			if (!$propelType) {
 				$propelType = Column::DEFAULT_TYPE;
-				$this
-						->warn(
-								"Column [" . $table->getName() . "."
-										. $row['COLUMN_NAME']
-										. "] has a column type ("
-										. $row["DATA_TYPE"]
-										. ") that Propel does not support.");
+				$this->warn("Column [" . $table->getName() . "." . $row['COLUMN_NAME']. "] has a column type (".$row["DATA_TYPE"].") that Propel does not support.");
 			}
 
 			$column = new Column($row['COLUMN_NAME']);
@@ -146,16 +145,13 @@ class OracleSchemaParser extends BaseSchemaParser {
 			$column->getDomain()->replaceSize($size);
 			$column->getDomain()->replaceScale($scale);
 			if ($default !== null) {
-				$column->getDomain()
-						->setDefaultValue(
-								new ColumnDefaultValue($default,
-										ColumnDefaultValue::TYPE_VALUE));
+				$column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, ColumnDefaultValue::TYPE_VALUE));
 			}
 			$column->setAutoIncrement(false); // Not yet supported
 			$column->setNotNull(!$isNullable);
 			$table->addColumn($column);
 		}
-
+		
 	} // addColumn()
 
 	/**
@@ -163,64 +159,48 @@ class OracleSchemaParser extends BaseSchemaParser {
 	 *
 	 * @param      Table $table The Table model class to add columns to.
 	 */
-	protected function addIndexes(Table $table) {
-		$stmt = $this->dbh
-				->query(
-						"SELECT COLUMN_NAME, INDEX_NAME FROM USER_IND_COLUMNS WHERE TABLE_NAME = '"
-								. $table->getName() . "' ORDER BY COLUMN_NAME");
+	protected function addIndexes(Table $table)
+	{
+		$stmt = $this->dbh->query("SELECT COLUMN_NAME, INDEX_NAME FROM USER_IND_COLUMNS WHERE TABLE_NAME = '" . $table->getName() . "' ORDER BY COLUMN_NAME");
 		/* @var stmt PDOStatement */
 		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		if (count($rows) > 0) {
 			$index = new Index($rows[0]['INDEX_NAME']);
-			foreach ($rows AS $row) {
+			foreach($rows AS $row) {
 				$index->addColumn($row['COLUMN_NAME']);
 			}
 			$table->addIndex($index);
 		}
 	}
-
+	
 	/**
 	 * Load foreign keys for this table.
 	 * 
 	 * @param      Table $table The Table model class to add FKs to
 	 */
-	protected function addForeignKeys(Table $table) {
+	protected function addForeignKeys(Table $table)
+	{	
 		// local store to avoid duplicates
-		$foreignKeys = array();
-
-		$stmt = $this->dbh
-				->query(
-						"SELECT CONSTRAINT_NAME, DELETE_RULE, R_CONSTRAINT_NAME FROM USER_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'R' AND TABLE_NAME = '"
-								. $table->getName() . "'");
+		$foreignKeys = array(); 
+		
+		$stmt = $this->dbh->query("SELECT CONSTRAINT_NAME, DELETE_RULE, R_CONSTRAINT_NAME FROM USER_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'R' AND TABLE_NAME = '" . $table->getName(). "'");
 		/* @var stmt PDOStatement */
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 			// Local reference
-			$stmt2 = $this->dbh
-					->query(
-							"SELECT COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = '"
-									. $row['CONSTRAINT_NAME']
-									. "' AND TABLE_NAME = '"
-									. $table->getName() . "'");
+			$stmt2 = $this->dbh->query("SELECT COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = '".$row['CONSTRAINT_NAME']."' AND TABLE_NAME = '" . $table->getName(). "'");
 			/* @var stmt2 PDOStatement */
 			$localReferenceInfo = $stmt2->fetch(PDO::FETCH_ASSOC);
-
+			
 			// Foreign reference
-			$stmt2 = $this->dbh
-					->query(
-							"SELECT TABLE_NAME, COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = '"
-									. $row['R_CONSTRAINT_NAME'] . "'");
+			$stmt2 = $this->dbh->query("SELECT TABLE_NAME, COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = '".$row['R_CONSTRAINT_NAME']."'");
 			$foreignReferenceInfo = $stmt2->fetch(PDO::FETCH_ASSOC);
-
+						
 			if (!isset($foreignKeys[$row["CONSTRAINT_NAME"]])) {
 				$fk = new ForeignKey($row["CONSTRAINT_NAME"]);
 				$fk->setForeignTableName($foreignReferenceInfo['TABLE_NAME']);
 				$fk->setOnDelete($row["DELETE_RULE"]);
 				$fk->setOnUpdate($row["DELETE_RULE"]);
-				$fk
-						->addReference(
-								array(
-										"local" => $localReferenceInfo['COLUMN_NAME'],
-										"foreign" => $foreignReferenceInfo['COLUMN_NAME']));
+				$fk->addReference(array("local" => $localReferenceInfo['COLUMN_NAME'], "foreign" => $foreignReferenceInfo['COLUMN_NAME']));
 				$table->addForeignKey($fk);
 				$foreignKeys[$row["CONSTRAINT_NAME"]] = $fk;
 			}
@@ -232,12 +212,9 @@ class OracleSchemaParser extends BaseSchemaParser {
 	 * 
 	 * @param      Table $table The Table model class to add PK to. 
 	 */
-	protected function addPrimaryKey(Table $table) {
-		$stmt = $this->dbh
-				->query(
-						"SELECT COLS.COLUMN_NAME FROM USER_CONSTRAINTS CONS, USER_CONS_COLUMNS COLS WHERE CONS.CONSTRAINT_NAME = COLS.CONSTRAINT_NAME AND CONS.TABLE_NAME = '"
-								. $table->getName()
-								. "' AND CONS.CONSTRAINT_TYPE = 'P'");
+	protected function addPrimaryKey(Table $table)
+	{
+		$stmt = $this->dbh->query("SELECT COLS.COLUMN_NAME FROM USER_CONSTRAINTS CONS, USER_CONS_COLUMNS COLS WHERE CONS.CONSTRAINT_NAME = COLS.CONSTRAINT_NAME AND CONS.TABLE_NAME = '".$table->getName()."' AND CONS.CONSTRAINT_TYPE = 'P'");
 		/* @var stmt PDOStatement */
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 			// This fixes a strange behavior by PDO. Sometimes the
@@ -246,7 +223,7 @@ class OracleSchemaParser extends BaseSchemaParser {
 				$row = $row[0];
 			}
 			$table->getColumn($row['COLUMN_NAME'])->setPrimaryKey(true);
-		}
+		}	
 	}
 
 }

@@ -24,31 +24,29 @@
  */
 class EventObject {
 
-	/** The object on which the Event initially occurred. */
-	protected $source;
+    /** The object on which the Event initially occurred. */
+    protected $source;
 
-	/** Constructs a prototypical Event. */
-	function __construct($source) {
-		if ($source === null) {
-			throw new Exception("Null source");
-		}
-		$this->source = $source;
-	}
+    /** Constructs a prototypical Event. */
+    function __construct($source) {
+        if ($source === null) {
+            throw new Exception("Null source");
+        }
+        $this->source = $source;
+    }
 
-	/** The object on which the Event initially occurred. */
-	function getSource() {
-		return $this->source;
-	}
+    /** The object on which the Event initially occurred. */
+    function getSource() {
+        return $this->source;
+    }
 
-	/** Returns a String representation of this EventObject.*/
-	function toString() {
-		if (method_exists($this->source, "toString")) {
-			return get_class($this) . "[source=" . $this->source->toString()
-					. "]";
-		} else {
-			return get_class($this) . "[source=" . get_class($this->source)
-					. "]";
-		}
-	}
+    /** Returns a String representation of this EventObject.*/
+    function toString() {
+        if (method_exists($this->source, "toString")) {
+            return get_class($this)."[source=".$this->source->toString()."]";
+        } else {
+            return get_class($this)."[source=".get_class($this->source)."]";
+        }
+    }
 }
 

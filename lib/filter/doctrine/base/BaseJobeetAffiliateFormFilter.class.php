@@ -40,6 +40,7 @@ abstract class BaseJobeetAffiliateFormFilter extends BaseFormFilterDoctrine
 
     parent::setup();
   }
+
   public function addJobeetCategoriesListColumnQuery(Doctrine_Query $query, $field, $values)
   {
     if (!is_array($values))
@@ -57,6 +58,7 @@ abstract class BaseJobeetAffiliateFormFilter extends BaseFormFilterDoctrine
       ->andWhereIn('JobeetCategoryAffiliate.category_id', $values)
     ;
   }
+
   public function getModelName()
   {
     return 'JobeetAffiliate';

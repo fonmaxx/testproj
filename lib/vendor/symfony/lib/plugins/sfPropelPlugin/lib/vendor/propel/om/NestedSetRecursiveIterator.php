@@ -27,7 +27,8 @@
  * @version    $Revision: 1262 $
  * @package    propel.om
  */
-class NestedSetRecursiveIterator implements RecursiveIterator {
+class NestedSetRecursiveIterator implements RecursiveIterator
+{
 	protected $topNode = null;
 
 	protected $curNode = null;
@@ -82,7 +83,6 @@ class NestedSetRecursiveIterator implements RecursiveIterator {
 	}
 
 	public function getChildren() {
-		return new NestedSetRecursiveIterator(
-				$this->curNode->retrieveFirstChild());
+		return new NestedSetRecursiveIterator($this->curNode->retrieveFirstChild());
 	}
 }

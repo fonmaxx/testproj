@@ -19,7 +19,11 @@
  * <http://phing.info>. 
  */
 
+
+
 include_once 'phing/util/StringHelper.php';
+
+
 
 /**
 
@@ -47,168 +51,195 @@ include_once 'phing/util/StringHelper.php';
 
 class PathTokenizer {
 
-	/**
-	
-	 * A array of tokens, created by preg_split().
-	
-	 */
+    
 
-	private $tokens = array();
+    /**
 
-	/**
-	
-	 * A string which stores any path components which have been read ahead
-	
-	 * due to DOS filesystem compensation.
-	
-	 * @var string
-	
-	 */
+     * A array of tokens, created by preg_split().
 
-	private $lookahead;
+     */
 
-	/**
-	
-	 * Flag to indicate whether or not we are running on a platform with a
-	
-	 * DOS style filesystem
-	
-	 * @var boolean
-	
-	 */
+    private $tokens = array();
 
-	private $dosStyleFilesystem;
+    
 
-	/**
-	
-	 * Constructs a path tokenizer for the specified path.
-	
-	 * 
-	
-	 * @param path The path to tokenize. Must not be <code>null</code>.
-	
-	 */
+    /**
 
-	public function __construct($path) {
+     * A string which stores any path components which have been read ahead
 
-		// on Windows and Unix, we can ignore delimiters and still have
+     * due to DOS filesystem compensation.
 
-		// enough information to tokenize correctly.    
+     * @var string
 
-		$this->tokens = preg_split("/[;:]/", $path, -1, PREG_SPLIT_NO_EMPTY);
+     */
 
-		$this->dosStyleFilesystem = (PATH_SEPARATOR == ';');
+    private $lookahead;
 
-	}
+    
 
-	/**
-	
-	 * Tests if there are more path elements available from this tokenizer's
-	
-	 * path. If this method returns <code>true</code>, then a subsequent call 
-	
-	 * to nextToken will successfully return a token.
-	
-	 * 
-	
-	 * @return <code>true</code> if and only if there is at least one token 
-	
-	 * in the string after the current position; <code>false</code> otherwise.
-	
-	 */
+    /**
 
-	public function hasMoreTokens() {
+     * Flag to indicate whether or not we are running on a platform with a
 
-		if ($this->lookahead !== null) {
+     * DOS style filesystem
 
-			return true;
+     * @var boolean
 
-		}
+     */
 
-		return !empty($this->tokens);
+    private $dosStyleFilesystem;
 
-	}
 
-	/**
-	
-	 * Returns the next path element from this tokenizer.
-	
-	 * 
-	
-	 * @return the next path element from this tokenizer.
-	
-	 * 
-	
-	 * @throws Exception if there are no more elements in this tokenizer's path.
-	
-	 */
 
-	public function nextToken() {
+    /**
 
-		if ($this->lookahead !== null) {
+     * Constructs a path tokenizer for the specified path.
 
-			$token = $this->lookahead;
+     * 
 
-			$this->lookahead = null;
+     * @param path The path to tokenize. Must not be <code>null</code>.
 
-		} else {
+     */
 
-			$token = trim(array_shift($this->tokens));
+    public function __construct($path) {
 
-		}
+        // on Windows and Unix, we can ignore delimiters and still have
 
-		if (strlen($token) === 1 && Character::isLetter($token{0})
- && $this->dosStyleFilesystem
- && !empty($this->tokens)) {
+        // enough information to tokenize correctly.    
 
-			// we are on a dos style system so this path could be a drive
+        $this->tokens = preg_split("/[;:]/", $path, -1, PREG_SPLIT_NO_EMPTY);
 
-			// spec. We look at the next token
+        $this->dosStyleFilesystem = ( PATH_SEPARATOR == ';');
 
-			$nextToken = trim(array_shift($this->tokens));
+    }
 
-			if (StringHelper::startsWith('\\', $nextToken)
-					|| StringHelper::startsWith('/', $nextToken)) {
 
-				// we know we are on a DOS style platform and the next path
 
-				// starts with a slash or backslash, so we know this is a 
+    /**
 
-				// drive spec
+     * Tests if there are more path elements available from this tokenizer's
 
-				$token .= ':' . $nextToken;
+     * path. If this method returns <code>true</code>, then a subsequent call 
 
-			} else {
+     * to nextToken will successfully return a token.
 
-				// store the token just read for next time
+     * 
 
-				$this->lookahead = $nextToken;
+     * @return <code>true</code> if and only if there is at least one token 
 
-			}
+     * in the string after the current position; <code>false</code> otherwise.
 
-		}
+     */
 
-		return $token;
+    public function hasMoreTokens() {
 
-	}
+        if ($this->lookahead !== null) {
 
-	/**
-	
-	 * Non StringTokenizer function, that indicates whether the specified path is contained in loaded tokens.
-	
-	 * We can do this easily because in PHP implimentation we're using arrays.
-	
-	 * @param string $path path to search for.
-	
-	 * @return boolean
-	
-	 */
+            return true;
 
-	public function contains($path) {
+        }        
 
-		return in_array($path, $this->tokens, true);
+        return !empty($this->tokens);
 
-	}
+    }
+
+    
+
+    /**
+
+     * Returns the next path element from this tokenizer.
+
+     * 
+
+     * @return the next path element from this tokenizer.
+
+     * 
+
+     * @throws Exception if there are no more elements in this tokenizer's path.
+
+     */
+
+    public function nextToken() {
+
+            
+
+        if ($this->lookahead !== null) {
+
+            $token = $this->lookahead;
+
+            $this->lookahead = null;
+
+        } else {
+
+            $token = trim(array_shift($this->tokens));
+
+        }
+
+            
+
+
+
+        if (strlen($token) === 1 && Character::isLetter($token{0})
+
+                                && $this->dosStyleFilesystem
+
+                                && !empty($this->tokens)) {
+
+            // we are on a dos style system so this path could be a drive
+
+            // spec. We look at the next token
+
+            $nextToken = trim(array_shift($this->tokens));
+
+            if (StringHelper::startsWith('\\', $nextToken) || StringHelper::startsWith('/', $nextToken)) {
+
+                // we know we are on a DOS style platform and the next path
+
+                // starts with a slash or backslash, so we know this is a 
+
+                // drive spec
+
+                $token .= ':' . $nextToken;
+
+            } else {
+
+                // store the token just read for next time
+
+                $this->lookahead = $nextToken;
+
+            }
+
+        }
+
+        
+
+        return $token;
+
+    }
+
+
+
+    /**
+
+     * Non StringTokenizer function, that indicates whether the specified path is contained in loaded tokens.
+
+     * We can do this easily because in PHP implimentation we're using arrays.
+
+     * @param string $path path to search for.
+
+     * @return boolean
+
+     */
+
+    public function contains($path) {
+
+        return in_array($path, $this->tokens, true);        
+
+    }
+
+    
 
 }
+
+
 

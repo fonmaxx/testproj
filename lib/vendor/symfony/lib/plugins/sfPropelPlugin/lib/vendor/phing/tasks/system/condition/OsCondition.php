@@ -25,40 +25,39 @@ require_once 'phing/tasks/system/condition/ConditionBase.php';
  *  Condition that tests the OS type.
  *
  *  @author    Andreas Aderhold <andi@binarycloud.com>
- *  @copyright ï¿½ 2001,2002 THYRELL. All rights reserved
+ *  @copyright © 2001,2002 THYRELL. All rights reserved
  *  @version   $Revision: 1.8 $ $Date: 2006-03-10 15:31:51 +0100 (Fri, 10 Mar 2006) $
  *  @access    public
  *  @package   phing.tasks.system.condition
  */
 class OsCondition implements Condition {
 
-	private $family;
+    private $family;
 
-	function setFamily($f) {
-		$this->family = strtolower($f);
-	}
+    function setFamily($f) {
+        $this->family = strtolower($f);
+    }
 
-	function evaluate() {
-		$osName = strtolower(Phing::getProperty("os.name"));
-
-		if ($this->family !== null) {
-			if ($this->family === "windows") {
-				return StringHelper::startsWith("win", $osName);
-			} elseif ($this->family === "mac") {
-				return (strpos($osName, "mac") !== false
-						|| strpos($osName, "darwin") !== false);
-			} elseif ($this->family === ("unix")) {
-				return (StringHelper::endsWith("ix", $osName)
-						|| StringHelper::endsWith("ux", $osName)
-						|| StringHelper::endsWith("bsd", $osName)
-						|| StringHelper::startsWith("sunos", $osName)
-						|| StringHelper::startsWith("darwin", $osName));
-			}
-			throw new BuildException(
-					"Don't know how to detect os family '" . $this->family
-							. "'");
-		}
-		return false;
-	}
+    function evaluate() {
+        $osName = strtolower(Phing::getProperty("os.name"));
+		
+        if ($this->family !== null) {
+            if ($this->family === "windows") {
+                return StringHelper::startsWith("win", $osName);
+            } elseif ($this->family === "mac") {
+                return (strpos($osName, "mac") !== false || strpos($osName, "darwin") !== false);
+            } elseif ($this->family === ("unix")) {
+				return (
+					StringHelper::endsWith("ix", $osName) ||
+					StringHelper::endsWith("ux", $osName) ||
+					StringHelper::endsWith("bsd", $osName) ||
+					StringHelper::startsWith("sunos", $osName) ||
+					StringHelper::startsWith("darwin", $osName)
+				);
+            }
+            throw new BuildException("Don't know how to detect os family '" . $this->family . "'");
+        }
+        return false;
+    }
 
 }

@@ -22,6 +22,5 @@
 /**
  *  @package   phing.system.lang
  */
-class FileNotFoundException extends Exception {
-}
+class FileNotFoundException extends Exception {}
 

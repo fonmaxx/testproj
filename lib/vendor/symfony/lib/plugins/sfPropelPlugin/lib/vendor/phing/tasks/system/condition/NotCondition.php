@@ -28,22 +28,21 @@ require_once 'phing/tasks/system/condition/ConditionBase.php';
  *  and vice versa.
  *
  *  @author    Andreas Aderhold <andi@binarycloud.com>
- *  @copyright ï¿½ 2001,2002 THYRELL. All rights reserved
+ *  @copyright © 2001,2002 THYRELL. All rights reserved
  *  @version   $Revision: 1.6 $ $Date: 2006-03-10 15:31:51 +0100 (Fri, 10 Mar 2006) $
  *  @access    public
  *  @package   phing.tasks.system.condition
  */
 class NotCondition extends ConditionBase implements Condition {
 
-	function evaluate() {
-		if ($this->countConditions() > 1) {
-			throw new BuildException(
-					"You must not nest more than one condition into <not>");
-		}
-		if ($this->countConditions() < 1) {
-			throw new BuildException("You must nest a condition into <not>");
-		}
-		$conds = $this->getIterator();
-		return !$conds->current()->evaluate();
-	}
+    function evaluate() {
+        if ($this->countConditions() > 1) {
+            throw new BuildException("You must not nest more than one condition into <not>");
+        }
+        if ($this->countConditions() < 1) {
+            throw new BuildException("You must nest a condition into <not>");
+        }
+        $conds = $this->getIterator();
+        return !$conds->current()->evaluate();
+    }
 }

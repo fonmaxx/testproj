@@ -33,7 +33,8 @@ require_once 'phing/tasks/ext/coverage/CoverageMerger.php';
  * @package phing.tasks.ext.coverage
  * @since 2.1.0
  */
-class CoverageMergerTask extends Task {
+class CoverageMergerTask extends Task
+{
 	/** the list of filesets containing the .php filename rules */
 	private $filesets = array();
 
@@ -42,7 +43,8 @@ class CoverageMergerTask extends Task {
 	 *
 	 * @param FileSet the new fileset containing .php files
 	 */
-	function addFileSet(FileSet $fileset) {
+	function addFileSet(FileSet $fileset)
+	{
 		$this->filesets[] = $fileset;
 	}
 
@@ -51,33 +53,38 @@ class CoverageMergerTask extends Task {
 	 *
 	 * @return array an array of filenames
 	 */
-	private function getFilenames() {
+	private function getFilenames()
+	{
 		$files = array();
 
-		foreach ($this->filesets as $fileset) {
+		foreach ($this->filesets as $fileset)
+		{
 			$ds = $fileset->getDirectoryScanner($this->project);
 			$ds->scan();
 
 			$includedFiles = $ds->getIncludedFiles();
-
-			foreach ($includedFiles as $file) {
+			
+			foreach ($includedFiles as $file)
+			{
 				$fs = new PhingFile(basename($ds->getBaseDir()), $file);
-
+					
 				$files[] = $fs->getAbsolutePath();
 			}
 		}
 
 		return $files;
 	}
-
-	function main() {
+	
+	function main()
+	{
 		$files = $this->getFilenames();
-
+		
 		$this->log("Merging " . count($files) . " coverage files");
 
-		foreach ($files as $file) {
+		foreach ($files as $file)
+		{
 			$coverageInformation = unserialize(file_get_contents($file));
-
+			
 			CoverageMerger::merge($this->project, array($coverageInformation));
 		}
 	}

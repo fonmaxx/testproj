@@ -34,57 +34,45 @@ class MysqlPlatform extends DefaultPlatform {
 	/**
 	 * Initializes db specific domain mapping.
 	 */
-	protected function initialize() {
+	protected function initialize()
+	{
 		parent::initialize();
-		$this
-				->setSchemaDomainMapping(
-						new Domain(PropelTypes::BOOLEAN, "TINYINT"));
-		$this
-				->setSchemaDomainMapping(
-						new Domain(PropelTypes::NUMERIC, "DECIMAL"));
-		$this
-				->setSchemaDomainMapping(
-						new Domain(PropelTypes::LONGVARCHAR, "TEXT"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, "TINYINT"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::NUMERIC, "DECIMAL"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, "TEXT"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, "BLOB"));
-		$this
-				->setSchemaDomainMapping(
-						new Domain(PropelTypes::VARBINARY, "MEDIUMBLOB"));
-		$this
-				->setSchemaDomainMapping(
-						new Domain(PropelTypes::LONGVARBINARY, "LONGBLOB"));
-		$this
-				->setSchemaDomainMapping(
-						new Domain(PropelTypes::BLOB, "LONGBLOB"));
-		$this
-				->setSchemaDomainMapping(
-						new Domain(PropelTypes::CLOB, "LONGTEXT"));
-		$this
-				->setSchemaDomainMapping(
-						new Domain(PropelTypes::TIMESTAMP, "DATETIME"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "MEDIUMBLOB"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "LONGBLOB"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, "LONGBLOB"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, "LONGTEXT"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, "DATETIME"));
 	}
 
 	/**
 	 * @see        Platform#getAutoIncrement()
 	 */
-	public function getAutoIncrement() {
+	public function getAutoIncrement()
+	{
 		return "AUTO_INCREMENT";
 	}
 
 	/**
 	 * @see        Platform#getMaxColumnNameLength()
 	 */
-	public function getMaxColumnNameLength() {
+	public function getMaxColumnNameLength()
+	{
 		return 64;
 	}
 
 	/**
 	 * @see        Platform::supportsNativeDeleteTrigger()
 	 */
-	public function supportsNativeDeleteTrigger() {
+	public function supportsNativeDeleteTrigger()
+	{
 		$usingInnoDB = false;
-		if (class_exists('DataModelBuilder', false)) {
-			$usingInnoDB = strtolower($this->getBuildProperty('mysqlTableType'))
-					== 'innodb';
+		if (class_exists('DataModelBuilder', false))
+		{
+			$usingInnoDB = strtolower($this->getBuildProperty('mysqlTableType')) == 'innodb';
 		}
 		return $usingInnoDB || false;
 	}
@@ -92,7 +80,8 @@ class MysqlPlatform extends DefaultPlatform {
 	/**
 	 * @see        Platform#hasSize(String)
 	 */
-	public function hasSize($sqlType) {
+	public function hasSize($sqlType)
+	{
 		return !("MEDIUMTEXT" == $sqlType || "LONGTEXT" == $sqlType
 				|| "BLOB" == $sqlType || "MEDIUMBLOB" == $sqlType
 				|| "LONGBLOB" == $sqlType);
@@ -103,7 +92,8 @@ class MysqlPlatform extends DefaultPlatform {
 	 * @param      string $text
 	 * @return     string
 	 */
-	public function disconnectedEscapeText($text) {
+	public function disconnectedEscapeText($text)
+	{
 		if (function_exists('mysql_escape_string')) {
 			return mysql_escape_string($text);
 		} else {
@@ -114,7 +104,8 @@ class MysqlPlatform extends DefaultPlatform {
 	/**
 	 * @see        Platform::quoteIdentifier()
 	 */
-	public function quoteIdentifier($text) {
+	public function quoteIdentifier($text)
+	{
 		return '`' . $text . '`';
 	}
 
@@ -122,7 +113,8 @@ class MysqlPlatform extends DefaultPlatform {
 	 * Gets the preferred timestamp formatter for setting date/time values.
 	 * @return     string
 	 */
-	public function getTimestampFormatter() {
+	public function getTimestampFormatter()
+	{
 		return 'Y-m-d H:i:s';
 	}
 }

@@ -43,12 +43,10 @@ abstract class PeerBuilder extends OMBuilder {
 	 */
 	public function __construct(Table $table) {
 		parent::__construct($table);
-		$this->basePeerClassname = $this->basePeerClass = $this
-				->getBasePeer($table);
+		$this->basePeerClassname = $this->basePeerClass = $this->getBasePeer($table);
 		$pos = strrpos($this->basePeerClassname, '.');
 		if ($pos !== false) {
-			$this->basePeerClassname = substr($this->basePeerClassname,
-					$pos + 1);
+			$this->basePeerClassname = substr($this->basePeerClassname, $pos + 1);
 		}
 	}
 
@@ -56,7 +54,8 @@ abstract class PeerBuilder extends OMBuilder {
 	 * Adds the addSelectColumns(), doCount(), etc. methods.
 	 * @param      string &$script The script will be modified in this method.
 	 */
-	protected function addSelectMethods(&$script) {
+	protected function addSelectMethods(&$script)
+	{
 		$this->addAddSelectColumns($script);
 
 		$this->addDoCount($script);
@@ -65,7 +64,7 @@ abstract class PeerBuilder extends OMBuilder {
 		// into a top-level method
 		$this->addDoSelectOne($script);
 		$this->addDoSelect($script);
-		$this->addDoSelectStmt($script); // <-- there's PDO code in here
+		$this->addDoSelectStmt($script);	 // <-- there's PDO code in here
 
 		$this->addAddInstanceToPool($script);
 		$this->addRemoveInstanceFromPool($script);
@@ -82,7 +81,8 @@ abstract class PeerBuilder extends OMBuilder {
 	 * Adds the correct getOMClass() method, depending on whether this table uses inheritance.
 	 * @param      string &$script The script will be modified in this method.
 	 */
-	protected function addGetOMClassMethod(&$script) {
+	protected function addGetOMClassMethod(&$script)
+	{
 		$table = $this->getTable();
 		if ($table->getChildrenColumn()) {
 			if ($table->isAbstract()) {
@@ -103,7 +103,8 @@ abstract class PeerBuilder extends OMBuilder {
 	 * Adds the doInsert(), doUpdate(), doDeleteAll(), doValidate(), etc. methods.
 	 * @param      string &$script The script will be modified in this method.
 	 */
-	protected function addUpdateMethods(&$script) {
+	protected function addUpdateMethods(&$script)
+	{
 		$this->addDoInsert($script);
 		$this->addDoUpdate($script);
 		$this->addDoDeleteAll($script);
@@ -121,7 +122,8 @@ abstract class PeerBuilder extends OMBuilder {
 	 * Adds the retrieveByPK() (and possibly retrieveByPKs()) method(s) appropriate for this class.
 	 * @param      string &$script The script will be modified in this method.
 	 */
-	protected function addRetrieveByPKMethods(&$script) {
+	protected function addRetrieveByPKMethods(&$script)
+	{
 		if (count($this->getTable()->getPrimaryKey()) === 1) {
 			$this->addRetrieveByPK_SinglePK($script);
 			$this->addRetrieveByPKs_SinglePK($script);
@@ -141,7 +143,8 @@ abstract class PeerBuilder extends OMBuilder {
 	 *
 	 * @param      string &$script The script will be modified in this method.
 	 */
-	protected function addClassBody(&$script) {
+	protected function addClassBody(&$script)
+	{
 
 		$table = $this->getTable();
 
@@ -157,7 +160,7 @@ abstract class PeerBuilder extends OMBuilder {
 			$this->addSelectMethods($script);
 			$this->addGetTableMap($script);
 		}
-
+		
 		$this->addBuildTableMap($script);
 
 		$this->addGetOMClassMethod($script);
@@ -176,11 +179,10 @@ abstract class PeerBuilder extends OMBuilder {
 	 * Whether the platform in use requires ON DELETE CASCADE emulation and whether there are references to this table.
 	 * @return     boolean
 	 */
-	protected function isDeleteCascadeEmulationNeeded() {
+	protected function isDeleteCascadeEmulationNeeded()
+	{
 		$table = $this->getTable();
-		if ((!$this->getPlatform()->supportsNativeDeleteTrigger()
-				|| $this->getBuildProperty('emulateForeignKeyConstraints'))
-				&& count($table->getReferrers()) > 0) {
+		if ((!$this->getPlatform()->supportsNativeDeleteTrigger() || $this->getBuildProperty('emulateForeignKeyConstraints')) && count($table->getReferrers()) > 0) {
 			foreach ($table->getReferrers() as $fk) {
 				if ($fk->getOnDelete() == ForeignKey::CASCADE) {
 					return true;
@@ -194,11 +196,10 @@ abstract class PeerBuilder extends OMBuilder {
 	 * Whether the platform in use requires ON DELETE SETNULL emulation and whether there are references to this table.
 	 * @return     boolean
 	 */
-	protected function isDeleteSetNullEmulationNeeded() {
+	protected function isDeleteSetNullEmulationNeeded()
+	{
 		$table = $this->getTable();
-		if ((!$this->getPlatform()->supportsNativeDeleteTrigger()
-				|| $this->getBuildProperty('emulateForeignKeyConstraints'))
-				&& count($table->getReferrers()) > 0) {
+		if ((!$this->getPlatform()->supportsNativeDeleteTrigger() || $this->getBuildProperty('emulateForeignKeyConstraints')) && count($table->getReferrers()) > 0) {
 			foreach ($table->getReferrers() as $fk) {
 				if ($fk->getOnDelete() == ForeignKey::SETNULL) {
 					return true;
@@ -214,11 +215,10 @@ abstract class PeerBuilder extends OMBuilder {
 	 * table is read-only or an alias.
 	 * @return     boolean
 	 */
-	protected function isAddGenericMutators() {
+	protected function isAddGenericMutators()
+	{
 		$table = $this->getTable();
-		return (!$table->isAlias()
-				&& $this->getBuildProperty('addGenericMutators')
-				&& !$table->isReadOnly());
+		return (!$table->isAlias() && $this->getBuildProperty('addGenericMutators') && !$table->isReadOnly());
 	}
 
 	/**
@@ -227,10 +227,10 @@ abstract class PeerBuilder extends OMBuilder {
 	 * table is an alias.
 	 * @return     boolean
 	 */
-	protected function isAddGenericAccessors() {
+	protected function isAddGenericAccessors()
+	{
 		$table = $this->getTable();
-		return (!$table->isAlias()
-				&& $this->getBuildProperty('addGenericAccessors'));
+		return (!$table->isAlias() && $this->getBuildProperty('addGenericAccessors'));
 	}
 
 	/**
@@ -239,15 +239,16 @@ abstract class PeerBuilder extends OMBuilder {
 	 * otherwise simply "retrieveByPK".
 	 * @return     string
 	 */
-	public function getRetrieveMethodName() {
+	public function getRetrieveMethodName()
+	{
 		if ($this->getTable()->isAlias()) {
-			$retrieveMethod = "retrieve" . $this->getTable()->getPhpName()
-					. "ByPK";
+			$retrieveMethod = "retrieve" . $this->getTable()->getPhpName() . "ByPK";
 		} else {
 			$retrieveMethod = "retrieveByPK";
 		}
 		return $retrieveMethod;
 	}
+
 
 	/**
 	 * COMPATIBILITY: Get the column constant name (e.g. PeerName::COLUMN_NAME).
@@ -275,23 +276,24 @@ abstract class PeerBuilder extends OMBuilder {
 			return $const;
 		}
 	}
-
+	
 	/**
-	 * Checks whether any registered behavior on that table has a modifier for a hook
-	 * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-	 * @return boolean
-	 */
-	public function hasBehaviorModifier($hookName) {
-		return parent::hasBehaviorModifier($hookName, 'PeerBuilderModifier');
-	}
+   * Checks whether any registered behavior on that table has a modifier for a hook
+   * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+   * @return boolean
+   */
+  public function hasBehaviorModifier($hookName)
+  {
+    return parent::hasBehaviorModifier($hookName, 'PeerBuilderModifier');
+  }
 
-	/**
-	 * Checks whether any registered behavior on that table has a modifier for a hook
-	 * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+  /**
+   * Checks whether any registered behavior on that table has a modifier for a hook
+   * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
 	 * @param string &$script The script will be modified in this method.
-	 */
-	public function applyBehaviorModifier($hookName, &$script, $tab = "		") {
-		return parent::applyBehaviorModifier($hookName, 'PeerBuilderModifier',
-				$script, $tab);
-	}
+   */
+  public function applyBehaviorModifier($hookName, &$script, $tab = "		")
+  {
+    return parent::applyBehaviorModifier($hookName, 'PeerBuilderModifier', $script, $tab);
+  }
 }

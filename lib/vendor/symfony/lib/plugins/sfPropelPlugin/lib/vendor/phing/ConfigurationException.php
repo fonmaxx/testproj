@@ -28,56 +28,56 @@
  */
 class ConfigurationException extends Exception {
 
-	/**
+    /**
 	 * Location in the xml file.
 	 * @var Location
 	 */
-	protected $location;
+    protected $location;
 
-	/**
+    /**
 	 * The nested "cause" exception.
 	 * @var Exception
 	 */
-	protected $cause;
+    protected $cause;
 
-	/**
-	 * Construct a BuildException.
-	 * Supported signatures:
-	 *         throw new BuildException($causeExc);
-	 *         throw new BuildException($msg);
-	 *         throw new BuildException($msg, $causeExc);
-	 */
-	function __construct($p1, $p2 = null, $p3 = null) {
+    /**
+     * Construct a BuildException.
+     * Supported signatures:
+     *         throw new BuildException($causeExc);
+     *         throw new BuildException($msg);
+     *         throw new BuildException($msg, $causeExc);
+     */
+    function __construct($p1, $p2 = null, $p3 = null) {
 
-		$cause = null;
-		$msg = "";
+    	$cause = null;
+    	$msg = "";
 
-		if ($p2 !== null) {
-			if ($p2 instanceof Exception) {
-				$cause = $p2;
-				$msg = $p1;
-			}
-		} elseif ($p1 instanceof Exception) {
-			$cause = $p1;
-		} else {
-			$msg = $p1;
-		}
+    	if ($p2 !== null) {
+    		if ($p2 instanceof Exception) {
+    			$cause = $p2;
+    			$msg = $p1;
+    		}
+    	} elseif ($p1 instanceof Exception) {
+    		$cause = $p1;
+    	} else {
+    		$msg = $p1;
+    	}
 
-		parent::__construct($msg);
+    	parent::__construct($msg);
 
-		if ($cause !== null) {
-			$this->cause = $cause;
-			$this->message .= " [wrapped: " . $cause->getMessage() . "]";
-		}
-	}
-
-	/**
-	 * Gets the cause exception.
-	 *
-	 * @return Exception
-	 */
-	public function getCause() {
-		return $this->cause;
-	}
-
+    	if ($cause !== null) {
+    		$this->cause = $cause;
+    		$this->message .= " [wrapped: " . $cause->getMessage() ."]";
+    	}
+    }
+	
+    /**
+     * Gets the cause exception.
+     *
+     * @return Exception
+     */
+    public function getCause() {
+    	return $this->cause;
+    }
+     
 }

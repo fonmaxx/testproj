@@ -30,5 +30,5 @@
  * @version     $Revision: 1080 $
  * @author      Jonathan H. Wage <jwage@mac.com>
  */
-class Doctrine_Migration_Exception extends Doctrine_Exception {
-}
+class Doctrine_Migration_Exception extends Doctrine_Exception
+{ }

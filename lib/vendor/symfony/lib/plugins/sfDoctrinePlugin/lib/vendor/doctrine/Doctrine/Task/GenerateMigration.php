@@ -30,21 +30,17 @@
  * @version     $Revision: 2761 $
  * @author      Jonathan H. Wage <jwage@mac.com>
  */
-class Doctrine_Task_GenerateMigration extends Doctrine_Task {
-	public $description = 'Generate new migration class definition', $requiredArguments = array(
-			'class_name' => 'Name of the migration class to generate',
-			'migrations_path' => 'Specify the complete path to your migration classes folder.'), $optionalArguments = array();
-
-	public function execute() {
-		Doctrine_Core::generateMigrationClass(
-				$this->getArgument('class_name'),
-				$this->getArgument('migrations_path'));
-
-		$this
-				->notify(
-						sprintf(
-								'Generated migration class: %s successfully to %s',
-								$this->getArgument('class_name'),
-								$this->getArgument('migrations_path')));
-	}
+class Doctrine_Task_GenerateMigration extends Doctrine_Task
+{
+    public $description          =   'Generate new migration class definition',
+           $requiredArguments    =   array('class_name'      => 'Name of the migration class to generate',
+                                           'migrations_path' => 'Specify the complete path to your migration classes folder.'),
+           $optionalArguments    =   array();
+    
+    public function execute()
+    {
+        Doctrine_Core::generateMigrationClass($this->getArgument('class_name'), $this->getArgument('migrations_path'));
+        
+        $this->notify(sprintf('Generated migration class: %s successfully to %s', $this->getArgument('class_name'), $this->getArgument('migrations_path')));
+    }
 }

@@ -30,24 +30,26 @@
  * @link        www.doctrine-project.org
  * @since       1.0
  */
-class Doctrine_File extends Doctrine_Record {
-	public function setTableDefinition() {
-		$this->hasColumn('url', 'string', 255);
-	}
+class Doctrine_File extends Doctrine_Record
+{
+    public function setTableDefinition()
+    {
+        $this->hasColumn('url', 'string', 255);
+    }
 
-	public function setUp() {
-		$this
-				->actAs('Searchable',
-						array('className' => 'Doctrine_File_Index',
-								'fields' => array('url', 'content')));
+    public function setUp()
+    {
+        $this->actAs('Searchable', array('className' => 'Doctrine_File_Index',
+                                         'fields' => array('url', 'content')));
+        
+        $this->index('url', array('fields' => array('url')));
+    }
 
-		$this->index('url', array('fields' => array('url')));
-	}
-
-	public function get($name, $load = true) {
-		if ($name === 'content') {
-			return file_get_contents(parent::get('url'));
-		}
-		return parent::get($name, $load);
-	}
+    public function get($name, $load = true)
+    {
+        if ($name === 'content') {
+            return file_get_contents(parent::get('url'));
+        }
+        return parent::get($name, $load);
+    }
 }

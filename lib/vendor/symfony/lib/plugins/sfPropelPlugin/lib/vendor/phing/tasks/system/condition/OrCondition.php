@@ -35,12 +35,12 @@ require_once 'phing/tasks/system/condition/ConditionBase.php';
  */
 class OrCondition extends ConditionBase implements Condition {
 
-	function evaluate() {
-		foreach ($this as $c) { // ConditionBase implements IteratorAggregator
-			if ($c->evaluate()) {
-				return true;
-			}
-		}
-		return false;
-	}
+    function evaluate() {
+        foreach($this as $c) { // ConditionBase implements IteratorAggregator
+              if ($c->evaluate()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

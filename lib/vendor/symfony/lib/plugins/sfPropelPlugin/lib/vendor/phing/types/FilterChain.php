@@ -47,131 +47,130 @@ include_once 'phing/filters/XsltFilter.php';
  */
 class FilterChain extends DataType {
 
-	private $filterReaders = array();
+    private $filterReaders = array();
 
-	function __construct(Project $project) {
-		$this->project = $project;
-	}
+    function __construct(Project $project) {
+        $this->project = $project;
+    }
 
-	function getFilterReaders() {
-		return $this->filterReaders;
-	}
+    function getFilterReaders() {
+        return $this->filterReaders;
+    }
 
-	function addExpandProperties(ExpandProperties $o) {
-		$o->setProject($this->project);
-		$this->filterReaders[] = $o;
-	}
+    function addExpandProperties(ExpandProperties $o) {
+        $o->setProject($this->project);
+        $this->filterReaders[] = $o;
+    }
 
-	function addGettext(TranslateGettext $o) {
-		$o->setProject($this->project);
-		$this->filterReaders[] = $o;
-	}
+    function addGettext(TranslateGettext $o) {
+        $o->setProject($this->project);
+        $this->filterReaders[] = $o;
+    }
+    
+    function addHeadFilter(HeadFilter $o) {
+        $o->setProject($this->project);
+        $this->filterReaders[] = $o;
+    }
+    
+    function addTailFilter(TailFilter $o) {
+        $o->setProject($this->project);
+        $this->filterReaders[] = $o;
+    }
+    
+    function addLineContains(LineContains $o) {
+        $o->setProject($this->project);
+        $this->filterReaders[] = $o;
+    }
+    
+    function addLineContainsRegExp(LineContainsRegExp $o) {
+        $o->setProject($this->project);
+        $this->filterReaders[] = $o;
+    }
+    
+    function addPrefixLines(PrefixLines $o) {
+        $o->setProject($this->project);
+        $this->filterReaders[] = $o;
+    }
+    
+    function addReplaceTokens(ReplaceTokens $o) {
+        $o->setProject($this->project);
+        $this->filterReaders[] = $o;
+    }
 
-	function addHeadFilter(HeadFilter $o) {
-		$o->setProject($this->project);
-		$this->filterReaders[] = $o;
-	}
-
-	function addTailFilter(TailFilter $o) {
-		$o->setProject($this->project);
-		$this->filterReaders[] = $o;
-	}
-
-	function addLineContains(LineContains $o) {
-		$o->setProject($this->project);
-		$this->filterReaders[] = $o;
-	}
-
-	function addLineContainsRegExp(LineContainsRegExp $o) {
-		$o->setProject($this->project);
-		$this->filterReaders[] = $o;
-	}
-
-	function addPrefixLines(PrefixLines $o) {
-		$o->setProject($this->project);
-		$this->filterReaders[] = $o;
-	}
-
-	function addReplaceTokens(ReplaceTokens $o) {
-		$o->setProject($this->project);
-		$this->filterReaders[] = $o;
-	}
-
-	function addReplaceRegexp(ReplaceRegexp $o) {
-		$o->setProject($this->project);
-		$this->filterReaders[] = $o;
-	}
-
-	function addStripPhpComments(StripPhpComments $o) {
-		$o->setProject($this->project);
-		$this->filterReaders[] = $o;
-	}
-
-	function addStripLineBreaks(StripLineBreaks $o) {
-		$o->setProject($this->project);
-		$this->filterReaders[] = $o;
-	}
-
-	function addStripLineComments(StripLineComments $o) {
-		$o->setProject($this->project);
-		$this->filterReaders[] = $o;
-	}
-
+    function addReplaceRegexp(ReplaceRegexp $o) {
+        $o->setProject($this->project);
+        $this->filterReaders[] = $o;
+    }
+    
+    function addStripPhpComments(StripPhpComments $o) {
+        $o->setProject($this->project);
+        $this->filterReaders[] = $o;
+    }
+    
+    function addStripLineBreaks(StripLineBreaks $o) {
+        $o->setProject($this->project);
+        $this->filterReaders[] = $o;
+    }
+    
+    function addStripLineComments(StripLineComments $o) {
+        $o->setProject($this->project);
+        $this->filterReaders[] = $o;        
+    }
+    
 	function addStripWhitespace(StripWhitespace $o) {
-		$o->setProject($this->project);
-		$this->filterReaders[] = $o;
-	}
-
+        $o->setProject($this->project);
+        $this->filterReaders[] = $o;
+    }
+    
 	function addTidyFilter(TidyFilter $o) {
-		$o->setProject($this->project);
-		$this->filterReaders[] = $o;
-	}
+        $o->setProject($this->project);
+        $this->filterReaders[] = $o;
+    }
+	
+    function addTabToSpaces(TabToSpaces $o) {
+        $o->setProject($this->project);
+        $this->filterReaders[] = $o;
+    }
+    
+    function addXincludeFilter(XincludeFilter $o) {
+        $o->setProject($this->project);
+        $this->filterReaders[] = $o;
+    }
 
-	function addTabToSpaces(TabToSpaces $o) {
-		$o->setProject($this->project);
-		$this->filterReaders[] = $o;
-	}
+    function addXsltFilter(XsltFilter $o) {
+        $o->setProject($this->project);
+        $this->filterReaders[] = $o;
+    }
+    
+    function addFilterReader(PhingFilterReader $o) {
+        $o->setProject($this->project);
+        $this->filterReaders[] = $o;
+    }
 
-	function addXincludeFilter(XincludeFilter $o) {
-		$o->setProject($this->project);
-		$this->filterReaders[] = $o;
-	}
+    /*
+     * Makes this instance in effect a reference to another FilterChain 
+     * instance.
+     *
+     * <p>You must not set another attribute or nest elements inside
+     * this element if you make it a reference.</p>
+     *
+     * @param r the reference to which this instance is associated
+     * @throw BuildException if this instance already has been configured.
+    */
+    function setRefid(Reference $r) {
+    
+        if ( count($this->filterReaders) === 0 ) {
+            throw $this->tooManyAttributes();
+        }
 
-	function addXsltFilter(XsltFilter $o) {
-		$o->setProject($this->project);
-		$this->filterReaders[] = $o;
-	}
-
-	function addFilterReader(PhingFilterReader $o) {
-		$o->setProject($this->project);
-		$this->filterReaders[] = $o;
-	}
-
-	/*
-	 * Makes this instance in effect a reference to another FilterChain 
-	 * instance.
-	 *
-	 * <p>You must not set another attribute or nest elements inside
-	 * this element if you make it a reference.</p>
-	 *
-	 * @param r the reference to which this instance is associated
-	 * @throw BuildException if this instance already has been configured.
-	 */
-	function setRefid(Reference $r) {
-
-		if (count($this->filterReaders) === 0) {
-			throw $this->tooManyAttributes();
-		}
-
-		// change this to get the objects from the other reference
-		$o = $r->getReferencedObject($this->getProject());
-		if ($o instanceof FilterChain) {
-			$this->filterReaders = $o->getFilterReaders();
-		} else {
-			throw new BuildException(
-					$r->getRefId() . " doesn't refer to a FilterChain");
-		}
-		parent::setRefid($r);
-	}
-
+        // change this to get the objects from the other reference
+        $o = $r->getReferencedObject($this->getProject());
+        if ( $o instanceof FilterChain ) {
+            $this->filterReaders = $o->getFilterReaders();
+        } else {
+            throw new BuildException($r->getRefId()." doesn't refer to a FilterChain");
+        }
+        parent::setRefid($r);
+    }
+    
 }

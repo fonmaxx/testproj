@@ -142,17 +142,13 @@ class PhingCallTask extends Task {
 	 */
 	function main() {
 
-		$this
-				->log(
-						"Running PhingCallTask for target '" . $this->subTarget
-								. "'", Project::MSG_DEBUG);
+		$this->log("Running PhingCallTask for target '" . $this->subTarget . "'", Project::MSG_DEBUG);
 		if ($this->callee === null) {
 			$this->init();
 		}
 
 		if ($this->subTarget === null) {
-			throw new BuildException("Attribute target is required.",
-					$this->getLocation());
+			throw new BuildException("Attribute target is required.", $this->getLocation());
 		}
 
 		$this->callee->setPhingfile($this->project->getProperty("phing.file"));

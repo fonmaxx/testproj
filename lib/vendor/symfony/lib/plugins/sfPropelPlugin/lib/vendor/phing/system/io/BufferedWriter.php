@@ -18,7 +18,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>. 
  */
-
+ 
 include_once 'phing/system/io/Writer.php';
 
 /**
@@ -29,43 +29,43 @@ include_once 'phing/system/io/Writer.php';
  * @package   phing.system.io 
  */
 class BufferedWriter extends Writer {
+    
+    /**
+     * The size of the buffer in kb.
+     */
+    private $bufferSize    = 0;
+    
+    /**
+     * @var Writer The Writer we are buffering output to.
+     */
+    private $out;
 
-	/**
-	 * The size of the buffer in kb.
-	 */
-	private $bufferSize = 0;
+    public function __construct(Writer $writer, $buffsize = 8192) {
+        $this->out = $writer;
+        $this->bufferSize = $buffsize;
+    }
 
-	/**
-	 * @var Writer The Writer we are buffering output to.
-	 */
-	private $out;
-
-	public function __construct(Writer $writer, $buffsize = 8192) {
-		$this->out = $writer;
-		$this->bufferSize = $buffsize;
-	}
-
-	public function write($buf, $off = null, $len = null) {
-		return $this->out->write($buf, $off, $len);
-	}
-
-	public function newLine() {
-		$this->write(PHP_EOL);
-	}
-
-	public function getResource() {
-		return $this->out->getResource();
-	}
-
-	public function flush() {
-		$this->out->flush();
-	}
-
-	/**
-	 * Close attached stream.
-	 */
-	public function close() {
-		return $this->out->close();
-	}
-
+    public function write($buf, $off = null, $len = null) {
+        return $this->out->write($buf, $off, $len);
+    }
+    
+    public function newLine() {
+        $this->write(PHP_EOL);
+    }
+    
+    public function getResource() {
+        return $this->out->getResource();
+    }
+    
+    public function flush() {
+    	$this->out->flush();
+    }
+	
+    /**
+     * Close attached stream.
+     */
+    public function close() {
+        return $this->out->close();
+    }
+    
 }

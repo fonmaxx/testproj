@@ -30,38 +30,39 @@
  * @since       1.0
  * @version     $Revision$
  */
-interface Doctrine_Record_Listener_Interface {
-	public function setOption($name, $value = null);
+interface Doctrine_Record_Listener_Interface
+{
+    public function setOption($name, $value = null);
 
-	public function getOptions();
+    public function getOptions();
 
-	public function getOption($name);
+    public function getOption($name);
 
-	public function preSerialize(Doctrine_Event $event);
+    public function preSerialize(Doctrine_Event $event);
 
-	public function postSerialize(Doctrine_Event $event);
+    public function postSerialize(Doctrine_Event $event);
 
-	public function preUnserialize(Doctrine_Event $event);
+    public function preUnserialize(Doctrine_Event $event);
 
-	public function postUnserialize(Doctrine_Event $event);
+    public function postUnserialize(Doctrine_Event $event);
 
-	public function preSave(Doctrine_Event $event);
+    public function preSave(Doctrine_Event $event);
 
-	public function postSave(Doctrine_Event $event);
+    public function postSave(Doctrine_Event $event);
 
-	public function preDelete(Doctrine_Event $event);
+    public function preDelete(Doctrine_Event $event);
 
-	public function postDelete(Doctrine_Event $event);
+    public function postDelete(Doctrine_Event $event);
 
-	public function preUpdate(Doctrine_Event $event);
+    public function preUpdate(Doctrine_Event $event);
 
-	public function postUpdate(Doctrine_Event $event);
+    public function postUpdate(Doctrine_Event $event);
 
-	public function preInsert(Doctrine_Event $event);
+    public function preInsert(Doctrine_Event $event);
 
-	public function postInsert(Doctrine_Event $event);
-
-	public function preHydrate(Doctrine_Event $event);
-
-	public function postHydrate(Doctrine_Event $event);
+    public function postInsert(Doctrine_Event $event);
+    
+    public function preHydrate(Doctrine_Event $event);
+    
+    public function postHydrate(Doctrine_Event $event);
 }

@@ -27,7 +27,8 @@
  * @version    $Revision: 1262 $
  * @package    propel.om
  */
-class PreOrderNodeIterator implements Iterator {
+class PreOrderNodeIterator implements Iterator
+{
 	private $topNode = null;
 
 	private $curNode = null;
@@ -65,21 +66,19 @@ class PreOrderNodeIterator implements Iterator {
 
 	public function next() {
 
-		if ($this->valid()) {
-			$nextNode = $this->curNode
-					->getFirstChildNode($this->querydb, $this->con);
+		if ($this->valid())
+		{
+			$nextNode = $this->curNode->getFirstChildNode($this->querydb, $this->con);
 
-			while ($nextNode === null) {
-				if ($this->curNode === null
-						|| $this->curNode->equals($this->topNode))
+			while ($nextNode === null)
+			{
+				if ($this->curNode === null || $this->curNode->equals($this->topNode))
 					break;
 
-				$nextNode = $this->curNode
-						->getSiblingNode(false, $this->querydb, $this->con);
+				$nextNode = $this->curNode->getSiblingNode(false, $this->querydb, $this->con);
 
 				if ($nextNode === null)
-					$this->curNode = $this->curNode
-							->getParentNode($this->querydb, $this->con);
+					$this->curNode = $this->curNode->getParentNode($this->querydb, $this->con);
 			}
 
 			$this->curNode = $nextNode;

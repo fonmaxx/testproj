@@ -1,6 +1,8 @@
 <?php
 
-class backend_compatConfiguration extends sfApplicationConfiguration {
-	public function configure() {
-	}
+class backend_compatConfiguration extends sfApplicationConfiguration
+{
+  public function configure()
+  {
+  }
 }

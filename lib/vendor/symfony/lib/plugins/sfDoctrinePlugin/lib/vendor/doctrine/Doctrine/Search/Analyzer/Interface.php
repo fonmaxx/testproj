@@ -30,6 +30,7 @@
  * @link        www.doctrine-project.org
  * @since       1.0
  */
-interface Doctrine_Search_Analyzer_Interface {
-	public function analyze($text);
+interface Doctrine_Search_Analyzer_Interface
+{
+    public function analyze($text);
 }

@@ -16,128 +16,138 @@
  * @author     Fabien Potencier <fabien.potencier@symfony-project.com>
  * @version    SVN: $Id: sfSymfonyCommandApplication.class.php 20053 2009-07-09 12:49:20Z nicolas $
  */
-class sfSymfonyCommandApplication extends sfCommandApplication {
-	protected $taskFiles = array();
+class sfSymfonyCommandApplication extends sfCommandApplication
+{
+  protected $taskFiles = array();
+  
+  /**
+   * Configures the current symfony command application.
+   */
+  public function configure()
+  {
+    if (!isset($this->options['symfony_lib_dir']))
+    {
+      throw new sfInitializationException('You must pass a "symfony_lib_dir" option.');
+    }
+    
+    $configurationFile = getcwd().'/config/ProjectConfiguration.class.php';
+    if (is_readable($configurationFile))
+    {
+      require_once $configurationFile;
+      $configuration = new ProjectConfiguration(getcwd(), $this->dispatcher);
+    }
+    else
+    {
+      $configuration = new sfProjectConfiguration(getcwd(), $this->dispatcher);
+    }
 
-	/**
-	 * Configures the current symfony command application.
-	 */
-	public function configure() {
-		if (!isset($this->options['symfony_lib_dir'])) {
-			throw new sfInitializationException(
-					'You must pass a "symfony_lib_dir" option.');
-		}
+    // application
+    $this->setName('symfony');
+    $this->setVersion(SYMFONY_VERSION);
 
-		$configurationFile = getcwd()
-				. '/config/ProjectConfiguration.class.php';
-		if (is_readable($configurationFile)) {
-			require_once $configurationFile;
-			$configuration = new ProjectConfiguration(getcwd(),
-					$this->dispatcher);
-		} else {
-			$configuration = new sfProjectConfiguration(getcwd(),
-					$this->dispatcher);
-		}
+    $this->loadTasks($configuration);
+  }
 
-		// application
-		$this->setName('symfony');
-		$this->setVersion(SYMFONY_VERSION);
+  /**
+   * Runs the current application.
+   *
+   * @param mixed $options The command line options
+   *
+   * @return integer 0 if everything went fine, or an error code
+   */
+  public function run($options = null)
+  {
+    $this->handleOptions($options);
+    $arguments = $this->commandManager->getArgumentValues();
 
-		$this->loadTasks($configuration);
-	}
+    if (!isset($arguments['task']))
+    {
+      $arguments['task'] = 'list';
+      $this->commandOptions .= $arguments['task'];
+    }
 
-	/**
-	 * Runs the current application.
-	 *
-	 * @param mixed $options The command line options
-	 *
-	 * @return integer 0 if everything went fine, or an error code
-	 */
-	public function run($options = null) {
-		$this->handleOptions($options);
-		$arguments = $this->commandManager->getArgumentValues();
+    $this->currentTask = $this->getTaskToExecute($arguments['task']);
 
-		if (!isset($arguments['task'])) {
-			$arguments['task'] = 'list';
-			$this->commandOptions .= $arguments['task'];
-		}
+    if ($this->currentTask instanceof sfCommandApplicationTask)
+    {
+      $this->currentTask->setCommandApplication($this);
+    }
 
-		$this->currentTask = $this->getTaskToExecute($arguments['task']);
+    $ret = $this->currentTask->runFromCLI($this->commandManager, $this->commandOptions);
 
-		if ($this->currentTask instanceof sfCommandApplicationTask) {
-			$this->currentTask->setCommandApplication($this);
-		}
+    $this->currentTask = null;
 
-		$ret = $this->currentTask
-				->runFromCLI($this->commandManager, $this->commandOptions);
+    return $ret;
+  }
 
-		$this->currentTask = null;
+  /**
+   * Loads all available tasks.
+   *
+   * Looks for tasks in the symfony core, the current project and all project plugins.
+   *
+   * @param sfProjectConfiguration $configuration The project configuration
+   */
+  public function loadTasks(sfProjectConfiguration $configuration)
+  {
+    // Symfony core tasks
+    $dirs = array(sfConfig::get('sf_symfony_lib_dir').'/task');
 
-		return $ret;
-	}
+    // Plugin tasks
+    foreach ($configuration->getPluginPaths() as $path)
+    {
+      if (is_dir($taskPath = $path.'/lib/task'))
+      {
+        $dirs[] = $taskPath;
+      }
+    }
 
-	/**
-	 * Loads all available tasks.
-	 *
-	 * Looks for tasks in the symfony core, the current project and all project plugins.
-	 *
-	 * @param sfProjectConfiguration $configuration The project configuration
-	 */
-	public function loadTasks(sfProjectConfiguration $configuration) {
-		// Symfony core tasks
-		$dirs = array(sfConfig::get('sf_symfony_lib_dir') . '/task');
+    // project tasks
+    $dirs[] = sfConfig::get('sf_lib_dir').'/task';
 
-		// Plugin tasks
-		foreach ($configuration->getPluginPaths() as $path) {
-			if (is_dir($taskPath = $path . '/lib/task')) {
-				$dirs[] = $taskPath;
-			}
-		}
+    $finder = sfFinder::type('file')->name('*Task.class.php');
+    foreach ($finder->in($dirs) as $file)
+    {
+      $this->taskFiles[basename($file, '.class.php')] = $file;
+    }
 
-		// project tasks
-		$dirs[] = sfConfig::get('sf_lib_dir') . '/task';
+    // register local autoloader for tasks
+    spl_autoload_register(array($this, 'autoloadTask'));
 
-		$finder = sfFinder::type('file')->name('*Task.class.php');
-		foreach ($finder->in($dirs) as $file) {
-			$this->taskFiles[basename($file, '.class.php')] = $file;
-		}
+    // require tasks
+    foreach ($this->taskFiles as $task => $file)
+    {
+      // forces autoloading of each task class
+      class_exists($task, true);
+    }
 
-		// register local autoloader for tasks
-		spl_autoload_register(array($this, 'autoloadTask'));
+    // unregister local autoloader
+    spl_autoload_unregister(array($this, 'autoloadTask'));
+  }
 
-		// require tasks
-		foreach ($this->taskFiles as $task => $file) {
-			// forces autoloading of each task class
-			class_exists($task, true);
-		}
+  /**
+   * Autoloads a task class
+   *
+   * @param  string  $class  The task class name
+   *
+   * @return Boolean
+   */
+  public function autoloadTask($class)
+  {
+    if (isset($this->taskFiles[$class]))
+    {
+      require_once $this->taskFiles[$class];
 
-		// unregister local autoloader
-		spl_autoload_unregister(array($this, 'autoloadTask'));
-	}
+      return true;
+    }
 
-	/**
-	 * Autoloads a task class
-	 *
-	 * @param  string  $class  The task class name
-	 *
-	 * @return Boolean
-	 */
-	public function autoloadTask($class) {
-		if (isset($this->taskFiles[$class])) {
-			require_once $this->taskFiles[$class];
+    return false;
+  }
 
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * @see sfCommandApplication
-	 */
-	public function getLongVersion() {
-		return sprintf('%s version %s (%s)', $this->getName(),
-				$this->formatter->format($this->getVersion(), 'INFO'),
-				sfConfig::get('sf_symfony_lib_dir')) . "\n";
-	}
+  /**
+   * @see sfCommandApplication
+   */
+  public function getLongVersion()
+  {
+    return sprintf('%s version %s (%s)', $this->getName(), $this->formatter->format($this->getVersion(), 'INFO'), sfConfig::get('sf_symfony_lib_dir'))."\n";
+  }
 }

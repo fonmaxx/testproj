@@ -1,14 +1,15 @@
-all:
-  doctrine:
-    class: sfDoctrineDatabase
-    param:
-      dsn: 'mysql:host=localhost;dbname=jobeet'
-      username: root
-      password: nigerniger
 test:
   doctrine:
     class: sfDoctrineDatabase
     param:
       dsn: 'mysql:host=localhost;dbname=jobeet_test'
+      username: root
+      password: nigerniger
+
+all:
+  doctrine:
+    class: sfDoctrineDatabase
+    param:
+      dsn: 'mysql:host=localhost;dbname=jobeet'
       username: root
       password: nigerniger

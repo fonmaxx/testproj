@@ -26,6 +26,7 @@ include_once 'propel/engine/database/model/NameGenerator.php';
 include_once 'propel/engine/database/model/Table.php';
 include_once 'propel/engine/database/model/Behavior.php';
 
+
 /**
  * A class for holding application data structures.
  *
@@ -57,19 +58,20 @@ class Database extends XMLElement {
 
 	private $domainMap = array();
 
-	/**
-	 * List of behaviors registered for this table
-	 * 
-	 * @var array
-	 */
-	protected $behaviors = array();
+  /**
+   * List of behaviors registered for this table
+   * 
+   * @var array
+   */
+  protected $behaviors = array();
 
 	/**
 	 * Constructs a new Database object.
 	 *
 	 * @param      string $name
 	 */
-	public function __construct($name = null) {
+	public function __construct($name = null)
+	{
 		$this->name = $name;
 	}
 
@@ -77,21 +79,16 @@ class Database extends XMLElement {
 	 * Sets up the Database object based on the attributes that were passed to loadFromXML().
 	 * @see        parent::loadFromXML()
 	 */
-	protected function setupObject() {
+	protected function setupObject()
+	{
 		$this->name = $this->getAttribute("name");
 		$this->pkg = $this->getAttribute("package");
 		$this->baseClass = $this->getAttribute("baseClass");
 		$this->basePeer = $this->getAttribute("basePeer");
-		$this->defaultIdMethod = $this
-				->getAttribute("defaultIdMethod", IDMethod::NATIVE);
-		$this->defaultPhpNamingMethod = $this
-				->getAttribute("defaultPhpNamingMethod",
-						NameGenerator::CONV_METHOD_UNDERSCORE);
-		$this->defaultTranslateMethod = $this
-				->getAttribute("defaultTranslateMethod",
-						Validator::TRANSLATE_NONE);
-		$this->heavyIndexing = $this
-				->booleanValue($this->getAttribute("heavyIndexing"));
+		$this->defaultIdMethod = $this->getAttribute("defaultIdMethod", IDMethod::NATIVE);
+		$this->defaultPhpNamingMethod = $this->getAttribute("defaultPhpNamingMethod", NameGenerator::CONV_METHOD_UNDERSCORE);
+		$this->defaultTranslateMethod = $this->getAttribute("defaultTranslateMethod", Validator::TRANSLATE_NONE);
+		$this->heavyIndexing = $this->booleanValue($this->getAttribute("heavyIndexing"));
 	}
 
 	/**
@@ -99,7 +96,8 @@ class Database extends XMLElement {
 	 *
 	 * @return     Platform a Platform implementation
 	 */
-	public function getPlatform() {
+	public function getPlatform()
+	{
 		return $this->platform;
 	}
 
@@ -108,21 +106,24 @@ class Database extends XMLElement {
 	 *
 	 * @param      Platform $platform A Platform implementation
 	 */
-	public function setPlatform($platform) {
+	public function setPlatform($platform)
+	{
 		$this->platform = $platform;
 	}
 
 	/**
 	 * Get the name of the Database
 	 */
-	public function getName() {
+	public function getName()
+	{
 		return $this->name;
 	}
 
 	/**
 	 * Set the name of the Database
 	 */
-	public function setName($name) {
+	public function setName($name)
+	{
 		$this->name = $name;
 	}
 
@@ -130,7 +131,8 @@ class Database extends XMLElement {
 	 * Get the value of package.
 	 * @return     value of package.
 	 */
-	public function getPackage() {
+	public function getPackage()
+	{
 		return $this->pkg;
 	}
 
@@ -138,7 +140,8 @@ class Database extends XMLElement {
 	 * Set the value of package.
 	 * @param      v  Value to assign to package.
 	 */
-	public function setPackage($v) {
+	public function setPackage($v)
+	{
 		$this->pkg = $v;
 	}
 
@@ -146,7 +149,8 @@ class Database extends XMLElement {
 	 * Get the value of baseClass.
 	 * @return     value of baseClass.
 	 */
-	public function getBaseClass() {
+	public function getBaseClass()
+	{
 		return $this->baseClass;
 	}
 
@@ -154,7 +158,8 @@ class Database extends XMLElement {
 	 * Set the value of baseClass.
 	 * @param      v  Value to assign to baseClass.
 	 */
-	public function setBaseClass($v) {
+	public function setBaseClass($v)
+	{
 		$this->baseClass = $v;
 	}
 
@@ -162,7 +167,8 @@ class Database extends XMLElement {
 	 * Get the value of basePeer.
 	 * @return     value of basePeer.
 	 */
-	public function getBasePeer() {
+	public function getBasePeer()
+	{
 		return $this->basePeer;
 	}
 
@@ -170,7 +176,8 @@ class Database extends XMLElement {
 	 * Set the value of basePeer.
 	 * @param      v Value to assign to basePeer.
 	 */
-	public function setBasePeer($v) {
+	public function setBasePeer($v)
+	{
 		$this->basePeer = $v;
 	}
 
@@ -178,7 +185,8 @@ class Database extends XMLElement {
 	 * Get the value of defaultIdMethod.
 	 * @return     value of defaultIdMethod.
 	 */
-	public function getDefaultIdMethod() {
+	public function getDefaultIdMethod()
+	{
 		return $this->defaultIdMethod;
 	}
 
@@ -186,7 +194,8 @@ class Database extends XMLElement {
 	 * Set the value of defaultIdMethod.
 	 * @param      v Value to assign to defaultIdMethod.
 	 */
-	public function setDefaultIdMethod($v) {
+	public function setDefaultIdMethod($v)
+	{
 		$this->defaultIdMethod = $v;
 	}
 
@@ -195,7 +204,8 @@ class Database extends XMLElement {
 	 * method for converting schema names for table and column to PHP names.
 	 * @return     string The default naming conversion used by this database.
 	 */
-	public function getDefaultPhpNamingMethod() {
+	public function getDefaultPhpNamingMethod()
+	{
 		return $this->defaultPhpNamingMethod;
 	}
 
@@ -203,7 +213,8 @@ class Database extends XMLElement {
 	 * Set the value of defaultPHPNamingMethod.
 	 * @param      string $v The default naming conversion for this database to use.
 	 */
-	public function setDefaultPhpNamingMethod($v) {
+	public function setDefaultPhpNamingMethod($v)
+	{
 		$this->defaultPhpNamingMethod = $v;
 	}
 
@@ -212,7 +223,8 @@ class Database extends XMLElement {
 	 * method for translate validator error messages.
 	 * @return     string The default translate method.
 	 */
-	public function getDefaultTranslateMethod() {
+	public function getDefaultTranslateMethod()
+	{
 		return $this->defaultTranslateMethod;
 	}
 
@@ -220,7 +232,8 @@ class Database extends XMLElement {
 	 * Set the value of defaultTranslateMethod.
 	 * @param      string $v The default translate method to use.
 	 */
-	public function setDefaultTranslateMethod($v) {
+	public function setDefaultTranslateMethod($v)
+	{
 		$this->defaultTranslateMethod = $v;
 	}
 
@@ -232,7 +245,8 @@ class Database extends XMLElement {
 	 * @return     boolean Value of heavyIndexing.
 	 * @see        getHeavyIndexing()
 	 */
-	public function isHeavyIndexing() {
+	public function isHeavyIndexing()
+	{
 		return $this->getHeavyIndexing();
 	}
 
@@ -241,7 +255,8 @@ class Database extends XMLElement {
 	 *
 	 * @return     boolean Value of heavyIndexing.
 	 */
-	public function getHeavyIndexing() {
+	public function getHeavyIndexing()
+	{
 		return $this->heavyIndexing;
 	}
 
@@ -249,14 +264,16 @@ class Database extends XMLElement {
 	 * Set the value of heavyIndexing.
 	 * @param      boolean $v  Value to assign to heavyIndexing.
 	 */
-	public function setHeavyIndexing($v) {
+	public function setHeavyIndexing($v)
+	{
 		$this->heavyIndexing = (boolean) $v;
 	}
 
 	/**
 	 * Return an array of all tables
 	 */
-	public function getTables() {
+	public function getTables()
+	{
 		return $this->tableList;
 	}
 
@@ -265,7 +282,8 @@ class Database extends XMLElement {
 	 * @param      string $name The name of the table (e.g. 'my_table')
 	 * @return     Table a Table object or null if it doesn't exist
 	 */
-	public function getTable($name) {
+	public function getTable($name)
+	{
 		if (isset($this->tablesByName[$name])) {
 			return $this->tablesByName[$name];
 		}
@@ -277,7 +295,8 @@ class Database extends XMLElement {
 	 * @param      string $phpName the PHP Name of the table (e.g. 'MyTable')
 	 * @return     Table a Table object or null if it doesn't exist
 	 */
-	public function getTableByPhpName($phpName) {
+	public function getTableByPhpName($phpName)
+	{
 		if (isset($this->tablesByPhpName[$phpName])) {
 			return $this->tablesByPhpName[$phpName];
 		}
@@ -287,17 +306,17 @@ class Database extends XMLElement {
 	/**
 	 * An utility method to add a new table from an xml attribute.
 	 */
-	public function addTable($data) {
+	public function addTable($data)
+	{
 		if ($data instanceof Table) {
 			$tbl = $data; // alias
 			$tbl->setDatabase($this);
 			if (isset($this->tablesByName[$tbl->getName()])) {
-				throw new EngineException(
-						"Duplicate table declared: " . $tbl->getName());
+				throw new EngineException("Duplicate table declared: " . $tbl->getName());
 			}
 			$this->tableList[] = $tbl;
-			$this->tablesByName[$tbl->getName()] = $tbl;
-			$this->tablesByPhpName[$tbl->getPhpName()] = $tbl;
+			$this->tablesByName[ $tbl->getName() ] = $tbl;
+			$this->tablesByPhpName[ $tbl->getPhpName() ] = $tbl;
 			if ($tbl->getPackage() === null) {
 				$tbl->setPackage($this->getPackage());
 			}
@@ -313,14 +332,16 @@ class Database extends XMLElement {
 	/**
 	 * Set the parent of the database
 	 */
-	public function setAppData(AppData $parent) {
+	public function setAppData(AppData $parent)
+	{
 		$this->dbParent = $parent;
 	}
 
 	/**
 	 * Get the parent of the table
 	 */
-	public function getAppData() {
+	public function getAppData()
+	{
 		return $this->dbParent;
 	}
 
@@ -333,7 +354,7 @@ class Database extends XMLElement {
 		if ($data instanceof Domain) {
 			$domain = $data; // alias
 			$domain->setDatabase($this);
-			$this->domainMap[$domain->getName()] = $domain;
+			$this->domainMap[ $domain->getName() ] = $domain;
 			return $domain;
 		} else {
 			$domain = new Domain();
@@ -347,72 +368,80 @@ class Database extends XMLElement {
 	 * Get already configured Domain object by name.
 	 * @return     Domain
 	 */
-	public function getDomain($domainName) {
+	public function getDomain($domainName)
+	{
 		if (isset($this->domainMap[$domainName])) {
 			return $this->domainMap[$domainName];
 		}
 		return null; // just to be explicit
 	}
 
-	public function getGeneratorConfig() {
-		return $this->getAppData()->getPlatform()->getGeneratorConfig();
-	}
+  public function getGeneratorConfig()
+  {
+    return $this->getAppData()->getPlatform()->getGeneratorConfig();
+  }
+  
+  /**
+   * Adds a new Behavior to the database
+   * @return Behavior A behavior instance
+   */
+  public function addBehavior($bdata)
+  {
+    if ($bdata instanceof Behavior) {
+      $behavior = $bdata;
+      $behavior->setDatabase($this);
+      $this->behaviors[$behavior->getName()] = $behavior;
+      return $behavior;
+    } else {
+      $class = $this->getConfiguredBehavior($bdata['name']);
+      $behavior = new $class();
+      $behavior->loadFromXML($bdata);
+      return $this->addBehavior($behavior);
+    }
+  }
+  
+  /**
+   * Get the database behaviors
+   * @return Array of Behavior objects
+   */
+  public function getBehaviors()
+  {
+    return $this->behaviors;
+  }
+  
+  /**
+   * Get one database behavior by name
+   * @param string $name the behavior name
+   * @return Behavior a behavior object
+   */
+  public function getBehavior($name)
+  {
+    return $this->behaviors[$name];
+  }
 
-	/**
-	 * Adds a new Behavior to the database
-	 * @return Behavior A behavior instance
-	 */
-	public function addBehavior($bdata) {
-		if ($bdata instanceof Behavior) {
-			$behavior = $bdata;
-			$behavior->setDatabase($this);
-			$this->behaviors[$behavior->getName()] = $behavior;
-			return $behavior;
-		} else {
-			$class = $this->getConfiguredBehavior($bdata['name']);
-			$behavior = new $class();
-			$behavior->loadFromXML($bdata);
-			return $this->addBehavior($behavior);
-		}
-	}
 
-	/**
-	 * Get the database behaviors
-	 * @return Array of Behavior objects
-	 */
-	public function getBehaviors() {
-		return $this->behaviors;
-	}
-
-	/**
-	 * Get one database behavior by name
-	 * @param string $name the behavior name
-	 * @return Behavior a behavior object
-	 */
-	public function getBehavior($name) {
-		return $this->behaviors[$name];
-	}
-
-	public function doFinalInitialization() {
-		$config = $this->getGeneratorConfig();
-		if ($config
-				&& ($defaultBehaviors = $config
-						->getBuildProperty('behaviorDefault'))) {
-			// add generic behaviors from build.properties 
-			$defaultBehaviors = explode(',', $defaultBehaviors);
-			foreach ($defaultBehaviors as $behavior) {
-				$this->addBehavior(array('name' => trim($behavior)));
-			}
-		}
-
-		// execute behavior database modifiers
-		foreach ($this->getBehaviors() as $behavior) {
-			$behavior->modifyDatabase();
-		}
+	public function doFinalInitialization()
+	{
+	  $config = $this->getGeneratorConfig();
+    if($config && ($defaultBehaviors = $config->getBuildProperty('behaviorDefault')))
+    {
+      // add generic behaviors from build.properties 
+      $defaultBehaviors = explode(',', $defaultBehaviors);
+      foreach ($defaultBehaviors as $behavior)
+      {
+        $this->addBehavior(array('name' => trim($behavior)));
+      }
+    }
+    
+    // execute behavior database modifiers
+    foreach ($this->getBehaviors() as $behavior)
+    {
+      $behavior->modifyDatabase();
+    }
 
 		$tables = $this->getTables();
 
-		for ($i = 0, $size = count($tables); $i < $size; $i++) {
+		for ($i=0,$size=count($tables); $i < $size; $i++) {
 			$currTable = $tables[$i];
 
 			// check schema integrity
@@ -420,50 +449,49 @@ class Database extends XMLElement {
 			// specified as autoIncrement="true"
 			// FIXME: Handle idMethod="native" via DB adapter.
 			/*
-			
+
 			--- REMOVING THIS BECAUSE IT'S ANNOYING
-			
+
 			if ($currTable->getIdMethod() == IDMethod::NATIVE ) {
 			$columns = $currTable->getColumns();
 			$foundOne = false;
 			for ($j=0, $cLen=count($columns); $j < $cLen && !$foundOne; $j++) {
 			$foundOne = $columns[$j]->isAutoIncrement();
 			}
-			
+
 			if (!$foundOne) {
 			$errorMessage = "Table '" . $currTable->getName()
 			. "' is set to use native id generation, but it does not "
 			. "have a column which declared as the one to "
 			. "auto increment (i.e. autoIncrement=\"true\")";
-			
+
 			throw new BuildException($errorMessage);
 			}
 			}
-			 */
+			*/
 
 			$currTable->doFinalInitialization();
 
 			// setup reverse fk relations
 			$fks = $currTable->getForeignKeys();
-			for ($j = 0, $fksLen = count($fks); $j < $fksLen; $j++) {
+			for ($j=0, $fksLen=count($fks); $j < $fksLen; $j++) {
 				$currFK = $fks[$j];
 				$foreignTable = $this->getTable($currFK->getForeignTableName());
 				if ($foreignTable === null) {
-					throw new BuildException(
-							"ERROR!! Attempt to set foreign"
-									. " key to nonexistent table, "
-									. $currFK->getForeignTableName() . "!");
+					throw new BuildException("ERROR!! Attempt to set foreign"
+					. " key to nonexistent table, "
+					. $currFK->getForeignTableName() . "!");
 				}
 
 				$referrers = $foreignTable->getReferrers();
-				if ($referrers === null || !in_array($currFK, $referrers, true)) {
+				if ($referrers === null || !in_array($currFK, $referrers, true) ) {
 					$foreignTable->addReferrer($currFK);
 				}
 
 				// local column references
 				$localColumnNames = $currFK->getLocalColumns();
 
-				for ($k = 0, $lcnLen = count($localColumnNames); $k < $lcnLen; $k++) {
+				for ($k=0,$lcnLen=count($localColumnNames); $k < $lcnLen; $k++) {
 
 					$local = $currTable->getColumn($localColumnNames[$k]);
 
@@ -471,12 +499,10 @@ class Database extends XMLElement {
 					// note we do not prevent the npe as there is nothing
 					// that we can do, if it is to occur.
 					if ($local === null) {
-						throw new BuildException(
-								"ERROR!! Attempt to define foreign"
-										. " key with nonexistent column, "
-										. $localColumnNames[$k]
-										. ", in table, "
-										. $currTable->getName() . "!");
+						throw new BuildException("ERROR!! Attempt to define foreign"
+						. " key with nonexistent column, "
+						. $localColumnNames[$k] . ", in table, "
+						. $currTable->getName() . "!");
 					}
 
 					//check for foreign pk's
@@ -488,18 +514,15 @@ class Database extends XMLElement {
 
 				// foreign column references
 				$foreignColumnNames = $currFK->getForeignColumns();
-				for ($k = 0, $fcnLen = count($localColumnNames); $k < $fcnLen; $k++) {
-					$foreign = $foreignTable
-							->getColumn($foreignColumnNames[$k]);
+				for ($k=0,$fcnLen=count($localColumnNames); $k < $fcnLen; $k++) {
+					$foreign = $foreignTable->getColumn($foreignColumnNames[$k]);
 					// if the foreign column does not exist, we may have an
 					// external reference or a misspelling
 					if ($foreign === null) {
-						throw new BuildException(
-								"ERROR!! Attempt to set foreign"
-										. " key to nonexistent column, "
-										. $foreignColumnNames[$k]
-										. ", in table, "
-										. $foreignTable->getName() . "!");
+						throw new BuildException("ERROR!! Attempt to set foreign"
+						. " key to nonexistent column, "
+						. $foreignColumnNames[$k] . ", in table, "
+						. $foreignTable->getName() . "!");
 					} else {
 						$foreign->addReferrer($currFK);
 					}
@@ -511,7 +534,8 @@ class Database extends XMLElement {
 	/**
 	 * @see        XMLElement::appendXml(DOMNode)
 	 */
-	public function appendXml(DOMNode $node) {
+	public function appendXml(DOMNode $node)
+	{
 		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
 
 		$dbNode = $node->appendChild($doc->createElement('database'));
@@ -535,27 +559,23 @@ class Database extends XMLElement {
 		}
 
 		if ($this->defaultPhpNamingMethod) {
-			$dbNode
-					->setAttribute('defaultPhpNamingMethod',
-							$this->defaultPhpNamingMethod);
+			$dbNode->setAttribute('defaultPhpNamingMethod', $this->defaultPhpNamingMethod);
 		}
 
 		if ($this->defaultTranslateMethod) {
-			$dbNode
-					->setAttribute('defaultTranslateMethod',
-							$this->defaultTranslateMethod);
+			$dbNode->setAttribute('defaultTranslateMethod', $this->defaultTranslateMethod);
 		}
 
 		/*
-		
+
 		FIXME - Before we can add support for domains in the schema, we need
 		to have a method of the Column that indicates whether the column was mapped
 		to a SPECIFIC domain (since Column->getDomain() will always return a Domain object)
-		
+
 		foreach ($this->domainMap as $domain) {
 		$domain->appendXml($dbNode);
 		}
-		 */
+		*/
 		foreach ($this->vendorInfos as $vi) {
 			$vi->appendXml($dbNode);
 		}

@@ -35,12 +35,14 @@ abstract class BaseJobeetAffiliateForm extends BaseFormDoctrine
       'updated_at'             => new sfValidatorDateTime(),
       'jobeet_categories_list' => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'JobeetCategory', 'required' => false)),
     ));
+
     $this->validatorSchema->setPostValidator(
       new sfValidatorAnd(array(
         new sfValidatorDoctrineUnique(array('model' => 'JobeetAffiliate', 'column' => array('email'))),
         new sfValidatorDoctrineUnique(array('model' => 'JobeetAffiliate', 'column' => array('token'))),
       ))
     );
+
     $this->widgetSchema->setNameFormat('jobeet_affiliate[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
@@ -54,13 +56,16 @@ abstract class BaseJobeetAffiliateForm extends BaseFormDoctrine
   {
     return 'JobeetAffiliate';
   }
+
   public function updateDefaultsFromObject()
   {
     parent::updateDefaultsFromObject();
+
     if (isset($this->widgetSchema['jobeet_categories_list']))
     {
       $this->setDefault('jobeet_categories_list', $this->object->JobeetCategories->getPrimaryKeys());
     }
+
   }
 
   protected function doSave($con = null)
@@ -69,6 +74,7 @@ abstract class BaseJobeetAffiliateForm extends BaseFormDoctrine
 
     parent::doSave($con);
   }
+
   public function saveJobeetCategoriesList($con = null)
   {
     if (!$this->isValid())
@@ -106,4 +112,5 @@ abstract class BaseJobeetAffiliateForm extends BaseFormDoctrine
       $this->object->link('JobeetCategories', array_values($link));
     }
   }
+
 }

@@ -30,24 +30,25 @@
  * @version     $Revision: 7490 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Collection_Iterator_Expandable extends
-		Doctrine_Collection_Iterator {
-	public function valid() {
-		if ($this->index < $this->count) {
-			return true;
-		} elseif ($this->index == $this->count) {
-			$coll = $this->collection->expand($this->index);
+class Doctrine_Collection_Iterator_Expandable extends Doctrine_Collection_Iterator
+{
+    public function valid()
+    {
+        if ($this->index < $this->count) {
+            return true;
+        } elseif ($this->index == $this->count) {
+            $coll  = $this->collection->expand($this->index);
 
-			if ($coll instanceof Doctrine_Collection) {
-				$count = count($coll);
-				if ($count > 0) {
-					$this->keys = array_merge($this->keys, $coll->getKeys());
-					$this->count += $count;
-					return true;
-				}
-			}
+            if ($coll instanceof Doctrine_Collection) {
+                $count = count($coll);
+                if ($count > 0) {
+                    $this->keys   = array_merge($this->keys, $coll->getKeys());
+                    $this->count += $count;
+                    return true;
+                }
+            }
 
-			return false;
-		}
-	}
+            return false;
+        }
+    }
 }

@@ -30,21 +30,23 @@
  * @version     $Revision: 7490 $
  * @author      Gijs van Dulmen <gijs@vandulmen.net>
  */
-class Doctrine_Validator_Minlength extends Doctrine_Validator_Driver {
-	/**
-	 * checks if given value is more length than the minimum length required
-	 *
-	 * @param mixed $value
-	 * @return boolean
-	 */
-	public function validate($value) {
-		if (is_null($value)) {
-			return true;
-		}
-		if (isset($this->args) && strlen($value) < $this->args) {
-			return false;
-		}
+class Doctrine_Validator_Minlength extends Doctrine_Validator_Driver
+{
+    /**
+     * checks if given value is more length than the minimum length required
+     *
+     * @param mixed $value
+     * @return boolean
+     */
+    public function validate($value)
+    {
+        if (is_null($value)) {
+            return true;
+        }
+        if (isset($this->args) && strlen($value) < $this->args) {
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

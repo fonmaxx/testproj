@@ -31,23 +31,23 @@ require_once 'phing/tasks/system/condition/Condition.php';
  * @package phing.tasks.system.condition
  */
 class IsSetCondition extends ProjectComponent implements Condition {
+    
+    private $property;
 
-	private $property;
+    public function setProperty($p) {
+        $this->property = $p;
+    }
 
-	public function setProperty($p) {
-		$this->property = $p;
-	}
-
-	/**
-	 * Check whether property is set.
-	 * @throws BuildException
-	 */
-	public function evaluate() {
-		if ($this->property === null) {
-			throw new BuildException(
-					"No property specified for isset " . "condition");
-		}
-		return $this->project->getProperty($this->property) !== null;
-	}
+    /**
+     * Check whether property is set.
+     * @throws BuildException
+     */
+    public function evaluate()  {
+        if ($this->property === null) {
+            throw new BuildException("No property specified for isset "
+                                     . "condition");
+        }        
+        return $this->project->getProperty($this->property) !== null;
+    }
 
 }

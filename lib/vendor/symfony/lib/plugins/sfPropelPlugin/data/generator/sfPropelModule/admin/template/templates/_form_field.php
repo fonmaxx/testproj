@@ -11,8 +11,7 @@
       <div class="content">[?php echo $form[$name]->render($attributes instanceof sfOutputEscaper ? $attributes->getRawValue() : $attributes) ?]</div>
 
       [?php if ($help): ?]
-        <div class="help">[?php echo __($help, array(), '<?php echo $this
-		->getI18nCatalogue() ?>') ?]</div>
+        <div class="help">[?php echo __($help, array(), '<?php echo $this->getI18nCatalogue() ?>') ?]</div>
       [?php elseif ($help = $form[$name]->renderHelp()): ?]
         <div class="help">[?php echo $help ?]</div>
       [?php endif; ?]

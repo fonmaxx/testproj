@@ -10,7 +10,7 @@ class Jobeet
   		// transliterate
   		if (function_exists('iconv'))
   		{
-    		$text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+    		$text =($a= @iconv('utf-8', 'us-ascii//TRANSLIT', $text))?$a:Support::rus2translit($text);
   		}
 
   		// lowercase

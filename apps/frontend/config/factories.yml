@@ -12,7 +12,7 @@ test:
   storage:
     class: sfSessionTestStorage
     param:
-      session_path: %SF_TEST_CACHE_DIR%/sessions
+      session_path: '%SF_TEST_CACHE_DIR%/sessions'
 
   response:
     class: sfWebResponse
@@ -40,3 +40,6 @@ all:
     param:
       cache_key_use_vary_headers: true
       cache_key_use_host_name:    true
+
+
+

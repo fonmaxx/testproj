@@ -31,41 +31,45 @@
  * @since       1.0
  * @version     $Revision: 7490 $
  */
-class Doctrine_Sequence extends Doctrine_Connection_Module {
-	/**
-	 * Returns the next free id of a sequence
-	 *
-	 * @param string $seqName   name of the sequence
-	 * @param bool              when true missing sequences are automatic created
-	 *
-	 * @return integer          next id in the given sequence
-	 * @throws Doctrine_Sequence_Exception
-	 */
-	public function nextId($seqName, $ondemand = true) {
-		throw new Doctrine_Sequence_Exception('method not implemented');
-	}
+class Doctrine_Sequence extends Doctrine_Connection_Module
+{
+    /**
+     * Returns the next free id of a sequence
+     *
+     * @param string $seqName   name of the sequence
+     * @param bool              when true missing sequences are automatic created
+     *
+     * @return integer          next id in the given sequence
+     * @throws Doctrine_Sequence_Exception
+     */
+    public function nextId($seqName, $ondemand = true)
+    {
+        throw new Doctrine_Sequence_Exception('method not implemented');
+    }
 
-	/**
-	 * Returns the autoincrement ID if supported or $id or fetches the current
-	 * ID in a sequence called: $table.(empty($field) ? '' : '_'.$field)
-	 *
-	 * @param   string  name of the table into which a new row was inserted
-	 * @param   string  name of the field into which a new row was inserted
-	 */
-	public function lastInsertId($table = null, $field = null) {
-		throw new Doctrine_Sequence_Exception('method not implemented');
-	}
+    /**
+     * Returns the autoincrement ID if supported or $id or fetches the current
+     * ID in a sequence called: $table.(empty($field) ? '' : '_'.$field)
+     *
+     * @param   string  name of the table into which a new row was inserted
+     * @param   string  name of the field into which a new row was inserted
+     */
+    public function lastInsertId($table = null, $field = null)
+    {
+        throw new Doctrine_Sequence_Exception('method not implemented');
+    }
 
-	/**
-	 * Returns the current id of a sequence
-	 *
-	 * @param string $seqName   name of the sequence
-	 *
-	 * @return integer          current id in the given sequence
-	 */
-	public function currId($seqName) {
-		$this->warnings[] = 'database does not support getting current
+    /**
+     * Returns the current id of a sequence
+     *
+     * @param string $seqName   name of the sequence
+     *
+     * @return integer          current id in the given sequence
+     */
+    public function currId($seqName)
+    {
+        $this->warnings[] = 'database does not support getting current
             sequence value, the sequence value was incremented';
-		return $this->nextId($seqName);
-	}
+        return $this->nextId($seqName);
+    }
 }

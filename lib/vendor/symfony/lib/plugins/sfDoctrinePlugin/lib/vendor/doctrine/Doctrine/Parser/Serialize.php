@@ -30,34 +30,37 @@
  * @version     $Revision: 1080 $
  * @author      Jonathan H. Wage <jwage@mac.com>
  */
-class Doctrine_Parser_Serialize extends Doctrine_Parser {
-	/**
-	 * dumpData
-	 *
-	 * Dump an array of data to a specified path or return
-	 * 
-	 * @param string $array 
-	 * @param string $path 
-	 * @param string $charset The charset of the data being dumped
-	 * @return void
-	 */
-	public function dumpData($array, $path = null, $charset = null) {
-		$data = serialize($array);
+class Doctrine_Parser_Serialize extends Doctrine_Parser
+{
+    /**
+     * dumpData
+     *
+     * Dump an array of data to a specified path or return
+     * 
+     * @param string $array 
+     * @param string $path 
+     * @param string $charset The charset of the data being dumped
+     * @return void
+     */
+    public function dumpData($array, $path = null, $charset = null)
+    {
+        $data = serialize($array);
+        
+        return $this->doDump($data, $path);
+    }
 
-		return $this->doDump($data, $path);
-	}
-
-	/**
-	 * loadData
-	 *
-	 * Load and unserialize data from a file or from passed data
-	 * 
-	 * @param string $path 
-	 * @return void
-	 */
-	public function loadData($path) {
-		$contents = $this->doLoad($path);
-
-		return unserialize($contents);
-	}
+    /**
+     * loadData
+     *
+     * Load and unserialize data from a file or from passed data
+     * 
+     * @param string $path 
+     * @return void
+     */
+    public function loadData($path)
+    {
+        $contents = $this->doLoad($path);
+        
+        return unserialize($contents);
+    }
 }

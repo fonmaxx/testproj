@@ -30,35 +30,37 @@
  * @version     $Revision: 7490 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Hook_WordLike extends Doctrine_Hook_Parser_Complex {
-	/**
-	 * parse
-	 * Parses given field and field value to DQL condition
-	 * and parameters. This method should always return
-	 * prepared statement conditions (conditions that use
-	 * placeholders instead of literal values).
-	 *
-	 * @param string $alias     component alias
-	 * @param string $field     the field name
-	 * @param mixed $value      the value of the field
-	 * @return void
-	 */
-	public function parseSingle($alias, $field, $value) {
-		if (strpos($value, "'") !== false) {
-			$value = $this->_tokenizer->bracketTrim($value, "'", "'");
+class Doctrine_Hook_WordLike extends Doctrine_Hook_Parser_Complex
+{
+    /**
+     * parse
+     * Parses given field and field value to DQL condition
+     * and parameters. This method should always return
+     * prepared statement conditions (conditions that use
+     * placeholders instead of literal values).
+     *
+     * @param string $alias     component alias
+     * @param string $field     the field name
+     * @param mixed $value      the value of the field
+     * @return void
+     */
+    public function parseSingle($alias, $field, $value)
+    {
+        if (strpos($value, "'") !== false) {
+            $value = $this->_tokenizer->bracketTrim($value, "'", "'");
+        
+            $a[]   = $alias . '.' . $field . ' LIKE ?';
+            $this->params[] = '%' . $value . '%';
 
-			$a[] = $alias . '.' . $field . ' LIKE ?';
-			$this->params[] = '%' . $value . '%';
-
-		} else {
-			$e2 = explode(' ', $value);
-
-			foreach ($e2 as $v) {
-				$v = trim($v);
-				$a[] = $alias . '.' . $field . ' LIKE ?';
-				$this->params[] = '%' . $v . '%';
-			}
-		}
-		return implode(' OR ', $a);
-	}
+        } else {
+            $e2 = explode(' ',$value);
+    
+            foreach ($e2 as $v) {
+                $v = trim($v);
+                $a[] = $alias . '.' . $field . ' LIKE ?';
+                $this->params[] = '%' . $v . '%';
+            }
+        }
+        return implode(' OR ', $a);
+    }
 }

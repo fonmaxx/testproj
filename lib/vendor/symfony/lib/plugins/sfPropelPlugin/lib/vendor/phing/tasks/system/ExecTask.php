@@ -122,10 +122,10 @@ class ExecTask extends Task {
 				$currdir = getcwd();
 				@chdir($this->dir->getPath());
 			} else {
-				throw new BuildException(
-						"Can't chdir to:" . $this->dir->__toString());
+				throw new BuildException("Can't chdir to:" . $this->dir->__toString());
 			}
 		}
+
 
 		if ($this->escape == true) {
 			// FIXME - figure out whether this is correct behavior
@@ -139,10 +139,7 @@ class ExecTask extends Task {
 
 		if ($this->output !== null) {
 			$this->command .= ' 1> ' . $this->output->getPath();
-			$this
-					->log(
-							"Writing standard output to: "
-									. $this->output->getPath());
+			$this->log("Writing standard output to: " . $this->output->getPath());
 		} elseif ($this->spawn) {
 			$this->command .= ' 1>/dev/null';
 			$this->log("Sending ouptut to /dev/null");
@@ -171,18 +168,15 @@ class ExecTask extends Task {
 			@chdir($currdir);
 		}
 
-		foreach ($output as $line) {
-			$this
-					->log($line,
-							($this->passthru ? Project::MSG_INFO
-									: Project::MSG_VERBOSE));
+		foreach($output as $line) {
+			$this->log($line,  ($this->passthru ? Project::MSG_INFO : Project::MSG_VERBOSE));
 		}
 
 		if ($this->returnProperty) {
 			$this->project->setProperty($this->returnProperty, $return);
 		}
 
-		if ($return != 0 && $this->checkreturn) {
+		if($return != 0 && $this->checkreturn) {
 			throw new BuildException("Task exited with code $return");
 		}
 
@@ -250,7 +244,7 @@ class ExecTask extends Task {
 	 * @param boolean $spawn
 	 */
 	function setSpawn($spawn) {
-		$this->spawn = (bool) $spawn;
+		$this->spawn  = (bool) $spawn;
 	}
 
 	/**
@@ -260,7 +254,7 @@ class ExecTask extends Task {
 	function setCheckreturn($checkreturn) {
 		$this->checkreturn = (bool) $checkreturn;
 	}
-
+	
 	/**
 	 * The name of property to set to return value from exec() call.
 	 * @param string $prop

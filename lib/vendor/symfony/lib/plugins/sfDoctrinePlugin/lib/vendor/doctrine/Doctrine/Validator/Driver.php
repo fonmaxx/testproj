@@ -30,91 +30,99 @@
  * @version     $Revision: 1080 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Validator_Driver {
-	/**
-	 * @var array $_args     an array of plugin specific args
-	 */
-	public $args;
-	public $invoker;
-	public $field;
+class Doctrine_Validator_Driver
+{
+    /**
+     * @var array $_args     an array of plugin specific args
+     */
+    public $args;
+    public $invoker;
+    public $field;
 
-	/**
-	 * __get
-	 * an alias for getOption
-	 *
-	 * @param string $arg
-	 */
-	public function __get($arg) {
-		if (isset($this->args[$arg])) {
-			return $this->args[$arg];
-		}
-		return null;
-	}
+    /**
+     * __get
+     * an alias for getOption
+     *
+     * @param string $arg
+     */
+    public function __get($arg)
+    {
+        if (isset($this->args[$arg])) {
+            return $this->args[$arg];
+        }
+        return null;
+    }
 
-	/**
-	 * __isset
-	 *
-	 * @param string $arg
-	 */
-	public function __isset($arg) {
-		return isset($this->args[$arg]);
-	}
+    /**
+     * __isset
+     *
+     * @param string $arg
+     */
+    public function __isset($arg)
+    {
+        return isset($this->args[$arg]);
+    }
 
-	/**
-	 * sets given value to an argument
-	 *
-	 * @param $arg          the name of the option to be changed
-	 * @param $value        the value of the option
-	 * @return Doctrine_Validator_Driver    this object
-	 */
-	public function __set($arg, $value) {
-		$this->args[$arg] = $value;
+    /**
+     * sets given value to an argument
+     *
+     * @param $arg          the name of the option to be changed
+     * @param $value        the value of the option
+     * @return Doctrine_Validator_Driver    this object
+     */
+    public function __set($arg, $value)
+    {
+        $this->args[$arg] = $value;
+        
+        return $this;
+    }
 
-		return $this;
-	}
+    /**
+     * returns the value of an argument
+     *
+     * @param $arg          the name of the option to retrieve
+     * @return mixed        the value of the option
+     */
+    public function getArg($arg)
+    {
+        if ( ! isset($this->args[$arg])) {
+            throw new Doctrine_Validator_Exception('Unknown option ' . $arg);
+        }
+        
+        return $this->args[$arg];
+    }
 
-	/**
-	 * returns the value of an argument
-	 *
-	 * @param $arg          the name of the option to retrieve
-	 * @return mixed        the value of the option
-	 */
-	public function getArg($arg) {
-		if (!isset($this->args[$arg])) {
-			throw new Doctrine_Validator_Exception('Unknown option ' . $arg);
-		}
+    /**
+     * sets given value to an argument
+     *
+     * @param $arg          the name of the option to be changed
+     * @param $value        the value of the option
+     * @return Doctrine_Validator_Driver    this object
+     */
+    public function setArg($arg, $value)
+    {
+        $this->args[$arg] = $value;
+        
+        return $this;
+    }
 
-		return $this->args[$arg];
-	}
+    /**
+     * returns all args and their associated values
+     *
+     * @return array    all args as an associative array
+     */
+    public function getArgs()
+    {
+        return $this->args;
+    }
 
-	/**
-	 * sets given value to an argument
-	 *
-	 * @param $arg          the name of the option to be changed
-	 * @param $value        the value of the option
-	 * @return Doctrine_Validator_Driver    this object
-	 */
-	public function setArg($arg, $value) {
-		$this->args[$arg] = $value;
-
-		return $this;
-	}
-
-	/**
-	 * returns all args and their associated values
-	 *
-	 * @return array    all args as an associative array
-	 */
-	public function getArgs() {
-		return $this->args;
-	}
-
-	public function __toString() {
-		$className = get_class($this);
-		if (strpos($className, 'Doctrine_Validator_') === 0) {
-			return strtolower(substr($className, 19));
-		} else {
-			return $className;
-		}
-	}
+    public function __toString()
+    {
+        $className = get_class($this);
+        if (strpos($className, 'Doctrine_Validator_') === 0) { 
+            return strtolower(substr($className, 19));
+        } else {
+            return $className;
+        }
+    }
 }

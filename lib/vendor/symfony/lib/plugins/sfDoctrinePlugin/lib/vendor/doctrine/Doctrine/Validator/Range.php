@@ -30,23 +30,25 @@
  * @version     $Revision: 7490 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Validator_Range extends Doctrine_Validator_Driver {
-	/**
-	 * checks if value is within given range
-	 *
-	 * @param mixed $value
-	 * @return boolean
-	 */
-	public function validate($value) {
-		if (is_null($value)) {
-			return true;
-		}
-		if (isset($this->args[0]) && $value < $this->args[0]) {
-			return false;
-		}
-		if (isset($this->args[1]) && $value > $this->args[1]) {
-			return false;
-		}
-		return true;
-	}
+class Doctrine_Validator_Range extends Doctrine_Validator_Driver
+{
+    /**
+     * checks if value is within given range
+     *
+     * @param mixed $value
+     * @return boolean
+     */
+    public function validate($value)
+    {
+        if (is_null($value)) {
+            return true;
+        }
+        if (isset($this->args[0]) && $value < $this->args[0]) {
+            return false;
+        }
+        if (isset($this->args[1]) && $value > $this->args[1]) {
+            return false;
+        }
+        return true;
+    }
 }

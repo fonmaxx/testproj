@@ -32,7 +32,8 @@ require_once 'phing/util/LogWriter.php';
  * @package phing.tasks.ext.simpletest
  * @since 2.2.0
  */
-class SimpleTestTask extends Task {
+class SimpleTestTask extends Task
+{
 	private $formatters = array();
 	private $haltonerror = false;
 	private $haltonfailure = false;
@@ -43,52 +44,56 @@ class SimpleTestTask extends Task {
 
 	/**
 	 * Initialize Task.
-	 * This method includes any necessary SimpleTest libraries and triggers
+ 	 * This method includes any necessary SimpleTest libraries and triggers
 	 * appropriate error if they cannot be found.  This is not done in header
 	 * because we may want this class to be loaded w/o triggering an error.
 	 */
 	function init() {
 		@include_once 'simpletest/scorer.php';
-
+		
 		if (!class_exists('SimpleReporter')) {
-			throw new BuildException(
-					"SimpleTestTask depends on SimpleTest package being installed.",
-					$this->getLocation());
+			throw new BuildException("SimpleTestTask depends on SimpleTest package being installed.", $this->getLocation());
 		}
-
+		
 		require_once 'simpletest/reporter.php';
 		require_once 'simpletest/xml.php';
 		require_once 'simpletest/test_case.php';
 		require_once 'phing/tasks/ext/simpletest/SimpleTestCountResultFormatter.php';
 		require_once 'phing/tasks/ext/simpletest/SimpleTestFormatterElement.php';
 	}
-
-	function setFailureproperty($value) {
+	
+	function setFailureproperty($value)
+	{
 		$this->failureproperty = $value;
 	}
-
-	function setErrorproperty($value) {
+	
+	function setErrorproperty($value)
+	{
 		$this->errorproperty = $value;
 	}
-
-	function setHaltonerror($value) {
+	
+	function setHaltonerror($value)
+	{
 		$this->haltonerror = $value;
 	}
 
-	function setHaltonfailure($value) {
+	function setHaltonfailure($value)
+	{
 		$this->haltonfailure = $value;
 	}
 
-	function setPrintsummary($printsummary) {
+	function setPrintsummary($printsummary)
+	{
 		$this->printsummary = $printsummary;
 	}
-
+	
 	/**
 	 * Add a new formatter to all tests of this task.
 	 *
 	 * @param SimpleTestFormatterElement formatter element
 	 */
-	function addFormatter(SimpleTestFormatterElement $fe) {
+	function addFormatter(SimpleTestFormatterElement $fe)
+	{
 		$this->formatters[] = $fe;
 	}
 
@@ -97,7 +102,8 @@ class SimpleTestTask extends Task {
 	 *
 	 * @param FileSet the new fileset containing XML results.
 	 */
-	function addFileSet(FileSet $fileset) {
+	function addFileSet(FileSet $fileset)
+	{
 		$this->filesets[] = $fileset;
 	}
 
@@ -107,17 +113,21 @@ class SimpleTestTask extends Task {
 	 *
 	 * @return array an array of filenames
 	 */
-	private function getFilenames() {
+	private function getFilenames()
+	{
 		$filenames = array();
 
-		foreach ($this->filesets as $fileset) {
+		foreach ($this->filesets as $fileset)
+		{
 			$ds = $fileset->getDirectoryScanner($this->project);
 			$ds->scan();
 
 			$files = $ds->getIncludedFiles();
 
-			foreach ($files as $file) {
-				if (strstr($file, ".php")) {
+			foreach ($files as $file)
+			{
+				if (strstr($file, ".php"))
+				{
 					$filenames[] = $ds->getBaseDir() . "/" . $file;
 				}
 			}
@@ -131,79 +141,97 @@ class SimpleTestTask extends Task {
 	 *
 	 * @throws BuildException
 	 */
-	function main() {
+	function main()
+	{
 		$group = new GroupTest();
-
+		
 		$filenames = $this->getFilenames();
-
-		foreach ($filenames as $testfile) {
+		
+		foreach ($filenames as $testfile)
+		{
 			$group->addTestFile($testfile);
 		}
-
-		if ($this->printsummary) {
+		
+		if ($this->printsummary)
+		{
 			$fe = new SimpleTestFormatterElement();
 			$fe->setType('summary');
 			$fe->setUseFile(false);
 			$this->formatters[] = $fe;
 		}
-
-		foreach ($this->formatters as $fe) {
+		
+		foreach ($this->formatters as $fe)
+		{
 			$formatter = $fe->getFormatter();
 			$formatter->setProject($this->getProject());
 
-			if ($fe->getUseFile()) {
+			if ($fe->getUseFile())
+			{
 				$destFile = new PhingFile($fe->getToDir(), $fe->getOutfile());
-
+				
 				$writer = new FileWriter($destFile->getAbsolutePath());
 
 				$formatter->setOutput($writer);
-			} else {
+			}
+			else
+			{
 				$formatter->setOutput($this->getDefaultOutput());
 			}
 		}
-
+		
 		$this->execute($group);
-
-		if ($this->testfailed) {
+		
+		if ($this->testfailed)
+		{
 			throw new BuildException("One or more tests failed");
 		}
 	}
-
-	private function execute($suite) {
+	
+	private function execute($suite)
+	{
 		$counter = new SimpleTestCountResultFormatter();
 		$reporter = new MultipleReporter();
 		$reporter->attachReporter($counter);
-
-		foreach ($this->formatters as $fe) {
+		
+		foreach ($this->formatters as $fe)
+		{
 			$formatter = $fe->getFormatter();
 
 			$reporter->attachReporter($formatter);
-		}
-
+		}		
+		
 		$suite->run($reporter);
-
+		
 		$retcode = $counter->getRetCode();
-
-		if ($retcode == SimpleTestCountResultFormatter::ERRORS) {
-			if ($this->errorproperty) {
+		
+		if ($retcode == SimpleTestCountResultFormatter::ERRORS)
+		{
+		    if ($this->errorproperty)
+		    {
 				$this->project->setNewProperty($this->errorproperty, true);
 			}
-
-			if ($this->haltonerror) {
-				$this->testfailed = true;
+			
+			if ($this->haltonerror)
+			{
+			    $this->testfailed = true;
 			}
-		} elseif ($retcode == SimpleTestCountResultFormatter::FAILURES) {
-			if ($this->failureproperty) {
+		}
+		elseif ($retcode == SimpleTestCountResultFormatter::FAILURES)
+		{
+			if ($this->failureproperty)
+			{
 				$this->project->setNewProperty($this->failureproperty, true);
 			}
-
-			if ($this->haltonfailure) {
+			
+			if ($this->haltonfailure)
+			{
 				$this->testfailed = true;
 			}
 		}
 	}
 
-	private function getDefaultOutput() {
+	private function getDefaultOutput()
+	{
 		return new LogWriter($this);
 	}
 }

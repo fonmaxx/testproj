@@ -18,7 +18,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>.
  */
-
+ 
 require_once 'phing/Task.php';
 
 /**
@@ -30,89 +30,89 @@ require_once 'phing/Task.php';
  * @version   $Revision: 1.7 $
  * @package   phing.tasks.system
  */
-class ExitTask extends Task {
+class ExitTask extends Task { 
 
-	private $message;
-	private $ifCondition;
-	private $unlessCondition;
+    private $message;
+    private $ifCondition;
+    private $unlessCondition;
 
-	/**
-	 * A message giving further information on why the build exited.
-	 *
-	 * @param string $value message to output
-	 */
-	public function setMsg($value) {
-		$this->setMessage($value);
-	}
+    /**
+     * A message giving further information on why the build exited.
+     *
+     * @param string $value message to output
+     */
+    public function setMsg($value) {
+        $this->setMessage($value);
+    }
 
-	/**
-	 * A message giving further information on why the build exited.
-	 *
-	 * @param value message to output
-	 */
-	public function setMessage($value) {
-		$this->message = $value;
-	}
+    /**
+     * A message giving further information on why the build exited.
+     *
+     * @param value message to output
+     */
+    public function setMessage($value) {
+        $this->message = $value;
+    }
 
-	/**
-	 * Only fail if a property of the given name exists in the current project.
-	 * @param c property name
-	 */
-	public function setIf($c) {
-		$this->ifCondition = $c;
-	}
+    /**
+     * Only fail if a property of the given name exists in the current project.
+     * @param c property name
+     */
+    public function setIf($c) {
+        $this->ifCondition = $c;
+    }
 
-	/**
-	 * Only fail if a property of the given name does not
-	 * exist in the current project.
-	 * @param c property name
-	 */
-	public function setUnless($c) {
-		$this->unlessCondition = $c;
-	}
+    /**
+     * Only fail if a property of the given name does not
+     * exist in the current project.
+     * @param c property name
+     */
+    public function setUnless($c) {
+        $this->unlessCondition = $c;
+    }
 
-	/**
-	 * @throws BuildException
-	 */
-	public function main() {
-		if ($this->testIfCondition() && $this->testUnlessCondition()) {
-			if ($this->message !== null) {
-				throw new BuildException($this->message);
-			} else {
-				throw new BuildException("No message");
-			}
-		}
-	}
+    /**
+     * @throws BuildException
+     */
+    public function main()  {
+        if ($this->testIfCondition() && $this->testUnlessCondition()) {
+            if ($this->message !== null) { 
+                throw new BuildException($this->message);
+            } else {
+                throw new BuildException("No message");
+            }
+        }
+    }
 
-	/**
-	 * Set a multiline message.
-	 */
-	public function addText($msg) {
-		if ($this->message === null) {
-			$this->message = "";
-		}
-		$this->message .= $this->project->replaceProperties($msg);
-	}
+    /**
+     * Set a multiline message.
+     */
+    public function addText($msg) {
+        if ($this->message === null) {
+            $this->message = "";
+        }
+        $this->message .= $this->project->replaceProperties($msg);
+    }
 
-	/**
-	 * @return boolean
-	 */
-	private function testIfCondition() {
-		if ($this->ifCondition === null || $this->ifCondition === "") {
-			return true;
-		}
-
-		return $this->project->getProperty($this->ifCondition) !== null;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	private function testUnlessCondition() {
-		if ($this->unlessCondition === null || $this->unlessCondition === "") {
-			return true;
-		}
-		return $this->project->getProperty($this->unlessCondition) === null;
-	}
+    /**
+     * @return boolean
+     */
+    private function testIfCondition() {
+        if ($this->ifCondition === null || $this->ifCondition === "") {
+            return true;
+        }
+        
+        return $this->project->getProperty($this->ifCondition) !== null;
+    }
+    
+    /**
+     * @return boolean
+     */
+    private function testUnlessCondition() {
+        if ($this->unlessCondition === null || $this->unlessCondition ===  "") {
+            return true;
+        }
+        return $this->project->getProperty($this->unlessCondition) === null;
+    }
 
 }

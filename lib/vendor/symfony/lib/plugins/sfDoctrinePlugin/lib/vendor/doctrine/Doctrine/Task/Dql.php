@@ -30,44 +30,44 @@
  * @version     $Revision: 2761 $
  * @author      Jonathan H. Wage <jwage@mac.com>
  */
-class Doctrine_Task_Dql extends Doctrine_Task {
-	public $description = 'Execute dql query and display the results', $requiredArguments = array(
-			'models_path' => 'Specify path to your Doctrine_Record definitions.',
-			'dql_query' => 'Specify the complete dql query to execute.'), $optionalArguments = array(
-			'params' => 'Comma separated list of the params to replace the ? tokens in the dql');
+class Doctrine_Task_Dql extends Doctrine_Task
+{
+    public $description          =   'Execute dql query and display the results',
+           $requiredArguments    =   array('models_path'    =>  'Specify path to your Doctrine_Record definitions.',
+                                           'dql_query'      =>  'Specify the complete dql query to execute.'),
+           $optionalArguments    =   array('params'         =>  'Comma separated list of the params to replace the ? tokens in the dql');
 
-	public function execute() {
-		Doctrine_Core::loadModels($this->getArgument('models_path'));
+    public function execute()
+    {
+        Doctrine_Core::loadModels($this->getArgument('models_path'));
 
-		$dql = $this->getArgument('dql_query');
+        $dql = $this->getArgument('dql_query');
 
-		$query = Doctrine_Query::create();
+        $query = Doctrine_Query::create();
 
-		$params = $this->getArgument('params');
-		$params = $params ? explode(',', $params) : array();
+        $params = $this->getArgument('params');
+        $params = $params ? explode(',', $params):array();
 
-		$this
-				->notify(
-						'executing: "' . $dql . '" (' . implode(', ', $params)
-								. ')');
+        $this->notify('executing: "' . $dql . '" (' . implode(', ', $params) . ')');
 
-		$results = $query->query($dql, $params, Doctrine_Core::HYDRATE_ARRAY);
+        $results = $query->query($dql, $params, Doctrine_Core::HYDRATE_ARRAY);
 
-		$this->_printResults($results);
-	}
+        $this->_printResults($results);
+    }
 
-	protected function _printResults($array) {
-		$yaml = Doctrine_Parser::dump($array, 'yml');
-		$lines = explode("\n", $yaml);
+    protected function _printResults($array)
+    {
+        $yaml = Doctrine_Parser::dump($array, 'yml');
+        $lines = explode("\n", $yaml);
 
-		unset($lines[0]);
+        unset($lines[0]);
 
-		foreach ($lines as $yamlLine) {
-			$line = trim($yamlLine);
+        foreach ($lines as $yamlLine) {
+            $line = trim($yamlLine);
 
-			if ($line) {
-				$this->notify($yamlLine);
-			}
-		}
-	}
+            if ($line) {
+                $this->notify($yamlLine);
+            }
+        }
+    }
 }

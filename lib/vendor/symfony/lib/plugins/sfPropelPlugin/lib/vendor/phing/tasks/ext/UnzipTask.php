@@ -32,45 +32,37 @@ require_once 'phing/lib/Zip.php';
  * @since     2.2.0
  */
 class UnzipTask extends ExtractBaseTask {
-
-	protected function extractArchive(PhingFile $zipfile) {
-		$extractParams = array('add_path' => $this->todir->getAbsolutePath());
-		if (!empty($this->removepath)) {
-			$extractParams['remove_path'] = $this->removepath;
-		}
-
-		$this
-				->log(
-						"Extracting zip: " . $zipfile->__toString() . ' to '
-								. $this->todir->__toString(),
-						Project::MSG_INFO);
-
-		try {
-			$zip = new Archive_Zip($zipfile->getAbsolutePath());
-
-			$extractResponse = $zip->extract($extractParams);
-			if (is_array($extractResponse)) {
-				foreach ($extractResponse as $extractedPath) {
-					$this
-							->log(
-									'Extracted'
-											. $extractedPath['stored_filename']
-											. ' to '
-											. $this->todir->__toString(),
-									Project::MSG_VERBOSE);
-				}
-			} else if ($extractResponse === 0) {
-				throw new BuildException(
-						'Failed to extract zipfile: ' . $zip->errorInfo(true));
-			}
-		} catch (IOException $ioe) {
-			$msg = "Could not extract ZIP: " . $ioe->getMessage();
-			throw new BuildException($msg, $ioe, $this->getLocation());
-		}
-	}
-
-	protected function listArchiveContent(PhingFile $zipfile) {
-		$zip = new Archive_Zip($zipfile->getAbsolutePath());
-		return $zip->listContent();
-	}
+    
+    protected function extractArchive(PhingFile $zipfile)
+    {
+        $extractParams = array('add_path' => $this->todir->getAbsolutePath());
+        if(!empty($this->removepath))
+        {
+            $extractParams['remove_path'] = $this->removepath;
+        }
+        
+        $this->log("Extracting zip: " . $zipfile->__toString() . ' to ' . $this->todir->__toString(), Project::MSG_INFO);
+        
+    	try {
+        	$zip = new Archive_Zip($zipfile->getAbsolutePath());
+        	
+        	$extractResponse = $zip->extract($extractParams);
+        	if(is_array($extractResponse)) {
+        	    foreach ($extractResponse as $extractedPath) {
+        	    	$this->log('Extracted' . $extractedPath['stored_filename'] . ' to ' . $this->todir->__toString(), Project::MSG_VERBOSE);
+        	    }
+        	} else if ($extractResponse === 0) {
+        	    throw new BuildException('Failed to extract zipfile: ' . $zip->errorInfo(true));
+        	}
+        } catch (IOException $ioe) {
+            $msg = "Could not extract ZIP: " . $ioe->getMessage();
+            throw new BuildException($msg, $ioe, $this->getLocation());
+        }
+    }
+    
+    protected function listArchiveContent(PhingFile $zipfile)
+    {
+        $zip = new Archive_Zip($zipfile->getAbsolutePath());
+        return $zip->listContent();
+    }
 }

@@ -34,300 +34,284 @@ include_once 'phing/TaskContainer.php';
  */
 
 class Target implements TaskContainer {
+    
+    /** name of target */
+    private $name;
+    
+    /** dependencies */
+    private $dependencies = array();
+    
+    /** holds objects of children of this target */
+    private $children = array();
+    
+    /** the if cond. from xml */
+    private $ifCondition = "";
+    
+    /** the unless cond. from xml */
+    private $unlessCondition = "";
+    
+    /** description of this target */
+    private $description;
+    
+    /** reference to project */
+    private $project;
 
-	/** name of target */
-	private $name;
+    /**
+     *  References the project to the current component.
+     *
+     *  @param Project The reference to the current project
+     */
+    public function setProject(Project $project) {
+        $this->project = $project;
+    }
 
-	/** dependencies */
-	private $dependencies = array();
+    /**
+     *  Returns reference to current project
+     *
+     *  @return Project Reference to current porject object
+     */
+    public function getProject() {
+        return $this->project;
+    }
 
-	/** holds objects of children of this target */
-	private $children = array();
+    /**
+     *  Sets the target dependencies from xml
+     *
+     *  @param string $depends Comma separated list of targetnames that depend on
+     *                  this target
+     *  @throws BuildException
+     */
+    public function setDepends($depends) {
+        // explode should be faster than strtok
+        $deps = explode(',', $depends);
+        for ($i=0, $size=count($deps); $i < $size; $i++) {
+            $trimmed = trim($deps[$i]);
+            if ($trimmed === "") {
+                throw new BuildException("Syntax Error: Depend attribute for target ".$this->getName()." is malformed.");
+            } 
+            $this->addDependency($trimmed);
+        }
+    }
 
-	/** the if cond. from xml */
-	private $ifCondition = "";
+    /**
+     *  Adds a singular dependent target name to the list
+     *
+     *  @param   string   The dependency target to add
+     *  @access  public
+     */
+    public function addDependency($dependency) {
+        $this->dependencies[] = (string) $dependency;
+    }
 
-	/** the unless cond. from xml */
-	private $unlessCondition = "";
+    /**
+     *  Returns reference to indexed array of the dependencies this target has.
+     *
+     *  @return  array  Referece to target dependencoes
+     */
+    public function getDependencies() {
+        return $this->dependencies;
+    }
 
-	/** description of this target */
-	private $description;
+    /**
+     *  Sets the name of the target
+     *
+     *  @param  string   Name of this target
+     */
+    public function setName($name) {
+        $this->name = (string) $name;
+    }
 
-	/** reference to project */
-	private $project;
+    /**
+     *  Returns name of this target.
+     *
+     *  @return  string     The name of the target
+     *  @access   public
+     */
+    function getName() {
+        return (string) $this->name;
+    }
 
-	/**
-	 *  References the project to the current component.
-	 *
-	 *  @param Project The reference to the current project
-	 */
-	public function setProject(Project $project) {
-		$this->project = $project;
-	}
+    /**
+     *  Adds a task element to the list of this targets child elements
+     *
+     *  @param   object  The task object to add
+     *  @access  public
+     */
+    function addTask(Task $task) {
+        $this->children[] = $task;
+    }
 
-	/**
-	 *  Returns reference to current project
-	 *
-	 *  @return Project Reference to current porject object
-	 */
-	public function getProject() {
-		return $this->project;
-	}
+    /**
+     *  Adds a runtime configurable element to the list of this targets child
+     *  elements.
+     *
+     *  @param   object  The RuntimeConfigurabel object
+     *  @access  public
+     */
+    function addDataType($rtc) {
+        $this->children[] = $rtc;
+    }
 
-	/**
-	 *  Sets the target dependencies from xml
-	 *
-	 *  @param string $depends Comma separated list of targetnames that depend on
-	 *                  this target
-	 *  @throws BuildException
-	 */
-	public function setDepends($depends) {
-		// explode should be faster than strtok
-		$deps = explode(',', $depends);
-		for ($i = 0, $size = count($deps); $i < $size; $i++) {
-			$trimmed = trim($deps[$i]);
-			if ($trimmed === "") {
-				throw new BuildException(
-						"Syntax Error: Depend attribute for target "
-								. $this->getName() . " is malformed.");
-			}
-			$this->addDependency($trimmed);
-		}
-	}
+    /**
+     *  Returns an array of all tasks this target has as childrens.
+     *
+     *  The task objects are copied here. Don't use this method to modify
+     *  task objects.
+     *
+     *  @return  array  Task[]
+     */
+    public function getTasks() {
+        $tasks = array();
+        for ($i=0,$size=count($this->children); $i < $size; $i++) {
+            $tsk = $this->children[$i];
+            if ($tsk instanceof Task) {
+                // note: we're copying objects here!
+                $tasks[] = clone $tsk;
+            }
+        }
+        return $tasks;
+    }
 
-	/**
-	 *  Adds a singular dependent target name to the list
-	 *
-	 *  @param   string   The dependency target to add
-	 *  @access  public
-	 */
-	public function addDependency($dependency) {
-		$this->dependencies[] = (string) $dependency;
-	}
+    /**
+     *  Set the if-condition from the XML tag, if any. The property name given
+     *  as parameter must be present so the if condition evaluates to true
+     *
+     *  @param   string  The property name that has to be present
+     *  @access  public
+     */
+    public function setIf($property) {
+        $this->ifCondition = ($property === null) ? "" : $property;
+    }
 
-	/**
-	 *  Returns reference to indexed array of the dependencies this target has.
-	 *
-	 *  @return  array  Referece to target dependencoes
-	 */
-	public function getDependencies() {
-		return $this->dependencies;
-	}
+    /**
+     *  Set the unless-condition from the XML tag, if any. The property name
+     *  given as parameter must be present so the unless condition evaluates
+     *  to true
+     *
+     *  @param   string  The property name that has to be present
+     *  @access  public
+     */
+    public function setUnless($property) {
+        $this->unlessCondition = ($property === null) ? "" : $property;
+    }
 
-	/**
-	 *  Sets the name of the target
-	 *
-	 *  @param  string   Name of this target
-	 */
-	public function setName($name) {
-		$this->name = (string) $name;
-	}
+    /**
+     *  Sets a textual description of this target.
+     *
+     *  @param string The description text
+     */
+    public function setDescription($description) {
+        if ($description !== null && strcmp($description, "") !== 0) {
+            $this->description = (string) $description;
+        } else {
+            $this->description = null;
+        }
+    }
 
-	/**
-	 *  Returns name of this target.
-	 *
-	 *  @return  string     The name of the target
-	 *  @access   public
-	 */
-	function getName() {
-		return (string) $this->name;
-	}
+    /**
+     *  Returns the description of this target.
+     *
+     *  @return string The description text of this target
+     */
+    public function getDescription() {
+        return $this->description;
+    }
 
-	/**
-	 *  Adds a task element to the list of this targets child elements
-	 *
-	 *  @param   object  The task object to add
-	 *  @access  public
-	 */
-	function addTask(Task $task) {
-		$this->children[] = $task;
-	}
+    /**
+     *  Returns a string representation of this target. In our case it
+     *  simply returns the target name field
+     *
+     *  @return string The string representation of this target
+     */
+    function toString() {
+        return (string) $this->name;
+    }
 
-	/**
-	 *  Adds a runtime configurable element to the list of this targets child
-	 *  elements.
-	 *
-	 *  @param   object  The RuntimeConfigurabel object
-	 *  @access  public
-	 */
-	function addDataType($rtc) {
-		$this->children[] = $rtc;
-	}
+    /**
+     *  The entry point for this class. Does some checking, then processes and
+     *  performs the tasks for this target.
+     *
+     */
+    public function main() {
+        if ($this->testIfCondition() && $this->testUnlessCondition()) {
+            foreach($this->children as $o) {
+                if ($o instanceof Task) {
+                    // child is a task
+                    $o->perform();
+                } else {
+                    // child is a RuntimeConfigurable
+                    $o->maybeConfigure($this->project);
+                }
+            }
+        } elseif (!$this->testIfCondition()) {
+            $this->project->log("Skipped target '".$this->name."' because property '".$this->ifCondition."' not set.", Project::MSG_VERBOSE);
+        } else {
+            $this->project->log("Skipped target '".$this->name."' because property '".$this->unlessCondition."' set.", Project::MSG_VERBOSE);
+        }
+    }
 
-	/**
-	 *  Returns an array of all tasks this target has as childrens.
-	 *
-	 *  The task objects are copied here. Don't use this method to modify
-	 *  task objects.
-	 *
-	 *  @return  array  Task[]
-	 */
-	public function getTasks() {
-		$tasks = array();
-		for ($i = 0, $size = count($this->children); $i < $size; $i++) {
-			$tsk = $this->children[$i];
-			if ($tsk instanceof Task) {
-				// note: we're copying objects here!
-				$tasks[] = clone $tsk;
-			}
-		}
-		return $tasks;
-	}
+    /**
+     *  Performs the tasks by calling the main method of this target that
+     *  actually executes the tasks.
+     *
+     *  This method is for ZE2 and used for proper exception handling of
+     *  task exceptions.
+     */
+    public function performTasks() {
+        try {// try to execute this target
+            $this->project->fireTargetStarted($this);
+            $this->main();
+            $this->project->fireTargetFinished($this, $null=null);
+        } catch (BuildException $exc) {
+            // log here and rethrow
+            $this->project->fireTargetFinished($this, $exc);
+            throw $exc;
+        }
+    }    
 
-	/**
-	 *  Set the if-condition from the XML tag, if any. The property name given
-	 *  as parameter must be present so the if condition evaluates to true
-	 *
-	 *  @param   string  The property name that has to be present
-	 *  @access  public
-	 */
-	public function setIf($property) {
-		$this->ifCondition = ($property === null) ? "" : $property;
-	}
+    /**
+     *  Tests if the property set in ifConfiditon exists.
+     *
+     *  @return  boolean  <code>true</code> if the property specified
+     *                    in <code>$this->ifCondition</code> exists;
+     *                    <code>false</code> otherwise
+     */
+    private function testIfCondition() {
+        if ($this->ifCondition === "") {
+            return true;
+        }
 
-	/**
-	 *  Set the unless-condition from the XML tag, if any. The property name
-	 *  given as parameter must be present so the unless condition evaluates
-	 *  to true
-	 *
-	 *  @param   string  The property name that has to be present
-	 *  @access  public
-	 */
-	public function setUnless($property) {
-		$this->unlessCondition = ($property === null) ? "" : $property;
-	}
+        $properties = explode(",", $this->ifCondition);
 
-	/**
-	 *  Sets a textual description of this target.
-	 *
-	 *  @param string The description text
-	 */
-	public function setDescription($description) {
-		if ($description !== null && strcmp($description, "") !== 0) {
-			$this->description = (string) $description;
-		} else {
-			$this->description = null;
-		}
-	}
+        $result = true;
+        foreach ($properties as $property) {
+            $test = ProjectConfigurator::replaceProperties($this->getProject(), $property, $this->project->getProperties());
+            $result = $result && ($this->project->getProperty($test) !== null);
+        }
 
-	/**
-	 *  Returns the description of this target.
-	 *
-	 *  @return string The description text of this target
-	 */
-	public function getDescription() {
-		return $this->description;
-	}
+        return $result;
+    }
 
-	/**
-	 *  Returns a string representation of this target. In our case it
-	 *  simply returns the target name field
-	 *
-	 *  @return string The string representation of this target
-	 */
-	function toString() {
-		return (string) $this->name;
-	}
+    /**
+     *  Tests if the property set in unlessCondition exists.
+     *
+     *  @return  boolean  <code>true</code> if the property specified
+     *                    in <code>$this->unlessCondition</code> exists;
+     *                    <code>false</code> otherwise
+     */
+    private function testUnlessCondition() {
+        if ($this->unlessCondition === "") {
+            return true;
+        }
+        
+        $properties = explode(",", $this->unlessCondition);
 
-	/**
-	 *  The entry point for this class. Does some checking, then processes and
-	 *  performs the tasks for this target.
-	 *
-	 */
-	public function main() {
-		if ($this->testIfCondition() && $this->testUnlessCondition()) {
-			foreach ($this->children as $o) {
-				if ($o instanceof Task) {
-					// child is a task
-					$o->perform();
-				} else {
-					// child is a RuntimeConfigurable
-					$o->maybeConfigure($this->project);
-				}
-			}
-		} elseif (!$this->testIfCondition()) {
-			$this->project
-					->log(
-							"Skipped target '" . $this->name
-									. "' because property '"
-									. $this->ifCondition . "' not set.",
-							Project::MSG_VERBOSE);
-		} else {
-			$this->project
-					->log(
-							"Skipped target '" . $this->name
-									. "' because property '"
-									. $this->unlessCondition . "' set.",
-							Project::MSG_VERBOSE);
-		}
-	}
-
-	/**
-	 *  Performs the tasks by calling the main method of this target that
-	 *  actually executes the tasks.
-	 *
-	 *  This method is for ZE2 and used for proper exception handling of
-	 *  task exceptions.
-	 */
-	public function performTasks() {
-		try {// try to execute this target
-			$this->project->fireTargetStarted($this);
-			$this->main();
-			$this->project->fireTargetFinished($this, $null = null);
-		} catch (BuildException $exc) {
-			// log here and rethrow
-			$this->project->fireTargetFinished($this, $exc);
-			throw $exc;
-		}
-	}
-
-	/**
-	 *  Tests if the property set in ifConfiditon exists.
-	 *
-	 *  @return  boolean  <code>true</code> if the property specified
-	 *                    in <code>$this->ifCondition</code> exists;
-	 *                    <code>false</code> otherwise
-	 */
-	private function testIfCondition() {
-		if ($this->ifCondition === "") {
-			return true;
-		}
-
-		$properties = explode(",", $this->ifCondition);
-
-		$result = true;
-		foreach ($properties as $property) {
-			$test = ProjectConfigurator::replaceProperties(
-					$this->getProject(), $property,
-					$this->project->getProperties());
-			$result = $result && ($this->project->getProperty($test) !== null);
-		}
-
-		return $result;
-	}
-
-	/**
-	 *  Tests if the property set in unlessCondition exists.
-	 *
-	 *  @return  boolean  <code>true</code> if the property specified
-	 *                    in <code>$this->unlessCondition</code> exists;
-	 *                    <code>false</code> otherwise
-	 */
-	private function testUnlessCondition() {
-		if ($this->unlessCondition === "") {
-			return true;
-		}
-
-		$properties = explode(",", $this->unlessCondition);
-
-		$result = true;
-		foreach ($properties as $property) {
-			$test = ProjectConfigurator::replaceProperties(
-					$this->getProject(), $property,
-					$this->project->getProperties());
-			$result = $result && ($this->project->getProperty($test) === null);
-		}
-		return $result;
-	}
+        $result = true;
+        foreach ($properties as $property) {
+            $test = ProjectConfigurator::replaceProperties($this->getProject(), $property, $this->project->getProperties());
+            $result = $result && ($this->project->getProperty($test) === null);
+        }
+        return $result;
+    }
 
 }

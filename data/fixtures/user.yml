@@ -1,0 +1,19 @@
+sfGuardUser:
+  User_admin:
+   last_name: G
+   email_address: 'fon_maxx@ukr.net'
+   username: fonmaxx
+   password: nigerniger
+   is_super_admin: true
+   #Groups: [Group_admin]
+
+#sfGuardGroup:
+ # Group_admin:
+  #  name:           admin
+   # description:    Administrator group
+    #Permissions:    [Permission_admin]
+
+#sfGuardPermission:
+ # Permission_admin:
+  #  name:           admin
+   # description:    Administrator permission

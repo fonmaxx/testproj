@@ -54,14 +54,14 @@ class PhpNameGenerator implements NameGenerator {
 	 * @return     The generated name.
 	 * @see        NameGenerator
 	 */
-	public function generateName($inputs) {
+	public function generateName($inputs)
+	{
 		$schemaName = $inputs[0];
 		$method = $inputs[1];
 
-		if (count($inputs) > 2) {
+		if (count($inputs)>2) {
 			$prefix = $inputs[2];
-			if ($prefix != ''
-					&& substr($schemaName, 0, strlen($prefix)) == $prefix) {
+			if ($prefix != '' && substr($schemaName, 0, strlen($prefix)) == $prefix) {
 				$schemaName = substr($schemaName, strlen($prefix));
 			}
 		}
@@ -69,18 +69,18 @@ class PhpNameGenerator implements NameGenerator {
 		$phpName = null;
 
 		switch ($method) {
-		case self::CONV_METHOD_CLEAN:
-			$phpName = $this->cleanMethod($schemaName);
-			break;
-		case self::CONV_METHOD_PHPNAME:
-			$phpName = $this->phpnameMethod($schemaName);
-			break;
-		case self::CONV_METHOD_NOCHANGE:
-			$phpName = $this->nochangeMethod($schemaName);
-			break;
-		case self::CONV_METHOD_UNDERSCORE:
-		default:
-			$phpName = $this->underscoreMethod($schemaName);
+			case self::CONV_METHOD_CLEAN:
+				$phpName = $this->cleanMethod($schemaName);
+				break;
+			case self::CONV_METHOD_PHPNAME:
+				$phpName = $this->phpnameMethod($schemaName);
+				break;
+			case self::CONV_METHOD_NOCHANGE:
+				$phpName = $this->nochangeMethod($schemaName);
+				break;
+			case self::CONV_METHOD_UNDERSCORE:
+			default:
+				$phpName = $this->underscoreMethod($schemaName);
 		}
 
 		return $phpName;
@@ -99,7 +99,8 @@ class PhpNameGenerator implements NameGenerator {
 	 * @see        NameGenerator
 	 * @see        #underscoreMethod()
 	 */
-	protected function underscoreMethod($schemaName) {
+	protected function underscoreMethod($schemaName)
+	{
 		$name = "";
 		$tok = strtok($schemaName, self::STD_SEPARATOR_CHAR);
 		while ($tok) {
@@ -108,7 +109,7 @@ class PhpNameGenerator implements NameGenerator {
 		}
 		return $name;
 	}
-
+	
 	/**
 	 * Converts a database schema name to php object name.  Removes
 	 * any character that is not a letter or a number and capitilizes 
@@ -122,12 +123,13 @@ class PhpNameGenerator implements NameGenerator {
 	 * @see        NameGenerator
 	 * @see        #underscoreMethod()
 	 */
-	protected function cleanMethod($schemaName) {
+	protected function cleanMethod($schemaName)
+	{
 		$name = "";
 		$regexp = '/([a-z0-9]+)/i';
 		$matches = array();
 		if (preg_match_all($regexp, $schemaName, $matches)) {
-			foreach ($matches[1] AS $tok) {
+			foreach($matches[1] AS $tok) {
 				$name .= ucfirst(strtolower($tok));
 			}
 		} else {
@@ -148,7 +150,8 @@ class PhpNameGenerator implements NameGenerator {
 	 * @see        NameGenerator
 	 * @see        #underscoreMethod(String)
 	 */
-	protected function phpnameMethod($schemaName) {
+	protected function phpnameMethod($schemaName)
+	{
 		$name = "";
 		$tok = strtok($schemaName, self::STD_SEPARATOR_CHAR);
 		while ($tok !== false) {
@@ -165,7 +168,8 @@ class PhpNameGenerator implements NameGenerator {
 	 * @param      string $name name to be converted.
 	 * @return     string The <code>name</code> parameter, unchanged.
 	 */
-	protected function nochangeMethod($name) {
+	protected function nochangeMethod($name)
+	{
 		return $name;
 	}
 }

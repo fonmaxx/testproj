@@ -55,9 +55,9 @@ class DefaultPlatform implements Platform {
 	 * Default constructor.
 	 * @param      PDO $con Optional database connection to use in this platform.
 	 */
-	public function __construct(PDO $con = null) {
-		if ($con)
-			$this->setConnection($con);
+	public function __construct(PDO $con = null)
+	{
+		if ($con) $this->setConnection($con);
 		$this->initialize();
 	}
 
@@ -65,7 +65,8 @@ class DefaultPlatform implements Platform {
 	 * Set the database connection to use for this Platform class.
 	 * @param      PDO $con Database connection to use in this platform.
 	 */
-	public function setConnection(PDO $con = null) {
+	public function setConnection(PDO $con = null)
+	{
 		$this->con = $con;
 	}
 
@@ -74,7 +75,8 @@ class DefaultPlatform implements Platform {
 	 *
 	 * @param      GeneratorConfig $config
 	 */
-	public function setGeneratorConfig(GeneratorConfig $config) {
+	public function setGeneratorConfig(GeneratorConfig $config)
+	{
 		$this->generatorConfig = $config;
 	}
 
@@ -83,7 +85,8 @@ class DefaultPlatform implements Platform {
 	 *
 	 * @return     GeneratorConfig
 	 */
-	public function getGeneratorConfig() {
+	public function getGeneratorConfig()
+	{
 		return $this->generatorConfig;
 	}
 
@@ -93,7 +96,8 @@ class DefaultPlatform implements Platform {
 	 * @param      string $name
 	 * @return     mixed
 	 */
-	protected function getBuildProperty($name) {
+	protected function getBuildProperty($name)
+	{
 		if ($this->generatorConfig !== null) {
 			return $this->generatorConfig->getBuildProperty($name);
 		}
@@ -104,34 +108,34 @@ class DefaultPlatform implements Platform {
 	 * Returns the database connection to use for this Platform class.
 	 * @return     PDO The database connection or NULL if none has been set.
 	 */
-	public function getConnection() {
+	public function getConnection()
+	{
 		return $this->con;
 	}
 
 	/**
 	 * Initialize the type -> Domain mapping.
 	 */
-	protected function initialize() {
+	protected function initialize()
+	{
 		$this->schemaDomainMap = array();
 		foreach (PropelTypes::getPropelTypes() as $type) {
 			$this->schemaDomainMap[$type] = new Domain($type);
 		}
 		// BU_* no longer needed, so map these to the DATE/TIMESTAMP domains
-		$this->schemaDomainMap[PropelTypes::BU_DATE] = new Domain(
-				PropelTypes::DATE);
-		$this->schemaDomainMap[PropelTypes::BU_TIMESTAMP] = new Domain(
-				PropelTypes::TIMESTAMP);
+		$this->schemaDomainMap[PropelTypes::BU_DATE] = new Domain(PropelTypes::DATE);
+		$this->schemaDomainMap[PropelTypes::BU_TIMESTAMP] = new Domain(PropelTypes::TIMESTAMP);
 
 		// Boolean is a bit special, since typically it must be mapped to INT type.
-		$this->schemaDomainMap[PropelTypes::BOOLEAN] = new Domain(
-				PropelTypes::BOOLEAN, "INTEGER");
+		$this->schemaDomainMap[PropelTypes::BOOLEAN] = new Domain(PropelTypes::BOOLEAN, "INTEGER");
 	}
 
 	/**
 	 * Adds a mapping entry for specified Domain.
 	 * @param      Domain $domain
 	 */
-	protected function setSchemaDomainMapping(Domain $domain) {
+	protected function setSchemaDomainMapping(Domain $domain)
+	{
 		$this->schemaDomainMap[$domain->getType()] = $domain;
 	}
 
@@ -140,35 +144,36 @@ class DefaultPlatform implements Platform {
 	 * For example MysqlPlatform->getDatabaseType() returns 'mysql'.
 	 * @return     string
 	 */
-	public function getDatabaseType() {
+	public function getDatabaseType()
+	{
 		$clazz = get_class($this);
 		$pos = strpos($clazz, 'Platform');
-		return strtolower(substr($clazz, 0, $pos));
+		return strtolower(substr($clazz,0,$pos));
 	}
 
 	/**
 	 * @see        Platform::getMaxColumnNameLength()
 	 */
-	public function getMaxColumnNameLength() {
+	public function getMaxColumnNameLength()
+	{
 		return 64;
 	}
 
 	/**
 	 * @see        Platform::getNativeIdMethod()
 	 */
-	public function getNativeIdMethod() {
+	public function getNativeIdMethod()
+	{
 		return Platform::IDENTITY;
 	}
 
 	/**
 	 * @see        Platform::getDomainForType()
 	 */
-	public function getDomainForType($propelType) {
+	public function getDomainForType($propelType)
+	{
 		if (!isset($this->schemaDomainMap[$propelType])) {
-			throw new EngineException(
-					"Cannot map unknown Propel type "
-							. var_export($propelType, true)
-							. " to native database type.");
+			throw new EngineException("Cannot map unknown Propel type " . var_export($propelType, true) . " to native database type.");
 		}
 		return $this->schemaDomainMap[$propelType];
 	}
@@ -177,35 +182,40 @@ class DefaultPlatform implements Platform {
 	 * @return     string Returns the SQL fragment to use if null values are disallowed.
 	 * @see        Platform::getNullString(boolean)
 	 */
-	public function getNullString($notNull) {
+	public function getNullString($notNull)
+	{
 		return ($notNull ? "NOT NULL" : "");
 	}
 
 	/**
 	 * @see        Platform::getAutoIncrement()
 	 */
-	public function getAutoIncrement() {
+	public function getAutoIncrement()
+	{
 		return "IDENTITY";
 	}
 
 	/**
 	 * @see        Platform::hasScale(String)
 	 */
-	public function hasScale($sqlType) {
+	public function hasScale($sqlType)
+	{
 		return true;
 	}
 
 	/**
 	 * @see        Platform::hasSize(String)
 	 */
-	public function hasSize($sqlType) {
+	public function hasSize($sqlType)
+	{
 		return true;
 	}
 
 	/**
 	 * @see        Platform::quote()
 	 */
-	public function quote($text) {
+	public function quote($text)
+	{
 		if ($this->getConnection()) {
 			return $this->getConnection()->quote($text);
 		} else {
@@ -222,46 +232,50 @@ class DefaultPlatform implements Platform {
 	 * @param      string $text Text that needs to be escaped.
 	 * @return     string
 	 */
-	protected function disconnectedEscapeText($text) {
+	protected function disconnectedEscapeText($text)
+	{
 		return str_replace("'", "''", $text);
 	}
 
 	/**
 	 * @see        Platform::quoteIdentifier()
 	 */
-	public function quoteIdentifier($text) {
+	public function quoteIdentifier($text)
+	{
 		return '"' . $text . '"';
 	}
 
 	/**
 	 * @see        Platform::supportsNativeDeleteTrigger()
 	 */
-	public function supportsNativeDeleteTrigger() {
+	public function supportsNativeDeleteTrigger()
+	{
 		return false;
 	}
 
 	/**
 	 * @see        Platform::supportsInsertNullPk()
 	 */
-	public function supportsInsertNullPk() {
+	public function supportsInsertNullPk()
+	{
 		return true;
 	}
-
+	
 	/**
 	 * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
 	 * @return     boolean
 	 */
-	public function hasStreamBlobImpl() {
+	public function hasStreamBlobImpl()
+	{
 		return false;
 	}
 
 	/**
 	 * @see        Platform::getBooleanString()
 	 */
-	public function getBooleanString($b) {
-		$b = ($b === true || strtolower($b) === 'true' || $b === 1
-				|| $b === '1' || strtolower($b) === 'y'
-				|| strtolower($b) === 'yes');
+	public function getBooleanString($b)
+	{
+		$b = ($b === true || strtolower($b) === 'true' || $b === 1 || $b === '1' || strtolower($b) === 'y' || strtolower($b) === 'yes');
 		return ($b ? '1' : '0');
 	}
 
@@ -269,7 +283,8 @@ class DefaultPlatform implements Platform {
 	 * Gets the preferred timestamp formatter for setting date/time values.
 	 * @return     string
 	 */
-	public function getTimestampFormatter() {
+	public function getTimestampFormatter()
+	{
 		return DateTime::ISO8601;
 	}
 
@@ -277,7 +292,8 @@ class DefaultPlatform implements Platform {
 	 * Gets the preferred time formatter for setting date/time values.
 	 * @return     string
 	 */
-	public function getTimeFormatter() {
+	public function getTimeFormatter()
+	{
 		return 'H:i:s';
 	}
 
@@ -285,7 +301,8 @@ class DefaultPlatform implements Platform {
 	 * Gets the preferred date formatter for setting date/time values.
 	 * @return     string
 	 */
-	public function getDateFormatter() {
+	public function getDateFormatter()
+	{
 		return 'Y-m-d';
 	}
 

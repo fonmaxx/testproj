@@ -1,5 +1,4 @@
-<form action="<?php echo url_for(
-		'attachment/' . sfContext::getInstance()->getActionName()) ?>" method="post" enctype="multipart/form-data">
+<form action="<?php echo url_for('attachment/'.sfContext::getInstance()->getActionName()) ?>" method="post" enctype="multipart/form-data">
   <table>
     <?php echo $form ?>
     <tr>

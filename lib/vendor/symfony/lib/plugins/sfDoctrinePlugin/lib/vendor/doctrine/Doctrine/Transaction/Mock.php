@@ -32,5 +32,5 @@
  * @since       1.0
  * @version     $Revision$
  */
-class Doctrine_Transaction_Mock extends Doctrine_Transaction {
-}
+class Doctrine_Transaction_Mock extends Doctrine_Transaction
+{ }

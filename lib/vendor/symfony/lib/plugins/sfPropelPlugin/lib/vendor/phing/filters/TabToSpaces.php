@@ -18,7 +18,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>.
- */
+*/
 
 require_once 'phing/filters/BaseParamFilterReader.php';
 require_once 'phing/filters/ChainableReader.php';
@@ -44,100 +44,101 @@ require_once 'phing/filters/ChainableReader.php';
  */
 class TabToSpaces extends BaseParamFilterReader implements ChainableReader {
 
-	/**
-	 * The default tab length. 
-	 * @var int
-	 */
-	const DEFAULT_TAB_LENGTH = 8;
+    /**
+     * The default tab length. 
+     * @var int
+     */
+    const DEFAULT_TAB_LENGTH = 8;
+    
+    /**
+     * Parameter name for the length of a tab.
+     * @var string
+     */
+    const TAB_LENGTH_KEY = "tablength";
+    
+    /**
+     * Tab length in this filter.
+     * @var int
+     */  
+    private $tabLength = 8; //self::DEFAULT_TAB_LENGTH;    
 
-	/**
-	 * Parameter name for the length of a tab.
-	 * @var string
-	 */
-	const TAB_LENGTH_KEY = "tablength";
+    /**
+     * Returns stream after converting tabs to the specified number of spaces.
+     * 
+     * @return the resulting stream, or -1
+     *         if the end of the resulting stream has been reached
+     * 
+     * @exception IOException if the underlying stream throws an IOException
+     *            during reading     
+     */
+    function read($len = null) {
+    
+        if ( !$this->getInitialized() ) {
+            $this->_initialize();
+            $this->setInitialized(true);
+        }
 
-	/**
-	 * Tab length in this filter.
-	 * @var int
-	 */ 
-	private $tabLength = 8; //self::DEFAULT_TAB_LENGTH;    
+          $buffer = $this->in->read($len);
+        
+        if($buffer === -1) {
+            return -1;
+        }
+        
+        $buffer = str_replace("\t", str_repeat(' ', $this->tabLength), $buffer);
+        
+        return $buffer;        
+    }
+    
+    /**
+     * Sets the tab length.
+     * 
+     * @param int $tabLength The number of spaces to be used when converting a tab.
+     */
+    function setTablength($tabLength) {
+        $this->tabLength = (int) $tabLength;
+    }
 
-	/**
-	 * Returns stream after converting tabs to the specified number of spaces.
-	 * 
-	 * @return the resulting stream, or -1
-	 *         if the end of the resulting stream has been reached
-	 * 
-	 * @exception IOException if the underlying stream throws an IOException
-	 *            during reading     
-	 */
-	function read($len = null) {
+    /**
+     * Returns the tab length.
+     * 
+     * @return int The number of spaces used when converting a tab
+     */
+    function getTablength() {
+        return $this->tabLength;
+    }
 
-		if (!$this->getInitialized()) {
-			$this->_initialize();
-			$this->setInitialized(true);
-		}
+    /**
+     * Creates a new TabsToSpaces using the passed in
+     * Reader for instantiation.
+     * 
+     * @param Reader $reader A Reader object providing the underlying stream.
+     *               Must not be <code>null</code>.
+     * 
+     * @return Reader A new filter based on this configuration, but filtering
+     *         the specified reader
+     */
+    function chain(Reader $reader) {
+        $newFilter = new TabToSpaces($reader);
+        $newFilter->setTablength($this->getTablength());
+        $newFilter->setInitialized(true);
+        $newFilter->setProject($this->getProject());        
+        return $newFilter;
+    }
 
-		$buffer = $this->in->read($len);
-
-		if ($buffer === -1) {
-			return -1;
-		}
-
-		$buffer = str_replace("\t", str_repeat(' ', $this->tabLength), $buffer);
-
-		return $buffer;
-	}
-
-	/**
-	 * Sets the tab length.
-	 * 
-	 * @param int $tabLength The number of spaces to be used when converting a tab.
-	 */
-	function setTablength($tabLength) {
-		$this->tabLength = (int) $tabLength;
-	}
-
-	/**
-	 * Returns the tab length.
-	 * 
-	 * @return int The number of spaces used when converting a tab
-	 */
-	function getTablength() {
-		return $this->tabLength;
-	}
-
-	/**
-	 * Creates a new TabsToSpaces using the passed in
-	 * Reader for instantiation.
-	 * 
-	 * @param Reader $reader A Reader object providing the underlying stream.
-	 *               Must not be <code>null</code>.
-	 * 
-	 * @return Reader A new filter based on this configuration, but filtering
-	 *         the specified reader
-	 */
-	function chain(Reader $reader) {
-		$newFilter = new TabToSpaces($reader);
-		$newFilter->setTablength($this->getTablength());
-		$newFilter->setInitialized(true);
-		$newFilter->setProject($this->getProject());
-		return $newFilter;
-	}
-
-	/**
-	 * Parses the parameters to set the tab length.
-	 */
-	private function _initialize() {
-		$params = $this->getParameters();
-		if ($params !== null) {
-			for ($i = 0; $i < count($params); $i++) {
-				if (self::TAB_LENGTH_KEY === $params[$i]->getName()) {
-					$this->tabLength = $params[$i]->getValue();
-					break;
-				}
-			}
-		}
-	}
+    /**
+     * Parses the parameters to set the tab length.
+     */
+    private function _initialize() {
+        $params = $this->getParameters();
+        if ( $params !== null ) {
+            for($i = 0 ; $i<count($params) ; $i++) {
+                if (self::TAB_LENGTH_KEY === $params[$i]->getName()) {
+                    $this->tabLength = $params[$i]->getValue();
+                    break;
+                }
+            }
+        }
+    }
 }
+
 

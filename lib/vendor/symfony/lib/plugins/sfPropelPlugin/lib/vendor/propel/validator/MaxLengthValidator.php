@@ -40,9 +40,11 @@
  * @version    $Revision: 1262 $
  * @package    propel.validator
  */
-class MaxLengthValidator implements BasicValidator {
+class MaxLengthValidator implements BasicValidator
+{
 
-	public function isValid(ValidatorMap $map, $str) {
-		return strlen($str) <= intval($map->getValue());
-	}
+  public function isValid (ValidatorMap $map, $str)
+  {
+	return strlen($str) <= intval($map->getValue());
+  }
 }

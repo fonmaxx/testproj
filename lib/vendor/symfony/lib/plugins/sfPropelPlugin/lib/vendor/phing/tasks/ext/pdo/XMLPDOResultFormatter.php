@@ -69,7 +69,7 @@ class XMLPDOResultFormatter extends PDOResultFormatter {
 	 * @var boolean
 	 */
 	private $formatOutput = true;
-
+	
 	/**
 	 * Set the DOM document encoding.
 	 * @param string $v
@@ -77,7 +77,7 @@ class XMLPDOResultFormatter extends PDOResultFormatter {
 	public function setEncoding($v) {
 		$this->encoding = $v;
 	}
-
+	
 	/**
 	 * @param boolean $v
 	 */
@@ -91,31 +91,31 @@ class XMLPDOResultFormatter extends PDOResultFormatter {
 		$this->doc->appendChild($this->rootNode);
 		$this->doc->formatOutput = $this->formatOutput;
 	}
-
+	
 	/**
 	 * Processes a specific row from PDO result set.
 	 *
 	 * @param array $row Row of PDO result set.
 	 */
 	public function processRow($row) {
-
+		
 		$rowNode = $this->doc->createElement('row');
 		$this->rootNode->appendChild($rowNode);
 
-		foreach ($row as $columnName => $columnValue) {
-
+		foreach($row as $columnName => $columnValue) {
+			
 			$colNode = $this->doc->createElement('column');
 			$colNode->setAttribute('name', $columnName);
-
+			
 			if ($columnValue != null) {
 				$columnValue = trim($columnValue);
 				$colNode->nodeValue = $columnValue;
 			}
 			$rowNode->appendChild($colNode);
 		}
-
+		
 	}
-
+	
 	/**
 	 * Gets a preferred filename for an output file.
 	 * 
@@ -124,10 +124,11 @@ class XMLPDOResultFormatter extends PDOResultFormatter {
 	 * 
 	 * @return string
 	 */
-	public function getPreferredOutfile() {
+	public function getPreferredOutfile()
+	{
 		return new PhingFile('results.xml');
 	}
-
+	
 	/**
 	 * Write XML to file and free the DOM objects.
 	 */

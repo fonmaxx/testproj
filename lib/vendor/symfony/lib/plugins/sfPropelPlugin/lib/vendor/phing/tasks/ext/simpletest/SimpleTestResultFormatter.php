@@ -31,26 +31,28 @@ require_once 'phing/system/io/Writer.php';
  * @package phing.tasks.ext.phpunit2
  * @since 2.2.0
  */
-abstract class SimpleTestResultFormatter extends SimpleReporter {
+abstract class SimpleTestResultFormatter extends SimpleReporter
+{
 	protected $out = NULL;
-
+	
 	protected $project = NULL;
-
+	
 	private $timer = NULL;
 
 	private $runCount = 0;
-
+	
 	private $failureCount = 0;
-
-	private $errorCount = 0;
+	
+	private $errorCount = 0;	
 
 	private $currentTest = "";
-
+	
 	/**
 	 * Sets the writer the formatter is supposed to write its results to.
-	 */
-	function setOutput(Writer $out) {
-		$this->out = $out;
+   	 */
+	function setOutput(Writer $out)
+	{
+		$this->out = $out;	
 	}
 
 	/**
@@ -58,7 +60,8 @@ abstract class SimpleTestResultFormatter extends SimpleReporter {
 	 *
 	 * @return string the extension
 	 */
-	function getExtension() {
+	function getExtension()
+	{
 		return "";
 	}
 
@@ -67,75 +70,91 @@ abstract class SimpleTestResultFormatter extends SimpleReporter {
 	 *
 	 * @param Project the project
 	 */
-	function setProject(Project $project) {
+	function setProject(Project $project)
+	{
 		$this->project = $project;
 	}
-
-	function getPreferredOutfile() {
+	
+	function getPreferredOutfile()
+	{
 		return "";
 	}
-
-	function paintMethodStart($test_name) {
+	
+	function paintMethodStart($test_name)
+	{
 		parent::paintMethodStart($test_name);
-
+		
 		$this->currentTest = $test_name;
 	}
-
-	function paintMethodEnd($test_name) {
+	
+	function paintMethodEnd($test_name)
+	{
 		parent::paintMethodEnd($test_name);
-
+		
 		$this->runCount++;
 	}
-
-	function paintCaseStart($test_name) {
+	
+	function paintCaseStart($test_name)
+	{
 		parent::paintCaseStart($test_name);
-
+		
 		$this->runCount = 0;
 		$this->failureCount = 0;
 		$this->errorCount = 0;
-
+		
 		$this->timer = new Timer();
 		$this->timer->start();
 	}
-
-	function paintCaseEnd($test_name) {
+		
+	function paintCaseEnd($test_name)
+	{
 		parent::paintCaseEnd($test_name);
-
+		
 		$this->timer->stop();
 	}
 
-	function paintError($message) {
+	function paintError($message)
+	{
 		parent::paintError($message);
-
+		
 		$this->errorCount++;
 	}
 
-	function paintFail($message) {
+	function paintFail($message)
+	{
 		parent::paintFail($message);
-
+		
 		$this->failureCount++;
 	}
 
-	function getRunCount() {
+	function getRunCount()
+	{
 		return $this->runCount;
 	}
-
-	function getFailureCount() {
+	
+	function getFailureCount()
+	{
 		return $this->failureCount;
 	}
-
-	function getErrorCount() {
+	
+	function getErrorCount()
+	{
 		return $this->errorCount;
 	}
-
-	function getTestName() {
+	
+	function getTestName()
+	{
 		return $this->currentTest;
 	}
-
-	function getElapsedTime() {
-		if ($this->timer) {
+	
+	function getElapsedTime()
+	{
+		if ($this->timer)
+		{
 			return $this->timer->getElapsedTime();
-		} else {
+		}
+		else
+		{
 			return 0;
 		}
 	}

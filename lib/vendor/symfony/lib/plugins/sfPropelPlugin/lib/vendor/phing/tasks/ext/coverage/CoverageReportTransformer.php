@@ -33,35 +33,41 @@ require_once 'phing/util/ExtendedFileStream.php';
  * @package phing.tasks.ext.coverage
  * @since 2.1.0
  */
-class CoverageReportTransformer {
+class CoverageReportTransformer
+{
 	private $task = NULL;
 	private $styleDir = "";
 	private $toDir = "";
 	private $document = NULL;
 
-	function __construct(Task $task) {
+	function __construct(Task $task)
+	{
 		$this->task = $task;
 	}
 
-	function setStyleDir($styleDir) {
+	function setStyleDir($styleDir)
+	{
 		$this->styleDir = $styleDir;
 	}
 
-	function setToDir($toDir) {
+	function setToDir($toDir)
+	{
 		$this->toDir = $toDir;
 	}
 
-	function setXmlDocument($document) {
+	function setXmlDocument($document)
+	{
 		$this->document = $document;
 	}
 
-	function transform() {
-		$dir = new PhingFile($this->toDir);
+	function transform()
+	{
+        $dir = new PhingFile($this->toDir);
 
-		if (!$dir->exists()) {
-			throw new BuildException(
-					"Directory '" . $this->toDir . "' does not exist");
-		}
+        if (!$dir->exists())
+        {
+            throw new BuildException("Directory '" . $this->toDir . "' does not exist");
+        }
 
 		$xslfile = $this->getStyleSheet();
 
@@ -79,27 +85,33 @@ class CoverageReportTransformer {
 		$proc->transformToXML($this->document);
 	}
 
-	private function getStyleSheet() {
+	private function getStyleSheet()
+	{
 		$xslname = "coverage-frames.xsl";
 
-		if ($this->styleDir) {
+		if ($this->styleDir)
+		{
 			$file = new PhingFile($this->styleDir, $xslname);
-		} else {
+		}
+		else
+		{
 			$path = Phing::getResourcePath("phing/etc/$xslname");
-
-			if ($path === NULL) {
+			
+			if ($path === NULL)
+			{
 				$path = Phing::getResourcePath("etc/$xslname");
 
-				if ($path === NULL) {
-					throw new BuildException(
-							"Could not find $xslname in resource path");
+				if ($path === NULL)
+				{
+					throw new BuildException("Could not find $xslname in resource path");
 				}
 			}
-
+			
 			$file = new PhingFile($path);
 		}
 
-		if (!$file->exists()) {
+		if (!$file->exists())
+		{
 			throw new BuildException("Could not find file " . $file->getPath());
 		}
 

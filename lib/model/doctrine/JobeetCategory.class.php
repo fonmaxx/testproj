@@ -32,4 +32,14 @@ class JobeetCategory extends BaseJobeetCategory
 	{
   		return $this->getActiveJobsQuery()->count();
 	}
+	public function getLatestPost()
+	{
+		return $this->getActiveJobs(1)->getFirst();
+	}
+	public function save(Doctrine_Connection $conn = null)
+	{
+	$this->setSlug(Jobeet::slugify($this->getName()));
+	return parent::save($conn);
+	}
+
 }

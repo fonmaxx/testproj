@@ -36,211 +36,199 @@ include_once 'phing/system/io/ConsoleReader.php';
  * @deprecated - in favor of the more capable InputTask
  */ 
 class PropertyPromptTask extends Task {
-
+	
 	/**
 	 * The property name to set with the output.
 	 * @var string
 	 */
-	private $propertyName; // required
+    private $propertyName;        // required
+    
+    /**
+     * The default value to use if no input is entered.
+     * @var string
+     */
+    private $defaultValue;
+    
+    /**
+     * The entered value.
+     * @var string
+     */
+    private $proposedValue;
+    
+    /**
+     * The text to use for the prompt.
+     * @var string
+     */
+    private $promptText;
+    
+    /**
+     * The character to put after the text.
+     * @var string
+     */
+    private $promptCharacter;
+    
+    /**
+     * 
+     */
+    private $useExistingValue;
 
-	/**
-	 * The default value to use if no input is entered.
-	 * @var string
-	 */
-	private $defaultValue;
+    /**
+     * Run the PropertyPrompt task.
+     * @throws BuildException
+     */
+    public function main() {
+    	
+        $this->proposedValue = $this->project->getProperty($this->propertyName);
+        $currentValue = $this->defaultValue;
+        
+        if ($currentValue == "" && $this->proposedValue !== null) {
+        		$currentValue = $this->proposedValue;
+       	}
+       	
+        if ($this->useExistingValue !== true || $this->proposedValue === null) {
+                        
+            $this->log("Prompting user for " . $this->propertyName . ". " . $this->getDefaultMessage(), Project::MSG_VERBOSE);
+            
+            print "\n" . $this->promptText . " [" . $currentValue . "] " . $this->promptCharacter . " ";
 
-	/**
-	 * The entered value.
-	 * @var string
-	 */
-	private $proposedValue;
-
-	/**
-	 * The text to use for the prompt.
-	 * @var string
-	 */
-	private $promptText;
-
-	/**
-	 * The character to put after the text.
-	 * @var string
-	 */
-	private $promptCharacter;
-
-	/**
-	 * 
-	 */
-	private $useExistingValue;
-
-	/**
-	 * Run the PropertyPrompt task.
-	 * @throws BuildException
-	 */
-	public function main() {
-
-		$this->proposedValue = $this->project->getProperty($this->propertyName);
-		$currentValue = $this->defaultValue;
-
-		if ($currentValue == "" && $this->proposedValue !== null) {
-			$currentValue = $this->proposedValue;
-		}
-
-		if ($this->useExistingValue !== true || $this->proposedValue === null) {
-
-			$this
-					->log(
-							"Prompting user for " . $this->propertyName . ". "
-									. $this->getDefaultMessage(),
-							Project::MSG_VERBOSE);
-
-			print 
-					"\n" . $this->promptText . " [" . $currentValue . "] "
-							. $this->promptCharacter . " ";
-
-			/** future version should probably have hooks for validation of user input.*/
-			$reader = new ConsoleReader();
-
-			try {
-				$this->proposedValue = $reader->readLine();
-			} catch (IOException $e) {
-				$this
-						->log(
-								"Prompt failed. Using default. (Failure reason: "
-										. $e->getMessage() . ")");
-				$this->proposedValue = $this->defaultValue;
-			}
-
-			if ($this->proposedValue === "") {
-				$this
-						->log("No value specified, using default.",
-								Project::MSG_VERBOSE);
-				$this->proposedValue = $this->defaultValue;
-			}
-
-			if (isset($this->proposedValue) && $this->proposedValue !== "") {
-				$this->project
-						->setProperty($this->propertyName, $this->proposedValue);
-			}
-
-		}
-	}
-
-	/**
-	 * Returns a string to be inserted in the log message
-	 * indicating whether a default response was specified
-	 * in the build file.
-	 */
-	private function getDefaultMessage() {
-		if ($this->defaultValue == "") {
-			return "No default response specified.";
-		} else
-			return "Default response is " . $this->defaultValue . ".";
-	}
-
-	/**
-	 * Returns defaultValue specified 
-	 * in this task for the Property
-	 * being set.
-	 * @return string
-	 */
-	public function getDefaultValue() {
-		return $this->defaultValue;
-	}
-
-	/**
-	 * Returns the terminating character used to 
-	 * punctuate the prompt text.
-	 * @return string
-	 */
-	public function getPromptCharacter() {
-		return $this->promptCharacter;
-	}
-
-	/**
-	 * Returns text of the prompt.
-	 * @return java.lang.String
-	 */
-	public function getPromptText() {
-		return $this->promptText;
-	}
-
-	/**
-	 * Returns name of the Ant Project Property
-	 * being set by this task.
-	 * @return string
-	 */
-	public function getPropertyName() {
-		return $this->propertyName;
-	}
-	/**
-	 * Initializes this task.
-	 */
-	public function init() {
-		parent::init();
-		$this->defaultValue = "";
-		$this->promptCharacter = "?";
-		$this->useExistingValue = false;
-	}
-
-	/**
-	 * Insert the method's description here.
-	 * Creation date: (12/10/2001 8:16:16 AM)
-	 * @return boolean
-	 */
-	public function isUseExistingValue() {
-		return $this->useExistingValue;
-	}
-
-	/**
-	 * Sets defaultValue for the Property
-	 * being set by this task.
-	 * @param string $newDefaultvalue
-	 */
-	public function setDefaultvalue($newDefaultvalue) {
-		$this->defaultValue = $newDefaultvalue;
-	}
-
-	/**
-	 * Sets the terminating character used to 
-	 * punctuate the prompt text (default is "?").
-	 * @param string $newPromptcharacter
-	 */
-	public function setPromptCharacter($newPromptcharacter) {
-		$this->promptCharacter = $newPromptcharacter;
-	}
-
-	/**
-	 * Sets text of the prompt.
-	 * @param string $newPrompttext
-	 */
-	public function setPromptText($newPrompttext) {
-		$this->promptText = $newPrompttext;
-	}
-
-	/**
-	 * Specifies the Phing Project Property
-	 * being set by this task.
-	 * @param newPropertyname java.lang.String
-	 */
-	public function setPropertyName($newPropertyname) {
-		$this->propertyName = $newPropertyname;
-	}
-
-	/**
-	 * 
-	 * @param boolean $newUseExistingValue
-	 */
-	public function setUseExistingValue($newUseExistingValue) {
-		$this->useExistingValue = $newUseExistingValue;
-	}
-
-	/**
-	 * Sets the prompt text that will be presented to the user.
-	 * @param string $prompt
-	 * @return void
-	 */
-	public function addText($prompt) {
-		$this->setPromptText($prompt);
-	}
-
+            /** future version should probably have hooks for validation of user input.*/
+            $reader = new ConsoleReader();
+            
+            try {
+                $this->proposedValue  = $reader->readLine();
+            } catch (IOException $e) {
+                $this->log("Prompt failed. Using default. (Failure reason: " . $e->getMessage().")");
+                $this->proposedValue = $this->defaultValue;
+            }
+            
+            if ($this->proposedValue === "") {
+                $this->log("No value specified, using default.", Project::MSG_VERBOSE);
+                $this->proposedValue = $this->defaultValue;
+            }
+            
+            if (isset($this->proposedValue) && $this->proposedValue !== "") {                    
+                $this->project->setProperty($this->propertyName, $this->proposedValue);
+            }
+             
+        }    
+    }
+    
+    /**
+     * Returns a string to be inserted in the log message
+     * indicating whether a default response was specified
+     * in the build file.
+     */
+    private function getDefaultMessage() {
+        if ($this->defaultValue == "") {
+            return "No default response specified.";
+        } else return "Default response is " . $this->defaultValue . ".";
+    }
+    
+    /**
+     * Returns defaultValue specified 
+     * in this task for the Property
+     * being set.
+     * @return string
+     */
+    public function getDefaultValue() {
+        return $this->defaultValue;
+    }
+    
+    /**
+     * Returns the terminating character used to 
+     * punctuate the prompt text.
+     * @return string
+     */
+    public function getPromptCharacter() {
+        return $this->promptCharacter;
+    }
+    
+    /**
+     * Returns text of the prompt.
+     * @return java.lang.String
+     */
+    public function getPromptText() {
+        return $this->promptText;
+    }
+    
+    /**
+     * Returns name of the Ant Project Property
+     * being set by this task.
+     * @return string
+     */
+    public function getPropertyName() {
+        return $this->propertyName;
+    }
+    /**
+     * Initializes this task.
+     */
+    public function init() {
+        parent::init();
+        $this->defaultValue    = "";
+        $this->promptCharacter = "?";
+        $this->useExistingValue = false;
+    }
+        
+    /**
+     * Insert the method's description here.
+     * Creation date: (12/10/2001 8:16:16 AM)
+     * @return boolean
+     */
+    public function isUseExistingValue() {
+        return $this->useExistingValue;
+    }
+    
+    /**
+     * Sets defaultValue for the Property
+     * being set by this task.
+     * @param string $newDefaultvalue
+     */
+    public function setDefaultvalue($newDefaultvalue) {
+        $this->defaultValue = $newDefaultvalue;
+    }
+    
+    /**
+     * Sets the terminating character used to 
+     * punctuate the prompt text (default is "?").
+     * @param string $newPromptcharacter
+     */
+    public function setPromptCharacter($newPromptcharacter) {
+        $this->promptCharacter = $newPromptcharacter;
+    }
+    
+    /**
+     * Sets text of the prompt.
+     * @param string $newPrompttext
+     */
+    public function setPromptText($newPrompttext) {
+        $this->promptText = $newPrompttext;
+    }
+    
+    /**
+     * Specifies the Phing Project Property
+     * being set by this task.
+     * @param newPropertyname java.lang.String
+     */
+    public function setPropertyName($newPropertyname) {
+        $this->propertyName = $newPropertyname;
+    }
+    
+    /**
+     * 
+     * @param boolean $newUseExistingValue
+     */
+    public function setUseExistingValue($newUseExistingValue) {
+        $this->useExistingValue = $newUseExistingValue;
+    }
+    
+    /**
+     * Sets the prompt text that will be presented to the user.
+     * @param string $prompt
+     * @return void
+     */
+    public function addText($prompt) {
+        $this->setPromptText($prompt);
+    }
+    
+    
 }

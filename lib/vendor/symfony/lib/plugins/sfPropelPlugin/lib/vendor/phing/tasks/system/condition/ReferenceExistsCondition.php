@@ -19,8 +19,7 @@
  * <http://phing.info>.
  */
 
-require_once 'phing/ProjectComponent.php';
-require_once 'phing/tasks/system/condition/Condition.php';
+require_once 'phing/ProjectComponent.php'; require_once 'phing/tasks/system/condition/Condition.php';
 
 /**
  * Condition that tests whether a given reference exists.
@@ -29,26 +28,25 @@ require_once 'phing/tasks/system/condition/Condition.php';
  * @version $Revision: 1.1 $
  * @package phing.tasks.system.condition  */
 class ReferenceExistsCondition extends ProjectComponent implements Condition {
+    
+    private $refid;
 
-	private $refid;
+    public function setRef($id) {
+      $this->refid = (string) $id;
+    }
 
-	public function setRef($id) {
-		$this->refid = (string) $id;
-	}
-
-	/**
-	 * Check whether the reference exists.
-	 * @throws BuildException
-	 */
-	public function evaluate() {
-		if ($this->refid === null) {
-			throw new BuildException(
-					"No ref attribute specified for reference-exists "
-							. "condition");
-		}
-		$refs = $this->project->getReferences();
-		return isset($refs[$this->refid]);
-	}
+    /**
+     * Check whether the reference exists.
+     * @throws BuildException
+     */
+    public function evaluate()  {
+        if ($this->refid === null) {
+            throw new BuildException("No ref attribute specified for reference-exists "
+                                     . "condition");
+        }        
+        $refs = $this->project->getReferences();
+        return isset($refs[$this->refid]);
+    }
 
 }
 

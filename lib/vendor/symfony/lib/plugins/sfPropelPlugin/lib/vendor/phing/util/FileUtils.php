@@ -36,269 +36,259 @@ include_once 'phing/system/io/PhingFile.php';
  * @version  $Revision: 1.10 $
  */
 class FileUtils {
+        
+    /**
+     * Returns a new Reader with filterchains applied.  If filterchains are empty,
+     * simply returns passed reader.
+     * 
+     * @param Reader $in Reader to modify (if appropriate).
+     * @param array &$filterChains filter chains to apply.
+     * @param Project $project
+     * @return Reader Assembled Reader (w/ filter chains).
+     */
+    public static function getChainedReader(Reader $in, &$filterChains, Project $project) {
+        if (!empty($filterChains)) {
+            $crh = new ChainReaderHelper();
+            $crh->setBufferSize(65536); // 64k buffer, but isn't being used (yet?)
+            $crh->setPrimaryReader($in);
+            $crh->setFilterChains($filterChains);
+            $crh->setProject($project);
+            $rdr = $crh->getAssembledReader();
+            return $rdr;
+        } else {
+            return $in;
+        }
+    }
+    
+    /**
+     * Copies a file using filter chains.
+     * 
+     * @param PhingFile $sourceFile
+     * @param PhingFile $destFile
+     * @param boolean $overwrite
+     * @param boolean $preserveLastModified
+     * @param array $filterChains 
+     * @param Project $project
+     * @return void
+     */
+    function copyFile(PhingFile $sourceFile, PhingFile $destFile, $overwrite = false, $preserveLastModified = true, &$filterChains = null, Project $project) {
+       
+        if ($overwrite || !$destFile->exists() || $destFile->lastModified() < $sourceFile->lastModified()) {
+            if ($destFile->exists() && $destFile->isFile()) {
+                $destFile->delete();
+            }
 
-	/**
-	 * Returns a new Reader with filterchains applied.  If filterchains are empty,
-	 * simply returns passed reader.
-	 * 
-	 * @param Reader $in Reader to modify (if appropriate).
-	 * @param array &$filterChains filter chains to apply.
-	 * @param Project $project
-	 * @return Reader Assembled Reader (w/ filter chains).
-	 */
-	public static function getChainedReader(Reader $in, &$filterChains,
-			Project $project) {
-		if (!empty($filterChains)) {
-			$crh = new ChainReaderHelper();
-			$crh->setBufferSize(65536); // 64k buffer, but isn't being used (yet?)
-			$crh->setPrimaryReader($in);
-			$crh->setFilterChains($filterChains);
-			$crh->setProject($project);
-			$rdr = $crh->getAssembledReader();
-			return $rdr;
-		} else {
-			return $in;
-		}
-	}
+            // ensure that parent dir of dest file exists!
+            $parent = $destFile->getParentFile();
+            if ($parent !== null && !$parent->exists()) {
+                $parent->mkdirs();
+            }
 
-	/**
-	 * Copies a file using filter chains.
-	 * 
-	 * @param PhingFile $sourceFile
-	 * @param PhingFile $destFile
-	 * @param boolean $overwrite
-	 * @param boolean $preserveLastModified
-	 * @param array $filterChains 
-	 * @param Project $project
-	 * @return void
-	 */
-	function copyFile(PhingFile $sourceFile, PhingFile $destFile,
-			$overwrite = false, $preserveLastModified = true,
-			&$filterChains = null, Project $project) {
+            if ((is_array($filterChains)) && (!empty($filterChains))) {
+                
+                $in = self::getChainedReader(new BufferedReader(new FileReader($sourceFile)), $filterChains, $project);
+                $out = new BufferedWriter(new FileWriter($destFile));                
+                
+                // New read() methods returns a big buffer.                
+                while(-1 !== ($buffer = $in->read())) { // -1 indicates EOF
+                    $out->write($buffer);
+                }
+                
+                if ( $in !== null )
+                    $in->close();
+                if ( $out !== null )
+                    $out->close();
+            } else {
+                // simple copy (no filtering)
+                $sourceFile->copyTo($destFile);
+            }
 
-		if ($overwrite || !$destFile->exists()
-				|| $destFile->lastModified() < $sourceFile->lastModified()) {
-			if ($destFile->exists() && $destFile->isFile()) {
-				$destFile->delete();
-			}
+            if ($preserveLastModified) {
+                $destFile->setLastModified($sourceFile->lastModified());
+            }
 
-			// ensure that parent dir of dest file exists!
-			$parent = $destFile->getParentFile();
-			if ($parent !== null && !$parent->exists()) {
-				$parent->mkdirs();
-			}
+        }
+    }
 
-			if ((is_array($filterChains)) && (!empty($filterChains))) {
+    /**
+     * Interpret the filename as a file relative to the given file -
+     * unless the filename already represents an absolute filename.
+     *
+     * @param  $file the "reference" file for relative paths. This
+     *         instance must be an absolute file and must not contain
+     *         ./ or ../ sequences (same for \ instead of /).
+     * @param  $filename a file name
+     *
+     * @return PhingFile A PhingFile object pointing to an absolute file that doesn't contain ./ or ../ sequences
+     *         and uses the correct separator for the current platform.
+     */
+    function resolveFile($file, $filename) {
+        // remove this and use the static class constant File::seperator
+        // as soon as ZE2 is ready
+        $fs = FileSystem::getFileSystem();
 
-				$in = self::getChainedReader(
-						new BufferedReader(new FileReader($sourceFile)),
-						$filterChains, $project);
-				$out = new BufferedWriter(new FileWriter($destFile));
+        $filename = str_replace('/', $fs->getSeparator(), str_replace('\\', $fs->getSeparator(), $filename));
 
-				// New read() methods returns a big buffer.                
-				while (-1 !== ($buffer = $in->read())) { // -1 indicates EOF
-					$out->write($buffer);
-				}
+        // deal with absolute files
+        if (StringHelper::startsWith($fs->getSeparator(), $filename) ||
+                (strlen($filename) >= 2 && Character::isLetter($filename{0}) && $filename{1} === ':')) {
+            return new PhingFile($this->normalize($filename));
+        }
 
-				if ($in !== null)
-					$in->close();
-				if ($out !== null)
-					$out->close();
-			} else {
-				// simple copy (no filtering)
-				$sourceFile->copyTo($destFile);
-			}
+        if (strlen($filename) >= 2 && Character::isLetter($filename{0}) && $filename{1} === ':') {
+            return new PhingFile($this->normalize($filename));
+        }
 
-			if ($preserveLastModified) {
-				$destFile->setLastModified($sourceFile->lastModified());
-			}
+        $helpFile = new PhingFile($file->getAbsolutePath());
 
-		}
-	}
+        $tok = strtok($filename, $fs->getSeparator());
+        while ($tok !== false) {
+            $part = $tok;
+            if ($part === '..') {
+                $parentFile = $helpFile->getParent();
+                if ($parentFile === null) {
+                    $msg = "The file or path you specified ($filename) is invalid relative to ".$file->getPath();
+                    throw new IOException($msg);
+                }
+                $helpFile = new PhingFile($parentFile);
+            } else if ($part === '.') {
+                // Do nothing here
+            } else {
+                $helpFile = new PhingFile($helpFile, $part);
+            }
+            $tok = strtok($fs->getSeparator());
+        }
+        return new PhingFile($helpFile->getAbsolutePath());
+    }
 
-	/**
-	 * Interpret the filename as a file relative to the given file -
-	 * unless the filename already represents an absolute filename.
-	 *
-	 * @param  $file the "reference" file for relative paths. This
-	 *         instance must be an absolute file and must not contain
-	 *         ./ or ../ sequences (same for \ instead of /).
-	 * @param  $filename a file name
-	 *
-	 * @return PhingFile A PhingFile object pointing to an absolute file that doesn't contain ./ or ../ sequences
-	 *         and uses the correct separator for the current platform.
-	 */
-	function resolveFile($file, $filename) {
-		// remove this and use the static class constant File::seperator
-		// as soon as ZE2 is ready
-		$fs = FileSystem::getFileSystem();
+    /**
+     * Normalize the given absolute path.
+     *
+     * This includes:
+     *   - Uppercase the drive letter if there is one.
+     *   - Remove redundant slashes after the drive spec.
+     *   - resolve all ./, .\, ../ and ..\ sequences.
+     *   - DOS style paths that start with a drive letter will have
+     *     \ as the separator.
+     * @param string $path Path to normalize.
+     * @return string
+     */
+    function normalize($path) {
+    
+        $path = (string) $path;
+        $orig = $path;
 
-		$filename = str_replace('/', $fs->getSeparator(),
-				str_replace('\\', $fs->getSeparator(), $filename));
+        $path = str_replace('/', DIRECTORY_SEPARATOR, str_replace('\\', DIRECTORY_SEPARATOR, $path));
 
-		// deal with absolute files
-		if (StringHelper::startsWith($fs->getSeparator(), $filename)
-				|| (strlen($filename) >= 2 && Character::isLetter($filename{0})
-						&& $filename{1} === ':')) {
-			return new PhingFile($this->normalize($filename));
-		}
+        // make sure we are dealing with an absolute path
+        if (!StringHelper::startsWith(DIRECTORY_SEPARATOR, $path)
+                && !(strlen($path) >= 2 && Character::isLetter($path{0}) && $path{1} === ':')) {
+            throw new IOException("$path is not an absolute path");
+        }
 
-		if (strlen($filename) >= 2 && Character::isLetter($filename{0})
-				&& $filename{1} === ':') {
-			return new PhingFile($this->normalize($filename));
-		}
+        $dosWithDrive = false;
+        $root = null;
 
-		$helpFile = new PhingFile($file->getAbsolutePath());
+        // Eliminate consecutive slashes after the drive spec
 
-		$tok = strtok($filename, $fs->getSeparator());
-		while ($tok !== false) {
-			$part = $tok;
-			if ($part === '..') {
-				$parentFile = $helpFile->getParent();
-				if ($parentFile === null) {
-					$msg = "The file or path you specified ($filename) is invalid relative to "
-							. $file->getPath();
-					throw new IOException($msg);
-				}
-				$helpFile = new PhingFile($parentFile);
-			} else if ($part === '.') {
-				// Do nothing here
-			} else {
-				$helpFile = new PhingFile($helpFile, $part);
-			}
-			$tok = strtok($fs->getSeparator());
-		}
-		return new PhingFile($helpFile->getAbsolutePath());
-	}
+        if (strlen($path) >= 2 && Character::isLetter($path{0}) && $path{1} === ':') {
+            $dosWithDrive = true;
 
-	/**
-	 * Normalize the given absolute path.
-	 *
-	 * This includes:
-	 *   - Uppercase the drive letter if there is one.
-	 *   - Remove redundant slashes after the drive spec.
-	 *   - resolve all ./, .\, ../ and ..\ sequences.
-	 *   - DOS style paths that start with a drive letter will have
-	 *     \ as the separator.
-	 * @param string $path Path to normalize.
-	 * @return string
-	 */
-	function normalize($path) {
+            $ca = str_replace('/', '\\', $path);
+            $ca = StringHelper::toCharArray($ca);
 
-		$path = (string) $path;
-		$orig = $path;
+            $path = strtoupper($ca[0]).':';
+            
+            for ($i=2, $_i=count($ca); $i < $_i; $i++) {
+                if (($ca[$i] !== '\\') ||
+                        ($ca[$i] === '\\' && $ca[$i - 1] !== '\\')
+                   ) {
+                    $path .= $ca[$i];
+                }
+            }
+         
+            $path = str_replace('\\', DIRECTORY_SEPARATOR, $path);
 
-		$path = str_replace('/', DIRECTORY_SEPARATOR,
-				str_replace('\\', DIRECTORY_SEPARATOR, $path));
+            if (strlen($path) == 2) {
+                $root = $path;
+                $path = "";
+            } else {
+                $root = substr($path, 0, 3);
+                $path = substr($path, 3);
+            }
 
-		// make sure we are dealing with an absolute path
-		if (!StringHelper::startsWith(DIRECTORY_SEPARATOR, $path)
-				&& !(strlen($path) >= 2 && Character::isLetter($path{0})
-						&& $path{1} === ':')) {
-			throw new IOException("$path is not an absolute path");
-		}
+        } else {
+            if (strlen($path) == 1) {
+                $root = DIRECTORY_SEPARATOR;
+                $path = "";
+            } else if ($path{1} == DIRECTORY_SEPARATOR) {
+                // UNC drive
+                $root = DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR;
+                $path = substr($path, 2);
+            }
+            else {
+                $root = DIRECTORY_SEPARATOR;
+                $path = substr($path, 1);
+            }
+        }
 
-		$dosWithDrive = false;
-		$root = null;
+        $s = array();
+        array_push($s, $root);
+        $tok = strtok($path, DIRECTORY_SEPARATOR);
+        while ($tok !== false) {            
+            $thisToken = $tok;
+            if ("." === $thisToken) {
+                $tok = strtok(DIRECTORY_SEPARATOR);
+                continue;
+            } elseif (".." === $thisToken) {
+                if (count($s) < 2) {
+                    // using '..' in path that is too short
+                    throw new IOException("Cannot resolve path: $orig");
+                } else {
+                    array_pop($s);
+                }
+            } else { // plain component
+                array_push($s, $thisToken);
+            }
+            $tok = strtok(DIRECTORY_SEPARATOR);
+        }
 
-		// Eliminate consecutive slashes after the drive spec
+        $sb = "";
+        for ($i=0,$_i=count($s); $i < $_i; $i++) {
+            if ($i > 1) {
+                // not before the filesystem root and not after it, since root
+                // already contains one
+                $sb .= DIRECTORY_SEPARATOR;
+            }
+            $sb .= (string) $s[$i];
+        }
 
-		if (strlen($path) >= 2 && Character::isLetter($path{0})
-				&& $path{1} === ':') {
-			$dosWithDrive = true;
 
-			$ca = str_replace('/', '\\', $path);
-			$ca = StringHelper::toCharArray($ca);
+        $path = (string) $sb;
+        if ($dosWithDrive === true) {
+            $path = str_replace('/', '\\', $path);
+        }
+        return $path;
+    }
+    
+    /**
+     * @return boolean Whether contents of two files is the same.
+     */
+    public function contentEquals(PhingFile $file1, PhingFile $file2) {
+        
+        if (!($file1->exists() || $file2->exists())) {
+            return false;
+        }
 
-			$path = strtoupper($ca[0]) . ':';
-
-			for ($i = 2, $_i = count($ca); $i < $_i; $i++) {
-				if (($ca[$i] !== '\\')
-						|| ($ca[$i] === '\\' && $ca[$i - 1] !== '\\')) {
-					$path .= $ca[$i];
-				}
-			}
-
-			$path = str_replace('\\', DIRECTORY_SEPARATOR, $path);
-
-			if (strlen($path) == 2) {
-				$root = $path;
-				$path = "";
-			} else {
-				$root = substr($path, 0, 3);
-				$path = substr($path, 3);
-			}
-
-		} else {
-			if (strlen($path) == 1) {
-				$root = DIRECTORY_SEPARATOR;
-				$path = "";
-			} else if ($path{1} == DIRECTORY_SEPARATOR) {
-				// UNC drive
-				$root = DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR;
-				$path = substr($path, 2);
-			} else {
-				$root = DIRECTORY_SEPARATOR;
-				$path = substr($path, 1);
-			}
-		}
-
-		$s = array();
-		array_push($s, $root);
-		$tok = strtok($path, DIRECTORY_SEPARATOR);
-		while ($tok !== false) {
-			$thisToken = $tok;
-			if ("." === $thisToken) {
-				$tok = strtok(DIRECTORY_SEPARATOR);
-				continue;
-			} elseif (".." === $thisToken) {
-				if (count($s) < 2) {
-					// using '..' in path that is too short
-					throw new IOException("Cannot resolve path: $orig");
-				} else {
-					array_pop($s);
-				}
-			} else { // plain component
-				array_push($s, $thisToken);
-			}
-			$tok = strtok(DIRECTORY_SEPARATOR);
-		}
-
-		$sb = "";
-		for ($i = 0, $_i = count($s); $i < $_i; $i++) {
-			if ($i > 1) {
-				// not before the filesystem root and not after it, since root
-				// already contains one
-				$sb .= DIRECTORY_SEPARATOR;
-			}
-			$sb .= (string) $s[$i];
-		}
-
-		$path = (string) $sb;
-		if ($dosWithDrive === true) {
-			$path = str_replace('/', '\\', $path);
-		}
-		return $path;
-	}
-
-	/**
-	 * @return boolean Whether contents of two files is the same.
-	 */
-	public function contentEquals(PhingFile $file1, PhingFile $file2) {
-
-		if (!($file1->exists() || $file2->exists())) {
-			return false;
-		}
-
-		if (!($file1->canRead() || $file2->canRead())) {
-			return false;
-		}
-
-		$c1 = file_get_contents($file1->getAbsolutePath());
-		$c2 = file_get_contents($file2->getAbsolutePath());
-
-		return trim($c1) == trim($c2);
-	}
-
+        if (!($file1->canRead() || $file2->canRead())) {
+            return false;
+        }
+        
+        $c1 = file_get_contents($file1->getAbsolutePath());
+        $c2 = file_get_contents($file2->getAbsolutePath());
+        
+        return trim($c1) == trim($c2);    
+    }
+    
 }
 

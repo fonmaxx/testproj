@@ -29,13 +29,13 @@ require_once 'phing/system/io/FileInputStream.php';
 class FileReader extends InputStreamReader {
 
 	/**
-	 * Construct a new FileReader.
-	 * @param mixed $file PhingFile or string pathname.
-	 */
-	public function __construct($file) {
-		$in = new FileInputStream($file);
-		parent::__construct($in);
-	}
-
+     * Construct a new FileReader.
+     * @param mixed $file PhingFile or string pathname.
+     */
+    public function __construct($file) {
+    	$in = new FileInputStream($file);
+    	parent::__construct($in);
+    }
+        
 }
 

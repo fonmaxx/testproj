@@ -1,11 +1,10 @@
-sfGuardUser:
-  User_admin:
-    first_name:     Maxx
-    last_name:      G
-    email_address:  fon_maxx@ukr.net
-    username:       fonmaxx
-    password:       nigerniger
-    is_super_admin: true
+#sfGuardUser:
+ # User_admin:
+  # last_name:      G
+   # email_address:  fon_maxx@ukr.net
+    #username:       fonmaxx
+    #password:       nigerniger
+    #is_super_admin: true
     #Groups:         [Group_admin]
 
 #sfGuardGroup:

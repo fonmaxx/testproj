@@ -58,6 +58,7 @@ abstract class BaseJobeetJobFormFilter extends BaseFormFilterDoctrine
 
     parent::setup();
   }
+
   public function getModelName()
   {
     return 'JobeetJob';

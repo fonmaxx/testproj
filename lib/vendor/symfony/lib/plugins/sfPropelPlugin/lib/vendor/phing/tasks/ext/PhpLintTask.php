@@ -30,7 +30,7 @@ require_once 'phing/Task.php';
  */
 class PhpLintTask extends Task {
 
-	protected $file; // the source file (from xml attribute)
+	protected $file;	// the source file (from xml attribute)
 	protected $filesets = array(); // all fileset objects assigned to this task
 
 	protected $errorProperty;
@@ -39,12 +39,12 @@ class PhpLintTask extends Task {
 	private $badFiles = array();
 	protected $interpreter = ''; // php interpreter to use for linting
 
-	/**
-	 * Initialize the interpreter with the Phing property
-	 */
-	public function __construct() {
-		$this->setInterpreter(Phing::getProperty('php.interpreter'));
-	}
+    /**
+     * Initialize the interpreter with the Phing property
+     */
+    public function __construct() {
+        $this->setInterpreter(Phing::getProperty('php.interpreter'));
+    }
 
 	/**
 	 * Override default php interpreter
@@ -76,7 +76,8 @@ class PhpLintTask extends Task {
 	 * Set an property name in which to put any errors.
 	 * @param string $propname 
 	 */
-	public function setErrorproperty($propname) {
+	public function setErrorproperty($propname)
+	{
 		$this->errorProperty = $propname;
 	}
 
@@ -87,36 +88,32 @@ class PhpLintTask extends Task {
 	 */
 	function createFileSet() {
 		$num = array_push($this->filesets, new FileSet());
-		return $this->filesets[$num - 1];
+		return $this->filesets[$num-1];
 	}
 
 	/**
 	 * Execute lint check against PhingFile or a FileSet
 	 */
 	public function main() {
-		if (!isset($this->file) and count($this->filesets) == 0) {
-			throw new BuildException(
-					"Missing either a nested fileset or attribute 'file' set");
+		if(!isset($this->file) and count($this->filesets) == 0) {
+			throw new BuildException("Missing either a nested fileset or attribute 'file' set");
 		}
 
-		if ($this->file instanceof PhingFile) {
+		if($this->file instanceof PhingFile) {
 			$this->lint($this->file->getPath());
 		} else { // process filesets
 			$project = $this->getProject();
-			foreach ($this->filesets as $fs) {
+			foreach($this->filesets as $fs) {
 				$ds = $fs->getDirectoryScanner($project);
 				$files = $ds->getIncludedFiles();
 				$dir = $fs->getDir($this->project)->getPath();
-				foreach ($files as $file) {
-					$this->lint($dir . DIRECTORY_SEPARATOR . $file);
+				foreach($files as $file) {
+					$this->lint($dir.DIRECTORY_SEPARATOR.$file);
 				}
 			}
 		}
 
-		if ($this->haltOnFailure && $this->hasErrors)
-			throw new BuildException(
-					'Syntax error(s) in PHP files: '
-							. implode(', ', $this->badFiles));
+		if ($this->haltOnFailure && $this->hasErrors) throw new BuildException('Syntax error(s) in PHP files: '.implode(', ',$this->badFiles));
 	}
 
 	/**
@@ -126,37 +123,37 @@ class PhpLintTask extends Task {
 	 * @return void
 	 */
 	protected function lint($file) {
-		$command = $this->Interpreter == '' ? 'php' : $this->Interpreter;
-		$command .= ' -l ';
-		if (file_exists($file)) {
-			if (is_readable($file)) {
+        $command = $this->Interpreter == ''
+            ? 'php'
+            : $this->Interpreter;
+        $command .= ' -l ';
+		if(file_exists($file)) {
+			if(is_readable($file)) {
 				$messages = array();
-				exec($command . '"' . $file . '"', $messages);
-				if (!preg_match('/^No syntax errors detected/', $messages[0])) {
+				exec($command.'"'.$file.'"', $messages);
+				if(!preg_match('/^No syntax errors detected/', $messages[0])) {
 					if (count($messages) > 1) {
 						if ($this->errorProperty) {
-							$this->project
-									->setProperty($this->errorProperty,
-											$messages[1]);
+							$this->project->setProperty($this->errorProperty, $messages[1]);
 						}
 						$this->log($messages[1], Project::MSG_ERR);
 					} else {
 						$this->log("Could not parse file", Project::MSG_ERR);
 					}
-					$this->badFiles[] = $file;
+					$this->badFiles[] = $file;	
 					$this->hasErrors = true;
-
+					
 				} else {
-					$this
-							->log($file . ': No syntax errors detected',
-									Project::MSG_INFO);
+					$this->log($file.': No syntax errors detected', Project::MSG_INFO);
 				}
 			} else {
-				throw new BuildException('Permission denied: ' . $file);
+				throw new BuildException('Permission denied: '.$file);
 			}
 		} else {
-			throw new BuildException('File not found: ' . $file);
+			throw new BuildException('File not found: '.$file);
 		}
 	}
 }
+
+
 

@@ -37,12 +37,14 @@
  * @version    $Revision: 1262 $
  * @package    propel.validator
  */
-class MaxValueValidator implements BasicValidator {
+class MaxValueValidator implements BasicValidator
+{
 
 	/**
 	 * @see        BasicValidator::isValid()
 	 */
-	public function isValid(ValidatorMap $map, $value) {
+	public function isValid (ValidatorMap $map, $value)
+	{
 		if (is_null($value) == false && is_numeric($value) == true) {
 			return intval($value) <= intval($map->getValue());
 		}

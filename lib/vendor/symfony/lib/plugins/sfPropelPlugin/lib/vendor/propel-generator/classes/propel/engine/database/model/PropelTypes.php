@@ -54,19 +54,21 @@ class PropelTypes {
 
 	const BOOLEAN = "BOOLEAN";
 
-	private static $TEXT_TYPES = array(self::CHAR, self::VARCHAR,
-			self::LONGVARCHAR, self::CLOB, self::DATE, self::TIME,
-			self::TIMESTAMP, self::BU_DATE, self::BU_TIMESTAMP);
+	private static $TEXT_TYPES = array (
+						self::CHAR, self::VARCHAR, self::LONGVARCHAR, self::CLOB, self::DATE, self::TIME, self::TIMESTAMP, self::BU_DATE, self::BU_TIMESTAMP
+					);
 
-	private static $LOB_TYPES = array(self::VARBINARY, self::LONGVARBINARY,
-			self::BLOB);
+	private static $LOB_TYPES = array (
+						self::VARBINARY, self::LONGVARBINARY, self::BLOB
+					);
 
-	private static $TEMPORAL_TYPES = array(self::DATE, self::TIME,
-			self::TIMESTAMP, self::BU_DATE, self::BU_TIMESTAMP);
+	private static $TEMPORAL_TYPES = array (
+						self::DATE, self::TIME, self::TIMESTAMP, self::BU_DATE, self::BU_TIMESTAMP
+					);
 
-	private static $NUMERIC_TYPES = array(self::SMALLINT, self::TINYINT,
-			self::INTEGER, self::BIGINT, self::FLOAT, self::DOUBLE,
-			self::NUMERIC, self::DECIMAL, self::REAL);
+	private static $NUMERIC_TYPES = array (
+						self::SMALLINT, self::TINYINT, self::INTEGER, self::BIGINT, self::FLOAT, self::DOUBLE, self::NUMERIC, self::DECIMAL, self::REAL
+					);
 
 	const CHAR_NATIVE_TYPE = "string";
 	const VARCHAR_NATIVE_TYPE = "string";
@@ -120,7 +122,8 @@ class PropelTypes {
 			self::TIME => self::TIME_NATIVE_TYPE,
 			self::TIMESTAMP => self::TIMESTAMP_NATIVE_TYPE,
 			self::BU_TIMESTAMP => self::BU_TIMESTAMP_NATIVE_TYPE,
-			self::BOOLEAN => self::BOOLEAN_NATIVE_TYPE,);
+			self::BOOLEAN => self::BOOLEAN_NATIVE_TYPE,
+	);
 
 	/**
 	 * Mapping between Propel types and Creole types (for rev-eng task)
@@ -128,23 +131,35 @@ class PropelTypes {
 	 * @var        array
 	 */
 	private static $propelTypeToCreoleTypeMap = array(
-			self::CHAR => self::CHAR, self::VARCHAR => self::VARCHAR,
-			self::LONGVARCHAR => self::LONGVARCHAR, self::CLOB => self::CLOB,
-			self::NUMERIC => self::NUMERIC, self::DECIMAL => self::DECIMAL,
-			self::TINYINT => self::TINYINT, self::SMALLINT => self::SMALLINT,
-			self::INTEGER => self::INTEGER, self::BIGINT => self::BIGINT,
-			self::REAL => self::REAL, self::FLOAT => self::FLOAT,
-			self::DOUBLE => self::DOUBLE, self::BINARY => self::BINARY,
+
+			self::CHAR => self::CHAR,
+			self::VARCHAR => self::VARCHAR,
+			self::LONGVARCHAR => self::LONGVARCHAR,
+			self::CLOB => self::CLOB,
+			self::NUMERIC => self::NUMERIC,
+			self::DECIMAL => self::DECIMAL,
+			self::TINYINT => self::TINYINT,
+			self::SMALLINT => self::SMALLINT,
+			self::INTEGER => self::INTEGER,
+			self::BIGINT => self::BIGINT,
+			self::REAL => self::REAL,
+			self::FLOAT => self::FLOAT,
+			self::DOUBLE => self::DOUBLE,
+			self::BINARY => self::BINARY,
 			self::VARBINARY => self::VARBINARY,
 			self::LONGVARBINARY => self::LONGVARBINARY,
-			self::BLOB => self::BLOB, self::DATE => self::DATE,
-			self::TIME => self::TIME, self::TIMESTAMP => self::TIMESTAMP,
-			self::BOOLEAN => self::BOOLEAN, 
+			self::BLOB => self::BLOB,
+			self::DATE => self::DATE,
+			self::TIME => self::TIME,
+			self::TIMESTAMP => self::TIMESTAMP,
+			self::BOOLEAN => self::BOOLEAN,
+
 			// These are pre-epoch dates, which we need to map to String type
 			// since they cannot be properly handled using strtotime() -- or even numeric
 			// timestamps on Windows.
 			self::BU_DATE => self::VARCHAR,
 			self::BU_TIMESTAMP => self::VARCHAR,
+
 	);
 
 	/**
@@ -153,23 +168,34 @@ class PropelTypes {
 	 * @var        array
 	 */
 	private static $propelTypeToPDOTypeMap = array(
-			self::CHAR => PDO::PARAM_STR, self::VARCHAR => PDO::PARAM_STR,
-			self::LONGVARCHAR => PDO::PARAM_STR, self::CLOB => PDO::PARAM_STR,
-			self::NUMERIC => PDO::PARAM_INT, self::DECIMAL => PDO::PARAM_STR,
-			self::TINYINT => PDO::PARAM_INT, self::SMALLINT => PDO::PARAM_INT,
-			self::INTEGER => PDO::PARAM_INT, self::BIGINT => PDO::PARAM_INT,
-			self::REAL => PDO::PARAM_STR, self::FLOAT => PDO::PARAM_STR,
-			self::DOUBLE => PDO::PARAM_STR, self::BINARY => PDO::PARAM_STR,
+			self::CHAR => PDO::PARAM_STR,
+			self::VARCHAR => PDO::PARAM_STR,
+			self::LONGVARCHAR => PDO::PARAM_STR,
+			self::CLOB => PDO::PARAM_STR,
+			self::NUMERIC => PDO::PARAM_INT,
+			self::DECIMAL => PDO::PARAM_STR,
+			self::TINYINT => PDO::PARAM_INT,
+			self::SMALLINT => PDO::PARAM_INT,
+			self::INTEGER => PDO::PARAM_INT,
+			self::BIGINT => PDO::PARAM_INT,
+			self::REAL => PDO::PARAM_STR,
+			self::FLOAT => PDO::PARAM_STR,
+			self::DOUBLE => PDO::PARAM_STR,
+			self::BINARY => PDO::PARAM_STR,
 			self::VARBINARY => PDO::PARAM_LOB,
 			self::LONGVARBINARY => PDO::PARAM_LOB,
-			self::BLOB => PDO::PARAM_LOB, self::DATE => PDO::PARAM_STR,
-			self::TIME => PDO::PARAM_STR, self::TIMESTAMP => PDO::PARAM_STR,
-			self::BOOLEAN => PDO::PARAM_BOOL, 
+			self::BLOB => PDO::PARAM_LOB,
+			self::DATE => PDO::PARAM_STR,
+			self::TIME => PDO::PARAM_STR,
+			self::TIMESTAMP => PDO::PARAM_STR,
+			self::BOOLEAN => PDO::PARAM_BOOL,
+
 			// These are pre-epoch dates, which we need to map to String type
 			// since they cannot be properly handled using strtotime() -- or even numeric
 			// timestamps on Windows.
 			self::BU_DATE => PDO::PARAM_STR,
-			self::BU_TIMESTAMP => PDO::PARAM_STR,);
+			self::BU_TIMESTAMP => PDO::PARAM_STR,
+	);
 
 	/**
 	 * Return native PHP type which corresponds to the
@@ -178,7 +204,8 @@ class PropelTypes {
 	 * @param      $propelType The Propel type name.
 	 * @return     string Name of the native PHP type
 	 */
-	public static function getPhpNative($propelType) {
+	public static function getPhpNative($propelType)
+	{
 		return self::$propelToPHPNativeMap[$propelType];
 	}
 
@@ -188,15 +215,17 @@ class PropelTypes {
 	 * @param      $type the propel added type.
 	 * @return     string Name of the the correct Creole type (e.g. "VARCHAR").
 	 */
-	public static function getCreoleType($type) {
-		return self::$propelTypeToCreoleTypeMap[$type];
+	public static function getCreoleType($type)
+	{
+		return  self::$propelTypeToCreoleTypeMap[$type];
 	}
 
 	/**
 	 * Resturns the PDO type (PDO::PARAM_* constant) value.
 	 * @return     int
 	 */
-	public static function getPDOType($type) {
+	public static function getPDOType($type)
+	{
 		return self::$propelTypeToPDOTypeMap[$type];
 	}
 
@@ -207,7 +236,8 @@ class PropelTypes {
 	 * @param      int $sqlType The Creole SQL type constant.
 	 * @return     string The Propel type to use or NULL if none found.
 	 */
-	public static function getPropelType($sqlType) {
+	public static function getPropelType($sqlType)
+	{
 		if (isset(self::$creoleToPropelTypeMap[$sqlType])) {
 			return self::$creoleToPropelTypeMap[$sqlType];
 		}
@@ -218,7 +248,8 @@ class PropelTypes {
 	 *
 	 * @return     array string[]
 	 */
-	public static function getPropelTypes() {
+	public static function getPropelTypes()
+	{
 		return array_keys(self::$propelTypeToCreoleTypeMap);
 	}
 
@@ -228,7 +259,8 @@ class PropelTypes {
 	 * @param      string $type Propel type
 	 * @return     boolean
 	 */
-	public static function isTemporalType($type) {
+	public static function isTemporalType($type)
+	{
 		return in_array($type, self::$TEMPORAL_TYPES);
 	}
 
@@ -238,7 +270,8 @@ class PropelTypes {
 	 * @param      string $type The Propel type to check.
 	 * @return     boolean True if values for the type need to be quoted.
 	 */
-	public static function isTextType($type) {
+	public static function isTextType($type)
+	{
 		return in_array($type, self::$TEXT_TYPES);
 	}
 
@@ -248,7 +281,8 @@ class PropelTypes {
 	 * @param      string $type The Propel type to check.
 	 * @return     boolean True if values for the type need to be quoted.
 	 */
-	public static function isNumericType($type) {
+	public static function isNumericType($type)
+	{
 		return in_array($type, self::$NUMERIC_TYPES);
 	}
 
@@ -257,7 +291,8 @@ class PropelTypes {
 	 * @param      string $type Propel type to check.
 	 * @return     boolean
 	 */
-	public static function isLobType($type) {
+	public static function isLobType($type)
+	{
 		return in_array($type, self::$LOB_TYPES);
 	}
 
@@ -267,9 +302,9 @@ class PropelTypes {
 	 * @param      string $phpType The PHP type to check
 	 * @return     boolean Whether the PHP type is a primitive (string, int, boolean, float)
 	 */
-	public static function isPhpPrimitiveType($phpType) {
-		return in_array($phpType,
-				array("boolean", "int", "double", "float", "string"));
+	public static function isPhpPrimitiveType($phpType)
+	{
+		return in_array($phpType, array("boolean", "int", "double", "float", "string"));
 	}
 
 	/**
@@ -278,7 +313,8 @@ class PropelTypes {
 	 * @param      string $phpType The PHP type to check
 	 * @return     boolean Whether the PHP type is a primitive (string, int, boolean, float)
 	 */
-	public static function isPhpPrimitiveNumericType($phpType) {
+	public static function isPhpPrimitiveNumericType($phpType)
+	{
 		return in_array($phpType, array("boolean", "int", "double", "float"));
 	}
 
@@ -288,8 +324,8 @@ class PropelTypes {
 	 * @param      string $phpType The PHP type to check
 	 * @return     boolean Whether the PHP type is a primitive (string, int, boolean, float)
 	 */
-	public static function isPhpObjectType($phpType) {
-		return (!self::isPhpPrimitiveType($phpType)
-				&& !in_array($phpType, array("resource", "array")));
+	public static function isPhpObjectType($phpType)
+	{
+		return (!self::isPhpPrimitiveType($phpType) && !in_array($phpType, array("resource", "array")));
 	}
 }

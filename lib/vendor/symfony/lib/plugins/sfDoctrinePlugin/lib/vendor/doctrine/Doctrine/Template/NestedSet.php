@@ -30,23 +30,26 @@
  * @version     $Revision$
  * @author      Roman Borschel <roman@code-factory.org>
  */
-class Doctrine_Template_NestedSet extends Doctrine_Template {
-	/**
-	 * Set up NestedSet template
-	 *
-	 * @return void
-	 */
-	public function setUp() {
-		$this->_table->setOption('treeOptions', $this->_options);
-		$this->_table->setOption('treeImpl', 'NestedSet');
-	}
+class Doctrine_Template_NestedSet extends Doctrine_Template
+{
+    /**
+     * Set up NestedSet template
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        $this->_table->setOption('treeOptions', $this->_options);
+        $this->_table->setOption('treeImpl', 'NestedSet');
+    }
 
-	/**
-	 * Call set table definition for the NestedSet behavior
-	 *
-	 * @return void
-	 */
-	public function setTableDefinition() {
-		$this->_table->getTree()->setTableDefinition();
-	}
+    /**
+     * Call set table definition for the NestedSet behavior
+     *
+     * @return void
+     */
+    public function setTableDefinition()
+    {
+        $this->_table->getTree()->setTableDefinition();
+    }
 }

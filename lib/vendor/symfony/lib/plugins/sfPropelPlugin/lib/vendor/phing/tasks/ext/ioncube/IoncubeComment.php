@@ -27,14 +27,17 @@
  * @package phing.tasks.ext.ioncube
  * @since 2.2.0
  */
-class IoncubeComment {
+class IoncubeComment
+{
 	private $value = "";
-
-	public function getValue() {
+	
+	public function getValue()
+	{
 		return $this->value;
 	}
-
-	public function addText($txt) {
+	
+	public function addText($txt)
+	{
 		$this->value = trim($txt);
 	}
 }

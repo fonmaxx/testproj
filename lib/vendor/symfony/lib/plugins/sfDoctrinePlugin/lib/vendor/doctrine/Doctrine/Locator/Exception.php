@@ -32,5 +32,5 @@
  * @version     $Revision$
  * @since       1.0
  */
-class Doctrine_Locator_Exception extends Doctrine_Exception {
-}
+class Doctrine_Locator_Exception extends Doctrine_Exception
+{ }

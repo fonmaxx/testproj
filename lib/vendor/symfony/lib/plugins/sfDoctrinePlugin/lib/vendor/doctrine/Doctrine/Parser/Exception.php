@@ -30,5 +30,5 @@
  * @version     $Revision: 1080 $
  * @author      Jonathan H. Wage <jwage@mac.com>
  */
-class Doctrine_Parser_Exception extends Doctrine_Exception {
-}
+class Doctrine_Parser_Exception extends Doctrine_Exception
+{ }

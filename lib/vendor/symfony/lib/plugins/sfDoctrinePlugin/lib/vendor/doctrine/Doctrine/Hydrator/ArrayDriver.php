@@ -30,55 +30,63 @@
  * @version     $Revision$
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Hydrator_ArrayDriver extends Doctrine_Hydrator_Graph {
-	public function getElementCollection($component) {
-		return array();
-	}
+class Doctrine_Hydrator_ArrayDriver extends Doctrine_Hydrator_Graph
+{
+    public function getElementCollection($component)
+    {
+        return array();
+    }
 
-	public function getElement(array $data, $component) {
-		return $data;
-	}
+    public function getElement(array $data, $component)
+    {
+        return $data;
+    }
 
-	public function registerCollection($coll) {
+    public function registerCollection($coll)
+    {
 
-	}
+    }
 
-	public function initRelated(&$record, $name, $keyColumn = null) {
-		if (!isset($record[$name])) {
-			$record[$name] = array();
-		}
-		return true;
-	}
+    public function initRelated(&$record, $name, $keyColumn = null)
+    {
+        if ( ! isset($record[$name])) {
+            $record[$name] = array();
+        }
+        return true;
+    }
 
-	public function getNullPointer() {
-		return null;
-	}
+    public function getNullPointer() 
+    {
+        return null;    
+    }
 
-	public function getLastKey(&$coll) {
-		end($coll);
-		return key($coll);
-	}
+    public function getLastKey(&$coll)
+    {
+        end($coll);
+        return key($coll);
+    }
 
-	public function setLastElement(&$prev, &$coll, $index, $dqlAlias, $oneToOne) {
-		if ($coll === null) {
-			unset($prev[$dqlAlias]); // Ticket #1228
-			return;
-		}
+    public function setLastElement(&$prev, &$coll, $index, $dqlAlias, $oneToOne)
+    {
+        if ($coll === null) {
+            unset($prev[$dqlAlias]); // Ticket #1228
+            return;
+        }
 
-		if ($index !== false) {
-			// Link element at $index to previous element for the component
-			// identified by the DQL alias $alias
-			$prev[$dqlAlias] = &$coll[$index];
-			return;
-		}
-
-		if ($coll) {
-			if ($oneToOne) {
-				$prev[$dqlAlias] = &$coll;
-			} else {
-				end($coll);
-				$prev[$dqlAlias] = &$coll[key($coll)];
-			}
-		}
-	}
+        if ($index !== false) {
+            // Link element at $index to previous element for the component
+            // identified by the DQL alias $alias
+            $prev[$dqlAlias] =& $coll[$index];
+            return;
+        }
+        
+        if ($coll) {
+            if ($oneToOne) {
+                $prev[$dqlAlias] =& $coll;
+            } else {
+                end($coll);
+                $prev[$dqlAlias] =& $coll[key($coll)];
+            }
+        }
+    }
 }

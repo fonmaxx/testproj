@@ -1,6 +1,8 @@
 <?php
 
-class crudConfiguration extends sfApplicationConfiguration {
-	public function configure() {
-	}
+class crudConfiguration extends sfApplicationConfiguration
+{
+  public function configure()
+  {
+  }
 }

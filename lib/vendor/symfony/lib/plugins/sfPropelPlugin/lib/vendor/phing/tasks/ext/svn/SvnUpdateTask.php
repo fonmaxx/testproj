@@ -30,13 +30,15 @@ require_once 'phing/tasks/ext/svn/SvnBaseTask.php';
  * @package phing.tasks.ext.svn
  * @since 2.3.0
  */
-class SvnUpdateTask extends SvnBaseTask {
+class SvnUpdateTask extends SvnBaseTask
+{
 	/**
 	 * The main entry point
 	 *
 	 * @throws BuildException
 	 */
-	function main() {
+	function main()
+	{
 		$this->setup('update');
 
 		$this->log("Updating SVN repository at '" . $this->getToDir() . "'");

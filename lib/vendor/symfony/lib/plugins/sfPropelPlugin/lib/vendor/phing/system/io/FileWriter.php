@@ -28,15 +28,15 @@ require_once 'phing/system/io/FileOutputStream.php';
  * @package   phing.system.io
  */
 class FileWriter extends OutputStreamWriter {
-
-	/**
-	 * Construct a new FileWriter.
-	 * @param mixed $file PhingFile or string pathname.
-	 * @param boolean $append Append to existing file?
-	 */
-	function __construct($file, $append = false) {
-		$out = new FileOutputStream($file, $append);
-		parent::__construct($out);
-	}
+    
+    /**
+     * Construct a new FileWriter.
+     * @param mixed $file PhingFile or string pathname.
+     * @param boolean $append Append to existing file?
+     */
+    function __construct($file, $append = false) {
+    	$out = new FileOutputStream($file, $append);
+    	parent::__construct($out);
+    }
 }
 

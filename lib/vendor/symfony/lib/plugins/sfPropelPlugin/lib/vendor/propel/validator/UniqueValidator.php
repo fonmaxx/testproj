@@ -34,12 +34,14 @@
  * @version    $Revision: 1262 $
  * @package    propel.validator
  */
-class UniqueValidator implements BasicValidator {
+class UniqueValidator implements BasicValidator
+{
 
 	/**
 	 * @see        BasicValidator::isValid()
 	 */
-	public function isValid(ValidatorMap $map, $str) {
+	public function isValid (ValidatorMap $map, $str)
+	{
 		$column = $map->getColumn();
 
 		$c = new Criteria();

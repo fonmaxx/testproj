@@ -30,131 +30,141 @@
  * @version     $Revision$
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_AuditLog extends Doctrine_Record_Generator {
-	/**
-	 * Array of AuditLog Options
-	 *
-	 * @var array
-	 */
-	protected $_options = array('className' => '%CLASS%Version',
-			'version' => array('name' => 'version', 'alias' => null,
-					'type' => 'integer', 'length' => 8,
-					'options' => array('primary' => true)),
-			'tableName' => false, 'generateFiles' => false,
-			'table' => false, 'pluginTable' => false,
-			'children' => array(), 'auditLog' => true,
-			'deleteVersions' => true, 'cascadeDelete' => true,
-			'excludeFields' => array(), 'appLevelDelete' => false);
+class Doctrine_AuditLog extends Doctrine_Record_Generator
+{
+    /**
+     * Array of AuditLog Options
+     *
+     * @var array
+     */
+    protected $_options = array('className'         => '%CLASS%Version',
+                                'version'           => array('name'   => 'version',
+                                                             'alias'  => null,
+                                                             'type'   => 'integer',
+                                                             'length' => 8,
+                                                             'options' => array('primary' => true)),
+                                'tableName'         => false,
+                                'generateFiles'     => false,
+                                'table'             => false,
+                                'pluginTable'       => false,
+                                'children'          => array(),
+                                'auditLog'          => true,
+                                'deleteVersions'    => true,
+                                'cascadeDelete'     => true,
+                                'excludeFields'     => array(),
+                                'appLevelDelete'    => false);
 
-	/**
-	 * Accepts array of options to configure the AuditLog
-	 *
-	 * @param   array $options An array of options
-	 * @return  void
-	 */
-	public function __construct(array $options = array()) {
-		$this->_options = Doctrine_Lib::arrayDeepMerge($this->_options,
-				$options);
-	}
+    /**
+     * Accepts array of options to configure the AuditLog
+     *
+     * @param   array $options An array of options
+     * @return  void
+     */
+    public function __construct(array $options = array())
+    {
+        $this->_options = Doctrine_Lib::arrayDeepMerge($this->_options, $options);
+    }
 
-	public function buildRelation() {
-		$this->buildForeignRelation('Version');
-		$this->buildLocalRelation();
-	}
+    public function buildRelation()
+    {
+        $this->buildForeignRelation('Version');
+        $this->buildLocalRelation();
+    }
 
-	/**
-	 * Set the table definition for the audit log table
-	 *
-	 * @return  void
-	 */
-	public function setTableDefinition() {
-		$name = $this->_options['table']->getComponentName();
+    /**
+     * Set the table definition for the audit log table
+     *
+     * @return  void
+     */
+    public function setTableDefinition()
+    {
+        $name = $this->_options['table']->getComponentName();
 
-		// Building columns
-		$columns = $this->_options['table']->getColumns();
+        // Building columns
+        $columns = $this->_options['table']->getColumns();
 
-		// remove all sequence, autoincrement and unique constraint definitions and add to the behavior model
-		foreach ($columns as $column => $definition) {
-			if (in_array($column, $this->_options['excludeFields'])) {
-				continue;
-			}
-			unset($definition['autoincrement']);
-			unset($definition['sequence']);
-			unset($definition['unique']);
+        // remove all sequence, autoincrement and unique constraint definitions and add to the behavior model
+        foreach ($columns as $column => $definition) {
+            if (in_array($column, $this->_options['excludeFields'])) {
+                continue;
+            }
+            unset($definition['autoincrement']);
+            unset($definition['sequence']);
+            unset($definition['unique']);
 
-			$fieldName = $this->_options['table']->getFieldName($column);
-			if ($fieldName != $column) {
-				$name = $column . ' as ' . $fieldName;
-			} else {
-				$name = $fieldName;
-			}
+            $fieldName = $this->_options['table']->getFieldName($column);
+            if ($fieldName != $column) {
+                $name = $column . ' as ' . $fieldName;
+            } else {
+                $name = $fieldName;
+            }
 
-			$this
-					->hasColumn($name, $definition['type'],
-							$definition['length'], $definition);
-		}
+            $this->hasColumn($name, $definition['type'], $definition['length'], $definition);
+        }
 
-		// the version column should be part of the primary key definition
-		$this
-				->hasColumn($this->_options['version']['name'],
-						$this->_options['version']['type'],
-						$this->_options['version']['length'],
-						$this->_options['version']['options']);
-	}
+        // the version column should be part of the primary key definition
+        $this->hasColumn(
+	        $this->_options['version']['name'],
+            $this->_options['version']['type'],
+            $this->_options['version']['length'],
+            $this->_options['version']['options']);
+    }
 
-	/**
-	 * Get array of information for the passed record and the specified version
-	 *
-	 * @param   Doctrine_Record $record
-	 * @param   integer         $version
-	 * @param   integer         $hydrationMode
-	 * @param	boolean			$asCollection
-	 * @return  array           An array or Doctrine_Collection or a Doctrine_Record
-	 */
-	public function getVersion(Doctrine_Record $record, $version,
-			$hydrationMode = Doctrine_Core::HYDRATE_ARRAY, $asCollection = true) {
-		$className = $this->_options['className'];
-		$method = ($asCollection) ? 'execute' : 'fetchOne';
+    /**
+     * Get array of information for the passed record and the specified version
+     *
+     * @param   Doctrine_Record $record
+     * @param   integer         $version
+     * @param   integer         $hydrationMode
+     * @param	boolean			$asCollection
+     * @return  array           An array or Doctrine_Collection or a Doctrine_Record
+     */
+    public function getVersion(Doctrine_Record $record, $version, $hydrationMode = Doctrine_Core::HYDRATE_ARRAY, $asCollection = true)
+    {
+        $className = $this->_options['className'];
+        $method    = ($asCollection) ? 'execute' : 'fetchOne';
 
-		$q = Doctrine_Core::getTable($className)->createQuery();
+        $q = Doctrine_Core::getTable($className)
+            ->createQuery();
 
-		$values = array();
-		foreach ((array) $this->_options['table']->getIdentifier() as $id) {
-			$conditions[] = $className . '.' . $id . ' = ?';
-			$values[] = $record->get($id);
-		}
+        $values = array();
+        foreach ((array) $this->_options['table']->getIdentifier() as $id) {
+            $conditions[] = $className . '.' . $id . ' = ?';
+            $values[] = $record->get($id);
+        }
 
-		$where = implode(' AND ', $conditions) . ' AND ' . $className . '.'
-				. $this->_options['version']['name'] . ' = ?';
+        $where = implode(' AND ', $conditions) . ' AND ' . $className . '.' . $this->_options['version']['name'] . ' = ?';
 
-		$values[] = $version;
+        $values[] = $version;
 
-		$q->where($where);
+        $q->where($where);
 
-		return $q->$method($values, $hydrationMode);
-	}
+        return $q->$method($values, $hydrationMode);
+    }
 
-	/**
-	 * Get the max version number for a given Doctrine_Record
-	 *
-	 * @param Doctrine_Record $record
-	 * @return Integer $versionnumber
-	 */
-	public function getMaxVersion(Doctrine_Record $record) {
-		$className = $this->_options['className'];
-		$select = 'MAX(' . $className . '.'
-				. $this->_options['version']['name'] . ') max_version';
+    /**
+     * Get the max version number for a given Doctrine_Record
+     *
+     * @param Doctrine_Record $record
+     * @return Integer $versionnumber
+     */
+    public function getMaxVersion(Doctrine_Record $record)
+    {
+        $className = $this->_options['className'];
+        $select = 'MAX(' . $className . '.' . $this->_options['version']['name'] . ') max_version';
 
-		foreach ((array) $this->_options['table']->getIdentifier() as $id) {
-			$conditions[] = $className . '.' . $id . ' = ?';
-			$values[] = $record->get($id);
-		}
+        foreach ((array) $this->_options['table']->getIdentifier() as $id) {
+            $conditions[] = $className . '.' . $id . ' = ?';
+            $values[] = $record->get($id);
+        }
 
-		$q = Doctrine_Core::getTable($className)->createQuery()
-				->select($select)->where(implode(' AND ', $conditions));
+        $q = Doctrine_Core::getTable($className)
+            ->createQuery()
+            ->select($select)
+            ->where(implode(' AND ',$conditions));
 
-		$result = $q->execute($values, Doctrine_Core::HYDRATE_ARRAY);
+        $result = $q->execute($values, Doctrine_Core::HYDRATE_ARRAY);
 
-		return isset($result[0]['max_version']) ? $result[0]['max_version'] : 0;
-	}
+        return isset($result[0]['max_version']) ? $result[0]['max_version']:0;
+    }
 }

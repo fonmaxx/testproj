@@ -59,12 +59,12 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 	 * @param      string $path The [relative] package path.
 	 * @throws     BuildException - if there is an error creating directories
 	 */
-	protected function ensureDirExists($path) {
+	protected function ensureDirExists($path)
+	{
 		$f = new PhingFile($this->getOutputDirectory(), $path);
 		if (!$f->exists()) {
 			if (!$f->mkdirs()) {
-				throw new BuildException(
-						"Error creating directories: " . $f->getPath());
+				throw new BuildException("Error creating directories: ". $f->getPath());
 			}
 		}
 	}
@@ -76,17 +76,15 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 	 * @param      boolean $overwrite Whether to overwrite existing files with te new ones (default is YES).
 	 * @todo       -cPropelOMTask Consider refactoring build() method into AbstractPropelDataModelTask (would need to be more generic).
 	 */
-	protected function build(OMBuilder $builder, $overwrite = true) {
+	protected function build(OMBuilder $builder, $overwrite = true)
+	{
 
 		$path = $builder->getClassFilePath();
 		$this->ensureDirExists(dirname($path));
 
 		$_f = new PhingFile($this->getOutputDirectory(), $path);
 		if ($overwrite || !$_f->exists()) {
-			$this
-					->log(
-							"\t\t-> " . $builder->getClassname()
-									. " [builder: " . get_class($builder) . "]");
+			$this->log("\t\t-> " . $builder->getClassname() . " [builder: " . get_class($builder) . "]");
 			$script = $builder->build();
 			file_put_contents($_f->getAbsolutePath(), $script);
 			foreach ($builder->getWarnings() as $warning) {
@@ -101,7 +99,8 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 	/**
 	 * Main method builds all the targets for a typical propel project.
 	 */
-	public function main() {
+	public function main()
+	{
 		// check to make sure task received all correct params
 		$this->validate();
 
@@ -126,8 +125,7 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 
 						// these files are always created / overwrite any existing files
 						foreach (array('peer', 'object', 'tablemap') as $target) {
-							$builder = $generatorConfig
-									->getConfiguredBuilder($table, $target);
+							$builder = $generatorConfig->getConfiguredBuilder($table, $target);
 							$this->build($builder);
 						}
 
@@ -137,9 +135,8 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 
 						// these classes are only generated if they don't already exist
 						foreach (array('peerstub', 'objectstub') as $target) {
-							$builder = $generatorConfig
-									->getConfiguredBuilder($table, $target);
-							$this->build($builder, $overwrite = false);
+							$builder = $generatorConfig->getConfiguredBuilder($table, $target);
+							$this->build($builder, $overwrite=false);
 						}
 
 						// -----------------------------------------------------------------------------------------
@@ -151,14 +148,13 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 							$col = $table->getChildrenColumn();
 							if ($col->isEnumeratedClasses()) {
 								foreach ($col->getChildren() as $child) {
-									$builder = $generatorConfig
-											->getConfiguredBuilder($table,
-													'objectmultiextend');
+									$builder = $generatorConfig->getConfiguredBuilder($table, 'objectmultiextend');
 									$builder->setChild($child);
-									$this->build($builder, $overwrite = false);
+									$this->build($builder, $overwrite=false);
 								} // foreach
 							} // if col->is enumerated
 						} // if tbl->getChildrenCol
+
 
 						// -----------------------------------------------------------------------------------------
 						// Create [empty] Interface if it doesn't exist
@@ -166,9 +162,8 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 
 						// Create [empty] interface if it does not already exist
 						if ($table->getInterface()) {
-							$builder = $generatorConfig
-									->getConfiguredBuilder($table, 'interface');
-							$this->build($builder, $overwrite = false);
+							$builder = $generatorConfig->getConfiguredBuilder($table, 'interface');
+							$this->build($builder, $overwrite=false);
 						}
 
 						// -----------------------------------------------------------------------------------------
@@ -176,39 +171,34 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 						// -----------------------------------------------------------------------------------------
 
 						if ($table->treeMode()) {
-							switch ($table->treeMode()) {
-							case 'NestedSet':
-								foreach (array('nestedsetpeer', 'nestedset') as $target) {
-									$builder = $generatorConfig
-											->getConfiguredBuilder($table,
-													$target);
-									$this->build($builder);
-								}
+							switch($table->treeMode()) {
+								case 'NestedSet':
+									foreach (array('nestedsetpeer', 'nestedset') as $target) {
+										$builder = $generatorConfig->getConfiguredBuilder($table, $target);
+										$this->build($builder);
+									}
 								break;
 
-							case 'MaterializedPath':
-								foreach (array('nodepeer', 'node') as $target) {
-									$builder = $generatorConfig
-											->getConfiguredBuilder($table,
-													$target);
-									$this->build($builder);
-								}
+								case 'MaterializedPath':
+									foreach (array('nodepeer', 'node') as $target) {
+										$builder = $generatorConfig->getConfiguredBuilder($table, $target);
+										$this->build($builder);
+									}
 
-								foreach (array('nodepeerstub', 'nodestub') as $target) {
-									$builder = $generatorConfig
-											->getConfiguredBuilder($table,
-													$target);
-									$this->build($builder, $overwrite = false);
-								}
+									foreach (array('nodepeerstub', 'nodestub') as $target) {
+										$builder = $generatorConfig->getConfiguredBuilder($table, $target);
+										$this->build($builder, $overwrite=false);
+									}
 								break;
 
-							case 'AdjacencyList':
-								// No implementation for this yet.
-							default:
+								case 'AdjacencyList':
+									// No implementation for this yet.
+								default:
 								break;
 							}
 
 						} // if Table->treeMode()
+
 
 					} // if !$table->isForReferenceOnly()
 

@@ -42,7 +42,8 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder {
 	 *
 	 * @param      Table $table
 	 */
-	public function __construct(Table $table) {
+	public function __construct(Table $table)
+	{
 		parent::__construct($table);
 	}
 
@@ -51,13 +52,13 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder {
 	 * @param      DataRow $row The row to process.
 	 * @return     string
 	 */
-	public function buildRowSql(DataRow $row) {
+	public function buildRowSql(DataRow $row)
+	{
 		$sql = parent::buildRowSql($row);
 
 		$table = $this->getTable();
 
-		if ($table->hasAutoIncrementPrimaryKey()
-				&& $table->getIdMethod() == IDMethod::NATIVE) {
+		if ($table->hasAutoIncrementPrimaryKey() && $table->getIdMethod() == IDMethod::NATIVE) {
 			foreach ($row->getColumnValues() as $colValue) {
 				if ($colValue->getColumn()->isAutoIncrement()) {
 					if ($colValue->getValue() > $this->maxSeqVal) {
@@ -70,15 +71,13 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder {
 		return $sql;
 	}
 
-	public function getTableEndSql() {
+	public function getTableEndSql()
+	{
 		$table = $this->getTable();
 		$sql = "";
-		if ($table->hasAutoIncrementPrimaryKey()
-				&& $table->getIdMethod() == IDMethod::NATIVE) {
-			$seqname = $this
-					->prefixTablename($this->getDDLBuilder()->getSequenceName());
-			$sql .= "SELECT pg_catalog.setval('$seqname', "
-					. ((int) $this->maxSeqVal) . ");
+		if ($table->hasAutoIncrementPrimaryKey() && $table->getIdMethod() == IDMethod::NATIVE) {
+			$seqname = $this->prefixTablename($this->getDDLBuilder()->getSequenceName());
+			$sql .= "SELECT pg_catalog.setval('$seqname', ".((int)$this->maxSeqVal).");
 ";
 		}
 		return $sql;
@@ -89,7 +88,8 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder {
 	 * @param      boolean $value
 	 * @return     string The representation of boolean for Postgres ('t' or 'f').
 	 */
-	protected function getBooleanSql($value) {
+	protected function getBooleanSql($value)
+	{
 		if ($value === 'f' || $value === 'false' || $value === "0") {
 			$value = false;
 		}
@@ -101,7 +101,8 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder {
 	 * @param      mixed $blob Blob object or string containing data.
 	 * @return     string
 	 */
-	protected function getBlobSql($blob) {
+	protected function getBlobSql($blob)
+	{
 		// they took magic __toString() out of PHP5.0.0; this sucks
 		if (is_object($blob)) {
 			$blob = $blob->__toString();

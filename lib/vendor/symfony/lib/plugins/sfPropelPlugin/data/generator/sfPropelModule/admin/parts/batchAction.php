@@ -26,8 +26,7 @@
       $this->forward(sfConfig::get('sf_secure_module'), sfConfig::get('sf_secure_action'));
     }
 
-    $validator = new sfValidatorPropelChoice(array('multiple' => true, 'model' => '<?php echo $this
-		->getModelClass() ?>'));
+    $validator = new sfValidatorPropelChoice(array('multiple' => true, 'model' => '<?php echo $this->getModelClass() ?>'));
     try
     {
       // validate ids
@@ -49,7 +48,7 @@
     $ids = $request->getParameter('ids');
 
     $count = 0;
-    foreach (<?php echo constant($this->getModelClass() . '::PEER') ?>::retrieveByPks($ids) as $object)
+    foreach (<?php echo constant($this->getModelClass().'::PEER') ?>::retrieveByPks($ids) as $object)
     {
       $this->dispatcher->notify(new sfEvent($this, 'admin.delete_object', array('object' => $object)));
 

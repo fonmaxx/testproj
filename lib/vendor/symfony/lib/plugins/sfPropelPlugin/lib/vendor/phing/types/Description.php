@@ -36,18 +36,18 @@
  */
 class Description extends DataType {
 
-	/**
-	 * Adds descriptive text to the project.
-	 *
-	 * @return void
-	 */
-	public function addText($text) {
-		$currentDescription = $this->project->getDescription();
-		if ($currentDescription === null) {
-			$this->project->setDescription($text);
-		} else {
-			$this->project->setDescription($currentDescription . $text);
-		}
-	}
-
+    /**
+     * Adds descriptive text to the project.
+     *
+     * @return void
+     */
+    public function addText($text) {
+        $currentDescription = $this->project->getDescription();
+        if ($currentDescription === null) {
+            $this->project->setDescription($text);
+        } else {
+            $this->project->setDescription($currentDescription . $text);
+        }
+    }
+    
 }

@@ -20,6 +20,7 @@
  * <http://propel.phpdb.org>.
  */
 
+
 /**
  * A <code>NameGenerator</code> implementation for table-specific
  * constraints.  Conforms to the maximum column name length for the
@@ -46,7 +47,8 @@ class ConstraintNameGenerator implements NameGenerator {
 	 * @see        NameGenerator
 	 * @throws     EngineException
 	 */
-	public function generateName($inputs) {
+	public function generateName($inputs)
+	{
 
 		$db = $inputs[0];
 		$name = $inputs[1];
@@ -56,15 +58,13 @@ class ConstraintNameGenerator implements NameGenerator {
 		// Calculate maximum RDBMS-specific column character limit.
 		$maxBodyLength = -1;
 		try {
-			$maxColumnNameLength = (int) $db->getPlatform()
-					->getMaxColumnNameLength();
+			$maxColumnNameLength = (int) $db->getPlatform()->getMaxColumnNameLength();
 			$maxBodyLength = ($maxColumnNameLength - strlen($namePostfix)
 					- strlen($constraintNbr) - 2);
 
 			if (self::DEBUG) {
-				print
-						("maxColumnNameLength=" . $maxColumnNameLength
-								. " maxBodyLength=" . $maxBodyLength . "\n");
+				print("maxColumnNameLength=" . $maxColumnNameLength
+						. " maxBodyLength=" . $maxBodyLength . "\n");
 			}
 		} catch (EngineException $e) {
 			echo $e;
@@ -77,7 +77,7 @@ class ConstraintNameGenerator implements NameGenerator {
 		}
 
 		$name .= self::STD_SEPARATOR_CHAR . $namePostfix
-				. self::STD_SEPARATOR_CHAR . $constraintNbr;
+			. self::STD_SEPARATOR_CHAR . $constraintNbr;
 
 		return $name;
 	}

@@ -34,54 +34,60 @@ class MssqlSchemaParser extends BaseSchemaParser {
 	 * Map MSSQL native types to Propel types.
 	 * @var        array
 	 */
-	private static $mssqlTypeMap = array("binary" => CreoleTypes::BINARY,
-			"bit" => PropelTypes::BOOLEAN, "char" => PropelTypes::CHAR,
-			"datetime" => PropelTypes::TIMESTAMP,
-			"decimal() identity" => PropelTypes::DECIMAL,
-			"decimal" => PropelTypes::DECIMAL,
-			"image" => PropelTypes::LONGVARBINARY,
-			"int" => PropelTypes::INTEGER,
-			"int identity" => PropelTypes::INTEGER,
-			"integer" => PropelTypes::INTEGER, "money" => PropelTypes::DECIMAL,
-			"nchar" => PropelTypes::CHAR, "ntext" => PropelTypes::LONGVARCHAR,
-			"numeric() identity" => PropelTypes::NUMERIC,
-			"numeric" => PropelTypes::NUMERIC,
-			"nvarchar" => PropelTypes::VARCHAR, "real" => PropelTypes::REAL,
-			"float" => PropelTypes::FLOAT,
-			"smalldatetime" => PropelTypes::TIMESTAMP,
-			"smallint" => PropelTypes::SMALLINT,
-			"smallint identity" => PropelTypes::SMALLINT,
-			"smallmoney" => PropelTypes::DECIMAL,
-			"sysname" => PropelTypes::VARCHAR,
-			"text" => PropelTypes::LONGVARCHAR,
-			"timestamp" => PropelTypes::BINARY,
-			"tinyint identity" => PropelTypes::TINYINT,
-			"tinyint" => PropelTypes::TINYINT,
-			"uniqueidentifier" => PropelTypes::CHAR,
-			"varbinary" => PropelTypes::VARBINARY,
-			"varchar" => PropelTypes::VARCHAR,
-			"uniqueidentifier" => PropelTypes::CHAR,
-			// SQL Server 2000 only
-			"bigint identity" => PropelTypes::BIGINT,
-			"bigint" => PropelTypes::BIGINT,
-			"sql_variant" => PropelTypes::VARCHAR,);
+	private static $mssqlTypeMap = array(
+		"binary" => CreoleTypes::BINARY,
+		"bit" => PropelTypes::BOOLEAN,
+		"char" => PropelTypes::CHAR,
+		"datetime" => PropelTypes::TIMESTAMP,
+		"decimal() identity"  => PropelTypes::DECIMAL,
+		"decimal"  => PropelTypes::DECIMAL,
+		"image" => PropelTypes::LONGVARBINARY,
+		"int" => PropelTypes::INTEGER,
+		"int identity" => PropelTypes::INTEGER,
+		"integer" => PropelTypes::INTEGER,
+		"money" => PropelTypes::DECIMAL,
+		"nchar" => PropelTypes::CHAR,
+		"ntext" => PropelTypes::LONGVARCHAR,
+		"numeric() identity" => PropelTypes::NUMERIC,
+		"numeric" => PropelTypes::NUMERIC,
+		"nvarchar" => PropelTypes::VARCHAR,
+		"real" => PropelTypes::REAL,
+		"float" => PropelTypes::FLOAT,
+		"smalldatetime" => PropelTypes::TIMESTAMP,
+		"smallint" => PropelTypes::SMALLINT,
+		"smallint identity" => PropelTypes::SMALLINT,
+		"smallmoney" => PropelTypes::DECIMAL,
+		"sysname" => PropelTypes::VARCHAR,
+		"text" => PropelTypes::LONGVARCHAR,
+		"timestamp" => PropelTypes::BINARY,
+		"tinyint identity" => PropelTypes::TINYINT,
+		"tinyint" => PropelTypes::TINYINT,
+		"uniqueidentifier" => PropelTypes::CHAR,
+		"varbinary" => PropelTypes::VARBINARY,
+		"varchar" => PropelTypes::VARCHAR,
+		"uniqueidentifier" => PropelTypes::CHAR,
+	// SQL Server 2000 only
+		"bigint identity" => PropelTypes::BIGINT,
+		"bigint" => PropelTypes::BIGINT,
+		"sql_variant" => PropelTypes::VARCHAR,
+	);
 
 	/**
 	 * Gets a type mapping from native types to Propel types
 	 *
 	 * @return     array
 	 */
-	protected function getTypeMapping() {
+	protected function getTypeMapping()
+	{
 		return self::$mssqlTypeMap;
 	}
 
 	/**
 	 *
 	 */
-	public function parse(Database $database) {
-		$stmt = $this->dbh
-				->query(
-						"SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME <> 'dtproperties'");
+	public function parse(Database $database)
+	{
+		$stmt = $this->dbh->query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME <> 'dtproperties'");
 
 		// First load the tables (important that this happen before filling out details of tables)
 		$tables = array();
@@ -106,12 +112,14 @@ class MssqlSchemaParser extends BaseSchemaParser {
 
 	}
 
+
 	/**
 	 * Adds Columns to the specified table.
 	 *
 	 * @param      Table $table The Table model class to add columns to.
 	 */
-	protected function addColumns(Table $table) {
+	protected function addColumns(Table $table)
+	{
 		$stmt = $this->dbh->query("sp_columns '" . $table->getName() . "'");
 
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -131,11 +139,7 @@ class MssqlSchemaParser extends BaseSchemaParser {
 			$propelType = $this->getMappedPropelType($type);
 			if (!$propelType) {
 				$propelType = Column::DEFAULT_TYPE;
-				$this
-						->warn(
-								"Column [" . $table->getName() . "." . $name
-										. "] has a column type (" . $type
-										. ") that Propel does not support.");
+				$this->warn("Column [" . $table->getName() . "." . $name. "] has a column type (".$type.") that Propel does not support.");
 			}
 
 			$column = new Column($name);
@@ -146,10 +150,7 @@ class MssqlSchemaParser extends BaseSchemaParser {
 			$column->getDomain()->replaceSize($size);
 			$column->getDomain()->replaceScale($scale);
 			if ($default !== null) {
-				$column->getDomain()
-						->setDefaultValue(
-								new ColumnDefaultValue($default,
-										ColumnDefaultValue::TYPE_VALUE));
+				$column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, ColumnDefaultValue::TYPE_VALUE));
 			}
 			$column->setAutoIncrement($autoincrement);
 			$column->setNotNull(!$is_nullable);
@@ -157,24 +158,23 @@ class MssqlSchemaParser extends BaseSchemaParser {
 			$table->addColumn($column);
 		}
 
+
 	} // addColumn()
 
 	/**
 	 * Load foreign keys for this table.
 	 */
-	protected function addForeignKeys(Table $table) {
+	protected function addForeignKeys(Table $table)
+	{
 		$database = $table->getDatabase();
 
-		$stmt = $this->dbh
-				->query(
-						"SELECT ccu1.TABLE_NAME, ccu1.COLUMN_NAME, ccu2.TABLE_NAME AS FK_TABLE_NAME, ccu2.COLUMN_NAME AS FK_COLUMN_NAME
+		$stmt = $this->dbh->query("SELECT ccu1.TABLE_NAME, ccu1.COLUMN_NAME, ccu2.TABLE_NAME AS FK_TABLE_NAME, ccu2.COLUMN_NAME AS FK_COLUMN_NAME
 									FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu1 INNER JOIN
 								      INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc1 ON tc1.CONSTRAINT_NAME = ccu1.CONSTRAINT_NAME AND
 								      CONSTRAINT_TYPE = 'Foreign Key' INNER JOIN
 								      INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc1 ON rc1.CONSTRAINT_NAME = tc1.CONSTRAINT_NAME INNER JOIN
 								      INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu2 ON ccu2.CONSTRAINT_NAME = rc1.UNIQUE_CONSTRAINT_NAME
-									WHERE (ccu1.table_name = '"
-								. $table->getName() . "')");
+									WHERE (ccu1.table_name = '".$table->getName()."')");
 
 		$row = $stmt->fetch(PDO::FETCH_NUM);
 
@@ -185,9 +185,10 @@ class MssqlSchemaParser extends BaseSchemaParser {
 			$ftbl = $row['FK_TABLE_NAME'];
 			$fcol = $row['FK_COLUMN_NAME'];
 
+
 			$foreignTable = $database->getTable($ftbl);
 			$foreignColumn = $foreignTable->getColumn($fcol);
-			$localColumn = $table->getColumn($lcol);
+			$localColumn   = $table->getColumn($lcol);
 
 			if (!isset($foreignKeys[$name])) {
 				$fk = new ForeignKey($name);
@@ -205,7 +206,8 @@ class MssqlSchemaParser extends BaseSchemaParser {
 	/**
 	 * Load indexes for this table
 	 */
-	protected function addIndexes(Table $table) {
+	protected function addIndexes(Table $table)
+	{
 		$stmt = $this->dbh->query("sp_indexes_rowset " . $table->getName());
 
 		$indexes = array();
@@ -226,16 +228,14 @@ class MssqlSchemaParser extends BaseSchemaParser {
 	/**
 	 * Loads the primary key for this table.
 	 */
-	protected function addPrimaryKey(Table $table) {
-		$stmt = $this->dbh
-				->query(
-						"SELECT COLUMN_NAME
+	protected function addPrimaryKey(Table $table)
+	{
+		$stmt = $this->dbh->query("SELECT COLUMN_NAME
 						FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
 								INNER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ON
 					  INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME = INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.constraint_name
 						WHERE     (INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_TYPE = 'PRIMARY KEY') AND
-					  (INFORMATION_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = '"
-								. $table->getName() . "')");
+					  (INFORMATION_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = '".$table->getName()."')");
 
 		// Loop through the returned results, grouping the same key_name together
 		// adding each column for that key.

@@ -44,7 +44,8 @@ abstract class OMBuilder extends DataModelBuilder {
 	 *
 	 * @return     string The resulting PHP sourcecode.
 	 */
-	public function build() {
+	public function build()
+	{
 		$this->validateModel();
 
 		$script = "<" . "?php\n"; // intentional concatenation
@@ -65,7 +66,8 @@ abstract class OMBuilder extends DataModelBuilder {
 	 * and will throw exceptions for errors that will definitely cause
 	 * problems.
 	 */
-	protected function validateModel() {
+	protected function validateModel()
+	{
 		// Validation is currently only implemented in the subclasses.
 	}
 
@@ -75,7 +77,8 @@ abstract class OMBuilder extends DataModelBuilder {
 	 *
 	 * @return     string Some code
 	 */
-	public function buildObjectInstanceCreationCode($objName, $clsName) {
+	public function buildObjectInstanceCreationCode($objName, $clsName)
+	{
 		return "$objName = new $clsName();";
 	}
 
@@ -91,14 +94,16 @@ abstract class OMBuilder extends DataModelBuilder {
 	 * @return     string
 	 * @see        DataModelBuilder#prefixClassname()
 	 */
-	public function getClassname() {
+	public function getClassname()
+	{
 		return $this->prefixClassname($this->getUnprefixedClassname());
 	}
 	/**
 	 * Gets the dot-path representation of current class being built.
 	 * @return     string
 	 */
-	public function getClasspath() {
+	public function getClasspath()
+	{
 		if ($this->getPackage()) {
 			$path = $this->getPackage() . '.' . $this->getClassname();
 		} else {
@@ -111,9 +116,9 @@ abstract class OMBuilder extends DataModelBuilder {
 	 * Gets the full path to the file for the current class.
 	 * @return     string
 	 */
-	public function getClassFilePath() {
-		return ClassTools::getFilePath($this->getPackage(),
-				$this->getClassname());
+	public function getClassFilePath()
+	{
+		return ClassTools::getFilePath($this->getPackage(), $this->getClassname());
 	}
 
 	/**
@@ -121,9 +126,9 @@ abstract class OMBuilder extends DataModelBuilder {
 	 * This is overridden by child classes that have different packages.
 	 * @return     string
 	 */
-	public function getPackage() {
-		$pkg = ($this->getTable()->getPackage() ? $this->getTable()
-						->getPackage() : $this->getDatabase()->getPackage());
+	public function getPackage()
+	{
+		$pkg = ($this->getTable()->getPackage() ? $this->getTable()->getPackage() : $this->getDatabase()->getPackage());
 		if (!$pkg) {
 			$pkg = $this->getBuildProperty('targetPackage');
 		}
@@ -134,7 +139,8 @@ abstract class OMBuilder extends DataModelBuilder {
 	 * Returns filesystem path for current package.
 	 * @return     string
 	 */
-	public function getPackagePath() {
+	public function getPackagePath()
+	{
 		return strtr($this->getPackage(), '.', '/');
 	}
 
@@ -168,15 +174,15 @@ abstract class OMBuilder extends DataModelBuilder {
 	 *
 	 * @return     string If $classname is provided, then will return $classname::COLUMN_NAME; if not, then the peername is looked up for current table to yield $currTablePeer::COLUMN_NAME.
 	 */
-	public function getColumnConstant($col, $classname = null) {
+	public function getColumnConstant($col, $classname = null)
+	{
 		if ($col === null) {
 			$e = new Exception("No col specified.");
 			print $e;
 			throw $e;
 		}
 		if ($classname === null) {
-			return $this->getBuildProperty('classPrefix')
-					. $col->getConstantName();
+			return $this->getBuildProperty('classPrefix') . $col->getConstantName();
 		}
 		// was it overridden in schema.xml ?
 		if ($col->getPeerName()) {
@@ -184,7 +190,7 @@ abstract class OMBuilder extends DataModelBuilder {
 		} else {
 			$const = strtoupper($col->getName());
 		}
-		return $classname . '::' . $const;
+		return $classname.'::'.$const;
 	}
 
 	/**
@@ -204,9 +210,9 @@ abstract class OMBuilder extends DataModelBuilder {
 	 * Convenience method to get the foreign Table object for an fkey.
 	 * @return     Table
 	 */
-	protected function getForeignTable(ForeignKey $fk) {
-		return $this->getTable()->getDatabase()
-				->getTable($fk->getForeignTableName());
+	protected function getForeignTable(ForeignKey $fk)
+	{
+		return $this->getTable()->getDatabase()->getTable($fk->getForeignTableName());
 	}
 
 	/**
@@ -219,7 +225,8 @@ abstract class OMBuilder extends DataModelBuilder {
 	 * @param      boolean $plural Whether the php name should be plural (e.g. initRelatedObjs() vs. addRelatedObj()
 	 * @return     string
 	 */
-	public function getFKPhpNameAffix(ForeignKey $fk, $plural = false) {
+	public function getFKPhpNameAffix(ForeignKey $fk, $plural = false)
+	{
 		if ($fk->getPhpName()) {
 			if ($plural) {
 				return $this->getPluralizer()->getPluralForm($fk->getPhpName());
@@ -245,11 +252,11 @@ abstract class OMBuilder extends DataModelBuilder {
 	 * @param      boolean $plural Whether the php name should be plural (e.g. initRelatedObjs() vs. addRelatedObj()
 	 * @return     string
 	 */
-	public function getRefFKPhpNameAffix(ForeignKey $fk, $plural = false) {
+	public function getRefFKPhpNameAffix(ForeignKey $fk, $plural = false)
+	{
 		if ($fk->getRefPhpName()) {
 			if ($plural) {
-				return $this->getPluralizer()
-						->getPluralForm($fk->getRefPhpName());
+				return $this->getPluralizer()->getPluralForm($fk->getRefPhpName());
 			} else {
 				return $fk->getRefPhpName();
 			}
@@ -271,21 +278,17 @@ abstract class OMBuilder extends DataModelBuilder {
 	 *
 	 * @return     string
 	 */
-	protected function getRelatedBySuffix(ForeignKey $fk, $columnCheck = false) {
+	protected function getRelatedBySuffix(ForeignKey $fk, $columnCheck = false)
+	{
 		$relCol = "";
 		foreach ($fk->getLocalColumns() as $columnName) {
 			$column = $fk->getTable()->getColumn($columnName);
 			if (!$column) {
-				throw new Exception(
-						"Could not fetch column: $columnName in table "
-								. $fk->getTable()->getName());
+				throw new Exception("Could not fetch column: $columnName in table " . $fk->getTable()->getName());
 			}
 
-			if (count(
-					$column->getTable()
-							->getForeignKeysReferencingTable(
-									$fk->getForeignTableName())) > 1
-					|| $fk->getForeignTableName() == $fk->getTable()->getName()) {
+			if ( count($column->getTable()->getForeignKeysReferencingTable($fk->getForeignTableName())) > 1
+			|| $fk->getForeignTableName() == $fk->getTable()->getName()) {
 				// if there are seeral foreign keys that point to the same table
 				// then we need to generate methods like getAuthorRelatedByColName()
 				// instead of just getAuthor().  Currently we are doing the same
@@ -298,13 +301,13 @@ abstract class OMBuilder extends DataModelBuilder {
 
 		#$fk->getForeignTableName() != $this->getTable()->getName() &&
 		// @todo comment on it
-		if ($columnCheck && !$relCol
-				&& $fk->getTable()->getColumn($fk->getForeignTableName())) {
+		if ($columnCheck && !$relCol && $fk->getTable()->getColumn($fk->getForeignTableName())) {
 			foreach ($fk->getLocalColumns() as $columnName) {
 				$column = $fk->getTable()->getColumn($columnName);
 				$relCol .= $column->getPhpName();
 			}
 		}
+
 
 		if ($relCol != "") {
 			$relCol = "RelatedBy" . $relCol;
@@ -312,54 +315,54 @@ abstract class OMBuilder extends DataModelBuilder {
 
 		return $relCol;
 	}
-
+	
 	/**
 	 * Whether to add the include statements.
 	 * This is based on the build property propel.addIncludes
 	 */
-	protected function isAddIncludes() {
+	protected function isAddIncludes()
+	{
 		return $this->getBuildProperty('addIncludes');
 	}
-
+	
 	/**
-	 * Checks whether any registered behavior on that table has a modifier for a hook
-	 * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-	 * @param string $modifier The name of the modifier object providing the method in the behavior
-	 * @return boolean
-	 */
-	public function hasBehaviorModifier($hookName, $modifier) {
-		$modifierGetter = 'get' . $modifier;
-		foreach ($this->getTable()->getBehaviors() as $behavior) {
-			if (method_exists($behavior->$modifierGetter(), $hookName)) {
-				return true;
-			}
-		}
-		return false;
-	}
+   * Checks whether any registered behavior on that table has a modifier for a hook
+   * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+   * @param string $modifier The name of the modifier object providing the method in the behavior
+   * @return boolean
+   */
+  public function hasBehaviorModifier($hookName, $modifier)
+  {
+    $modifierGetter = 'get' . $modifier;
+    foreach ($this->getTable()->getBehaviors() as $behavior) {
+      if(method_exists($behavior->$modifierGetter(), $hookName)) { 
+        return true;
+      }
+    }
+    return false;
+  }
 
-	/**
-	 * Checks whether any registered behavior on that table has a modifier for a hook
-	 * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-	 * @param string $modifier The name of the modifier object providing the method in the behavior
+  /**
+   * Checks whether any registered behavior on that table has a modifier for a hook
+   * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+   * @param string $modifier The name of the modifier object providing the method in the behavior
 	 * @param string &$script The script will be modified in this method.
-	 */
-	public function applyBehaviorModifier($hookName, $modifier, &$script,
-			$tab = "		") {
-		$modifierGetter = 'get' . $modifier;
-		foreach ($this->getTable()->getBehaviors() as $behavior) {
-			$modifier = $behavior->$modifierGetter();
-			if (method_exists($modifier, $hookName)) {
-				if (strpos($hookName, 'Filter') !== false) {
-					// filter hook: the script string will be modified by the behavior
-					$modifier->$hookName($script);
-				} else {
-					// regular hook: the behavior returns a string to append to the script string
-					$script .= "\n" . $tab . '// ' . $behavior->getName()
-							. " behavior\n";
-					$script .= preg_replace('/^/m', $tab,
-							$modifier->$hookName());
-				}
-			}
-		}
-	}
+   */
+  public function applyBehaviorModifier($hookName, $modifier, &$script, $tab = "		")
+  {
+    $modifierGetter = 'get' . $modifier;
+    foreach ($this->getTable()->getBehaviors() as $behavior) {
+      $modifier = $behavior->$modifierGetter();
+      if(method_exists($modifier, $hookName)) {
+        if (strpos($hookName, 'Filter') !== false) {
+          // filter hook: the script string will be modified by the behavior
+          $modifier->$hookName($script);
+        } else {
+          // regular hook: the behavior returns a string to append to the script string
+          $script .= "\n" . $tab . '// ' . $behavior->getName() . " behavior\n";
+          $script .= preg_replace('/^/m', $tab, $modifier->$hookName());           
+         }
+      }
+    }
+  }
 }

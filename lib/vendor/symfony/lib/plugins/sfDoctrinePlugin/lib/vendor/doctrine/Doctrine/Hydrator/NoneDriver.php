@@ -31,8 +31,10 @@
  * @version     $Revision: 3192 $
  * @author      Jonathan H. Wage <jonwage@gmail.com>
  */
-class Doctrine_Hydrator_NoneDriver extends Doctrine_Hydrator_Abstract {
-	public function hydrateResultSet($stmt) {
-		return $stmt->fetchAll(PDO::FETCH_NUM);
-	}
+class Doctrine_Hydrator_NoneDriver extends Doctrine_Hydrator_Abstract
+{
+    public function hydrateResultSet($stmt)
+    {
+        return $stmt->fetchAll(PDO::FETCH_NUM);
+    }
 }

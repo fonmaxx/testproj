@@ -18,7 +18,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>.
  */
-
+ 
 require_once 'phing/Task.php';
 
 /**
@@ -35,59 +35,54 @@ require_once 'phing/Task.php';
  * @package  phing.tasks.system
  */
 class AdhocTask extends Task {
-
-	/**
-	 * The PHP script
-	 * @var string
-	 */
-	protected $script;
-
-	protected $newClasses = array();
-
-	/**
-	 * Main entry point
-	 */
-	public function main() {
-		$this->execute();
-		if ($this->newClasses) {
-			foreach ($this->newClasses as $classname) {
-				$this
-						->log("Added adhoc class " . $classname,
-								Project::MSG_VERBOSE);
-			}
-		} else {
-			$this
-					->log(
-							"Adhoc task executed but did not result in any new classes.",
-							Project::MSG_VERBOSE);
-		}
-	}
-
-	/**
-	 * Get array of names of newly defined classes.
-	 * @return array
-	 */
-	protected function getNewClasses() {
-		return $this->newClasses;
-	}
-
-	/**
-	 * Load the adhoc class, and perform any core validation.
-	 * @return string The classname of the ProjectComponent class.
-	 * @throws BuildException - if more than one class is defined.
-	 */
-	protected function execute() {
-		$classes = get_declared_classes();
-		eval($this->script);
-		$this->newClasses = array_diff(get_declared_classes(), $classes);
-	}
-
-	/**
-	 * Set the script.
-	 * @param string $script
-	 */
-	public function addText($script) {
-		$this->script = $script;
-	}
-
+            
+    /**
+     * The PHP script
+     * @var string
+     */
+    protected $script;
+    
+    protected $newClasses = array();
+    
+    /**
+     * Main entry point
+     */
+    public function main() {    
+        $this->execute();        
+        if ($this->newClasses) {
+            foreach($this->newClasses as $classname) {
+                $this->log("Added adhoc class " . $classname, Project::MSG_VERBOSE);
+            }
+        } else {
+            $this->log("Adhoc task executed but did not result in any new classes.", Project::MSG_VERBOSE);
+        }
+    }
+    
+    /**
+     * Get array of names of newly defined classes.
+     * @return array
+     */
+    protected function getNewClasses() {
+        return $this->newClasses;
+    }
+    
+    /**
+     * Load the adhoc class, and perform any core validation.
+     * @return string The classname of the ProjectComponent class.
+     * @throws BuildException - if more than one class is defined.
+     */
+    protected function execute() {
+        $classes = get_declared_classes();        
+        eval($this->script);        
+        $this->newClasses = array_diff(get_declared_classes(), $classes);        
+    }
+            
+    /**
+     * Set the script.
+     * @param string $script
+     */
+    public function addText($script) {
+        $this->script = $script;
+    }
+           
 }

@@ -50,7 +50,7 @@ class PropelException extends Exception {
 
 		if ($cause !== null) {
 			$this->cause = $cause;
-			$this->message .= " [wrapped: " . $cause->getMessage() . "]";
+			$this->message .= " [wrapped: " . $cause->getMessage() ."]";
 		}
 	}
 

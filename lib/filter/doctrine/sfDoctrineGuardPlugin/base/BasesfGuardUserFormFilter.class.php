@@ -54,6 +54,7 @@ abstract class BasesfGuardUserFormFilter extends BaseFormFilterDoctrine
 
     parent::setup();
   }
+
   public function addGroupsListColumnQuery(Doctrine_Query $query, $field, $values)
   {
     if (!is_array($values))
@@ -71,6 +72,7 @@ abstract class BasesfGuardUserFormFilter extends BaseFormFilterDoctrine
       ->andWhereIn('sfGuardUserGroup.group_id', $values)
     ;
   }
+
   public function addPermissionsListColumnQuery(Doctrine_Query $query, $field, $values)
   {
     if (!is_array($values))
@@ -88,6 +90,7 @@ abstract class BasesfGuardUserFormFilter extends BaseFormFilterDoctrine
       ->andWhereIn('sfGuardUserPermission.permission_id', $values)
     ;
   }
+
   public function getModelName()
   {
     return 'sfGuardUser';

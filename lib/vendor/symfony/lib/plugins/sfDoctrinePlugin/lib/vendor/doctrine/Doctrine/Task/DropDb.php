@@ -30,33 +30,32 @@
  * @version     $Revision: 2761 $
  * @author      Jonathan H. Wage <jwage@mac.com>
  */
-class Doctrine_Task_DropDb extends Doctrine_Task {
-	public $description = 'Drop database for all existing connections', $requiredArguments = array(), $optionalArguments = array(
-			'force' => 'Whether or not to force the drop database task');
+class Doctrine_Task_DropDb extends Doctrine_Task
+{
+    public $description          =   'Drop database for all existing connections',
+           $requiredArguments    =   array(),
+           $optionalArguments    =   array('force'  =>  'Whether or not to force the drop database task');
 
-	public function execute() {
-		if (!$this->getArgument('force')) {
-			$answer = $this
-					->ask('Are you sure you wish to drop your databases? (y/n)');
+    public function execute()
+    {
+        if ( ! $this->getArgument('force')) {
+            $answer = $this->ask('Are you sure you wish to drop your databases? (y/n)');
 
-			if ($answer != 'y') {
-				$this->notify('Successfully cancelled');
+            if ($answer != 'y') {
+                $this->notify('Successfully cancelled');
 
-				return;
-			}
-		}
+                return;
+            }
+        }
 
-		$manager = Doctrine_Manager::getInstance();
-		foreach ($manager as $name => $connection) {
-			try {
-				$connection->dropDatabase();
-				$this
-						->notify(
-								"Successfully dropped database for connection named '"
-										. $name . "'");
-			} catch (Exception $e) {
-				$this->notify($e->getMessage());
-			}
-		}
-	}
+        $manager = Doctrine_Manager::getInstance();
+        foreach ($manager as $name => $connection) {
+            try {
+                $connection->dropDatabase();
+                $this->notify("Successfully dropped database for connection named '" . $name . "'");
+            } catch (Exception $e) {
+                $this->notify($e->getMessage());
+            }
+        }
+    }
 }

@@ -30,34 +30,33 @@
  * @version     $Revision: 2761 $
  * @author      Jonathan H. Wage <jwage@mac.com>
  */
-class Doctrine_Task_RebuildDb extends Doctrine_Task {
-	public $description = 'Drops and re-creates databases', $requiredArguments = array(), $optionalArguments = array();
+class Doctrine_Task_RebuildDb extends Doctrine_Task
+{
+    public $description          =   'Drops and re-creates databases',
+           $requiredArguments    =   array(),
+           $optionalArguments    =   array();
+    
+    public function __construct($dispatcher = null)
+    {
+        parent::__construct($dispatcher);
+        
+        $this->dropDb = new Doctrine_Task_DropDb($this->dispatcher);
+        $this->createDb = new Doctrine_Task_CreateDb($this->dispatcher);
+        $this->createTables = new Doctrine_Task_CreateTables($this->dispatcher);
 
-	public function __construct($dispatcher = null) {
-		parent::__construct($dispatcher);
+        $this->requiredArguments = array_merge($this->requiredArguments, $this->dropDb->requiredArguments, $this->createDb->requiredArguments, $this->createTables->requiredArguments);
+        $this->optionalArguments = array_merge($this->optionalArguments, $this->dropDb->optionalArguments, $this->createDb->optionalArguments, $this->createTables->optionalArguments);
+    }
 
-		$this->dropDb = new Doctrine_Task_DropDb($this->dispatcher);
-		$this->createDb = new Doctrine_Task_CreateDb($this->dispatcher);
-		$this->createTables = new Doctrine_Task_CreateTables($this->dispatcher);
+    public function execute()
+    {
+        $this->dropDb->setArguments($this->getArguments());
+        $this->dropDb->execute();
 
-		$this->requiredArguments = array_merge($this->requiredArguments,
-				$this->dropDb->requiredArguments,
-				$this->createDb->requiredArguments,
-				$this->createTables->requiredArguments);
-		$this->optionalArguments = array_merge($this->optionalArguments,
-				$this->dropDb->optionalArguments,
-				$this->createDb->optionalArguments,
-				$this->createTables->optionalArguments);
-	}
+        $this->createDb->setArguments($this->getArguments());
+        $this->createDb->execute();
 
-	public function execute() {
-		$this->dropDb->setArguments($this->getArguments());
-		$this->dropDb->execute();
-
-		$this->createDb->setArguments($this->getArguments());
-		$this->createDb->execute();
-
-		$this->createTables->setArguments($this->getArguments());
-		$this->createTables->execute();
-	}
+        $this->createTables->setArguments($this->getArguments());
+        $this->createTables->execute();
+    }
 }

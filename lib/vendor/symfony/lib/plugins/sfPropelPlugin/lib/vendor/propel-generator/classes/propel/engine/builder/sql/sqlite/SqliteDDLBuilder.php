@@ -35,16 +35,13 @@ class SqliteDDLBuilder extends DDLBuilder {
 	 *
 	 * @see        parent::addDropStatement()
 	 */
-	protected function addDropStatements(&$script) {
+	protected function addDropStatements(&$script)
+	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 
 		$script .= "
-DROP TABLE "
-				. $this
-						->quoteIdentifier(
-								$this->prefixTablename($table->getName()))
-				. ";
+DROP TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName())).";
 ";
 	}
 
@@ -52,14 +49,14 @@ DROP TABLE "
 	 *
 	 * @see        parent::addColumns()
 	 */
-	protected function addTable(&$script) {
+	protected function addTable(&$script)
+	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 
 		$script .= "
 -----------------------------------------------------------------------------
--- " . $table->getName()
-				. "
+-- ".$table->getName()."
 -----------------------------------------------------------------------------
 ";
 
@@ -67,11 +64,7 @@ DROP TABLE "
 
 		$script .= "
 
-CREATE TABLE "
-				. $this
-						->quoteIdentifier(
-								$this->prefixTablename($table->getName()))
-				. "
+CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))."
 (
 	";
 
@@ -82,13 +75,11 @@ CREATE TABLE "
 		}
 
 		if ($table->hasPrimaryKey() && count($table->getPrimaryKey()) > 1) {
-			$lines[] = "PRIMARY KEY ("
-					. $this->getColumnList($table->getPrimaryKey()) . ")";
+			$lines[] = "PRIMARY KEY (".$this->getColumnList($table->getPrimaryKey()).")";
 		}
 
-		foreach ($table->getUnices() as $unique) {
-			$lines[] = "UNIQUE (" . $this->getColumnList($unique->getColumns())
-					. ")";
+		foreach ($table->getUnices() as $unique ) {
+			$lines[] = "UNIQUE (".$this->getColumnList($unique->getColumns()).")";
 		}
 
 		$sep = ",
@@ -103,7 +94,8 @@ CREATE TABLE "
 	 * Adds CREATE INDEX statements for this table.
 	 * @see        parent::addIndices()
 	 */
-	protected function addIndices(&$script) {
+	protected function addIndices(&$script)
+	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 
@@ -113,13 +105,7 @@ CREATE ";
 			if ($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}
-			$script .= "INDEX " . $this->quoteIdentifier($index->getName())
-					. " ON "
-					. $this
-							->quoteIdentifier(
-									$this->prefixTablename($table->getName()))
-					. " (" . $this->getColumnList($index->getColumns())
-					. ");
+			$script .= "INDEX ".$this->quoteIdentifier($index->getName())." ON ".$this->quoteIdentifier($this->prefixTablename($table->getName()))." (".$this->getColumnList($index->getColumns()).");
 ";
 		}
 	}
@@ -128,17 +114,15 @@ CREATE ";
 	 *
 	 * @see        parent::addForeignKeys()
 	 */
-	protected function addForeignKeys(&$script) {
+	protected function addForeignKeys(&$script)
+	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 
 		foreach ($table->getForeignKeys() as $fk) {
 			$script .= "
 -- SQLite does not support foreign keys; this is just for reference
--- FOREIGN KEY (" . $this->getColumnList($fk->getLocalColumns())
-					. ") REFERENCES "
-					. $this->prefixTablename($fk->getForeignTableName()) . " ("
-					. $this->getColumnList($fk->getForeignColumns()) . ")
+-- FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()).") REFERENCES ".$this->prefixTablename($fk->getForeignTableName())." (".$this->getColumnList($fk->getForeignColumns()).")
 ";
 		}
 	}

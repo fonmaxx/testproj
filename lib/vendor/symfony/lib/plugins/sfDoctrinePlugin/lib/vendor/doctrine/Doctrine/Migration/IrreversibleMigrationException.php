@@ -30,6 +30,5 @@
  * @version     $Revision: 1080 $
  * @author      Jonathan H. Wage <jwage@mac.com>
  */
-class Doctrine_Migration_IrreversibleMigrationException extends
-		Doctrine_Migration_Exception {
-}
+class Doctrine_Migration_IrreversibleMigrationException extends Doctrine_Migration_Exception
+{ }

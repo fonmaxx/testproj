@@ -68,14 +68,10 @@ class Validator extends XMLElement {
 	 * Sets up the Validator object based on the attributes that were passed to loadFromXML().
 	 * @see        parent::loadFromXML()
 	 */
-	protected function setupObject() {
-		$this->column = $this->getTable()
-				->getColumn($this->getAttribute("column"));
-		$this->translate = $this
-				->getAttribute("translate",
-						$this->getTable()->getDatabase()
-								->getDefaultTranslateMethod());
-		;
+	protected function setupObject()
+	{
+		$this->column = $this->getTable()->getColumn($this->getAttribute("column"));
+		$this->translate = $this->getAttribute("translate", $this->getTable()->getDatabase()->getDefaultTranslateMethod());;
 	}
 
 	/**
@@ -86,13 +82,15 @@ class Validator extends XMLElement {
 	 * @param      mixed $data Rule object or XML attribs (array) from <rule/> element.
 	 * @return     Rule The added Rule.
 	 */
-	public function addRule($data) {
+	public function addRule($data)
+	{
 		if ($data instanceof Rule) {
 			$rule = $data; // alias
 			$rule->setValidator($this);
 			$this->ruleList[] = $rule;
 			return $rule;
-		} else {
+		}
+		else {
 			$rule = new Rule();
 			$rule->setValidator($this);
 			$rule->loadFromXML($data);
@@ -104,7 +102,8 @@ class Validator extends XMLElement {
 	 * Gets an array of all added rules for this validator.
 	 * @return     array Rule[]
 	 */
-	public function getRules() {
+	public function getRules()
+	{
 		return $this->ruleList;
 	}
 
@@ -112,7 +111,8 @@ class Validator extends XMLElement {
 	 * Gets the name of the column that this Validator applies to.
 	 * @return     string
 	 */
-	public function getColumnName() {
+	public function getColumnName()
+	{
 		return $this->column->getName();
 	}
 
@@ -121,7 +121,8 @@ class Validator extends XMLElement {
 	 * @param      Column $column
 	 * @see        Table::addValidator()
 	 */
-	public function setColumn(Column $column) {
+	public function setColumn(Column $column)
+	{
 		$this->column = $column;
 	}
 
@@ -129,7 +130,8 @@ class Validator extends XMLElement {
 	 * Gets the Column object that this validator applies to.
 	 * @return     Column
 	 */
-	public function getColumn() {
+	public function getColumn()
+	{
 		return $this->column;
 	}
 
@@ -137,7 +139,8 @@ class Validator extends XMLElement {
 	 * Set the owning Table.
 	 * @param      Table $table
 	 */
-	public function setTable(Table $table) {
+	public function setTable(Table $table)
+	{
 		$this->table = $table;
 	}
 
@@ -145,7 +148,8 @@ class Validator extends XMLElement {
 	 * Get the owning Table.
 	 * @return     Table
 	 */
-	public function getTable() {
+	public function getTable()
+	{
 		return $this->table;
 	}
 
@@ -154,7 +158,8 @@ class Validator extends XMLElement {
 	 * Currently only "gettext" and "none" are supported.  The default is "none".
 	 * @param      string $method Translation method ("gettext", "none").
 	 */
-	public function setTranslate($method) {
+	public function setTranslate($method)
+	{
 		$this->translate = $method;
 	}
 
@@ -163,14 +168,16 @@ class Validator extends XMLElement {
 	 * Currently only "gettext" and "none" are supported.  The default is "none".
 	 * @return     string Translation method ("gettext", "none").
 	 */
-	public function getTranslate() {
+	public function getTranslate()
+	{
 		return $this->translate;
 	}
 
 	/**
 	 * @see        XMLElement::appendXml(DOMNode)
 	 */
-	public function appendXml(DOMNode $node) {
+	public function appendXml(DOMNode $node)
+	{
 		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
 
 		$valNode = $node->appendChild($doc->createElement('validator'));

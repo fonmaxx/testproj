@@ -153,40 +153,51 @@ class PropelSchemaReverseTask extends PDOTask {
 	 *
 	 * @var        array
 	 */
-	static protected $validatorBitMap = array(
-			'none' => PropelSchemaReverseTask::VALIDATORS_NONE,
-			'maxlength' => PropelSchemaReverseTask::VALIDATORS_MAXLENGTH,
-			'maxvalue' => PropelSchemaReverseTask::VALIDATORS_MAXVALUE,
-			'type' => PropelSchemaReverseTask::VALIDATORS_TYPE,
-			'required' => PropelSchemaReverseTask::VALIDATORS_REQUIRED,
-			'unique' => PropelSchemaReverseTask::VALIDATORS_UNIQUE,
-			'all' => PropelSchemaReverseTask::VALIDATORS_ALL,);
+	static protected $validatorBitMap = array (
+		'none' => PropelSchemaReverseTask::VALIDATORS_NONE,
+		'maxlength' => PropelSchemaReverseTask::VALIDATORS_MAXLENGTH,
+		'maxvalue' => PropelSchemaReverseTask::VALIDATORS_MAXVALUE,
+		'type' => PropelSchemaReverseTask::VALIDATORS_TYPE,
+		'required' => PropelSchemaReverseTask::VALIDATORS_REQUIRED,
+		'unique' => PropelSchemaReverseTask::VALIDATORS_UNIQUE,
+		'all' => PropelSchemaReverseTask::VALIDATORS_ALL,
+	);
 
 	/**
 	 * Defines messages that are added to validators
 	 *
 	 * @var        array
 	 */
-	static protected $validatorMessages = array(
-			'maxlength' => array(
-					'msg' => 'The field %s must be not longer than %s characters.',
-					'var' => array('colName', 'value')),
-			'maxvalue' => array(
-					'msg' => 'The field %s must be not greater than %s.',
-					'var' => array('colName', 'value')),
-			'type' => array('msg' => 'The column %s must be an %s value.',
-					'var' => array('colName', 'value')),
-			'required' => array('msg' => 'The field %s is required.',
-					'var' => array('colName')),
-			'unique' => array('msg' => 'This %s already exists in table %s.',
-					'var' => array('colName', 'tableName')),);
+	static protected $validatorMessages = array (
+		'maxlength' => array (
+			'msg' => 'The field %s must be not longer than %s characters.',
+			'var' => array('colName', 'value')
+	),
+		'maxvalue' => array (
+			'msg' => 'The field %s must be not greater than %s.',
+			'var' => array('colName', 'value')
+	),
+		'type' => array (
+			'msg' => 'The column %s must be an %s value.',
+			'var' => array('colName', 'value')
+	),
+		'required' => array (
+			'msg' => 'The field %s is required.',
+			'var' => array('colName')
+	),
+		'unique' => array (
+			'msg' => 'This %s already exists in table %s.',
+			'var' => array('colName', 'tableName')
+	),
+	);
 
 	/**
 	 * Gets the (optional) schema name to use.
 	 *
 	 * @return     string
 	 */
-	public function getDbSchema() {
+	public function getDbSchema()
+	{
 		return $this->dbSchema;
 	}
 
@@ -195,7 +206,8 @@ class PropelSchemaReverseTask extends PDOTask {
 	 *
 	 * @param      string $dbSchema
 	 */
-	public function setDbSchema($dbSchema) {
+	public function setDbSchema($dbSchema)
+	{
 		$this->dbSchema = $dbSchema;
 	}
 
@@ -204,7 +216,8 @@ class PropelSchemaReverseTask extends PDOTask {
 	 *
 	 * @return     string
 	 */
-	public function getDbEncoding($v) {
+	public function getDbEncoding($v)
+	{
 		return $this->dbEncoding;
 	}
 
@@ -213,7 +226,8 @@ class PropelSchemaReverseTask extends PDOTask {
 	 *
 	 * @param      string $v
 	 */
-	public function setDbEncoding($v) {
+	public function setDbEncoding($v)
+	{
 		$this->dbEncoding = $v;
 	}
 
@@ -222,7 +236,8 @@ class PropelSchemaReverseTask extends PDOTask {
 	 *
 	 * @return     string
 	 */
-	public function getDatabaseName() {
+	public function getDatabaseName()
+	{
 		return $this->databaseName;
 	}
 
@@ -233,7 +248,8 @@ class PropelSchemaReverseTask extends PDOTask {
 	 *
 	 * @param      string $v
 	 */
-	public function setDatabaseName($v) {
+	public function setDatabaseName($v)
+	{
 		$this->databaseName = $v;
 	}
 
@@ -242,7 +258,8 @@ class PropelSchemaReverseTask extends PDOTask {
 	 *
 	 * @param      PhingFile $v
 	 */
-	public function setOutputFile(PhingFile $v) {
+	public function setOutputFile(PhingFile $v)
+	{
 		$this->xmlSchema = $v;
 	}
 
@@ -251,7 +268,8 @@ class PropelSchemaReverseTask extends PDOTask {
 	 *
 	 * @param      boolean $v
 	 */
-	public function setSamePhpName($v) {
+	public function setSamePhpName($v)
+	{
 		$this->samePhpName = $v;
 	}
 
@@ -260,7 +278,8 @@ class PropelSchemaReverseTask extends PDOTask {
 	 *
 	 * @param      boolean $v
 	 */
-	public function setAddVendorInfo($v) {
+	public function setAddVendorInfo($v)
+	{
 		$this->addVendorInfo = (boolean) $v;
 	}
 
@@ -270,7 +289,8 @@ class PropelSchemaReverseTask extends PDOTask {
 	 * @param      string $v The comma-separated list of which validators to add.
 	 * @return     void
 	 */
-	public function setAddValidators($v) {
+	public function setAddValidators($v)
+	{
 		$validKeys = array_keys(self::$validatorBitMap);
 
 		// lowercase input
@@ -281,13 +301,11 @@ class PropelSchemaReverseTask extends PDOTask {
 		$exprs = explode(',', $v);
 		foreach ($exprs as $expr) {
 			$expr = trim($expr);
-			if (!empty($expr)) {
-				if (!isset(self::$validatorBitMap[$expr])) {
-					throw new BuildException(
-							"Unable to interpret validator in expression ('$v'): "
-									. $expr);
-				}
-				$bits |= self::$validatorBitMap[$expr];
+			if(!empty($expr)) {
+  			if (!isset(self::$validatorBitMap[$expr])) {
+  				throw new BuildException("Unable to interpret validator in expression ('$v'): " . $expr);
+  			}
+  			$bits |= self::$validatorBitMap[$expr];
 			}
 		}
 
@@ -300,7 +318,8 @@ class PropelSchemaReverseTask extends PDOTask {
 	 * @param      int $type The validator type constant.
 	 * @return     boolean
 	 */
-	protected function isValidatorRequired($type) {
+	protected function isValidatorRequired($type)
+	{
 		return (($this->validatorBits & $type) === $type);
 	}
 
@@ -309,18 +328,18 @@ class PropelSchemaReverseTask extends PDOTask {
 	 *
 	 * @return     boolean
 	 */
-	public function isSamePhpName() {
+	public function isSamePhpName()
+	{
 		return $this->samePhpName;
 	}
 
 	/**
 	 * @throws     BuildException
 	 */
-	public function main() {
+	public function main()
+	{
 		if (!$this->getDatabaseName()) {
-			throw new BuildException(
-					"databaseName attribute is required for schema reverse engineering",
-					$this->getLocation());
+			throw new BuildException("databaseName attribute is required for schema reverse engineering", $this->getLocation());
 		}
 
 		//(not yet supported) $this->log("schema : " . $this->dbSchema);
@@ -330,12 +349,7 @@ class PropelSchemaReverseTask extends PDOTask {
 		$this->doc = new DOMDocument('1.0', 'utf-8');
 		$this->doc->formatOutput = true; // pretty printing
 
-		$this->doc
-				->appendChild(
-						$this->doc
-								->createComment(
-										"Autogenerated by " . get_class($this)
-												. " class."));
+		$this->doc->appendChild($this->doc->createComment("Autogenerated by ".get_class($this)." class."));
 
 		try {
 
@@ -354,10 +368,7 @@ class PropelSchemaReverseTask extends PDOTask {
 			$out->close();
 
 		} catch (Exception $e) {
-			$this
-					->log(
-							"There was an error building XML from metadata: "
-									. $e->getMessage(), Project::MSG_ERR);
+			$this->log("There was an error building XML from metadata: " . $e->getMessage(), Project::MSG_ERR);
 		}
 
 		$this->log("Schema reverse engineering finished");
@@ -367,11 +378,11 @@ class PropelSchemaReverseTask extends PDOTask {
 	 * Gets the GeneratorConfig object for this task or creates it on-demand.
 	 * @return     GeneratorConfig
 	 */
-	protected function getGeneratorConfig() {
+	protected function getGeneratorConfig()
+	{
 		if ($this->generatorConfig === null) {
 			$this->generatorConfig = new GeneratorConfig();
-			$this->generatorConfig
-					->setBuildProperties($this->getProject()->getProperties());
+			$this->generatorConfig->setBuildProperties($this->getProject()->getProperties());
 		}
 		return $this->generatorConfig;
 	}
@@ -380,7 +391,8 @@ class PropelSchemaReverseTask extends PDOTask {
 	 * Builds the model classes from the database schema.
 	 * @return     Database The built-out Database (with all tables, etc.)
 	 */
-	protected function buildModel() {
+	protected function buildModel()
+	{
 		$config = $this->getGeneratorConfig();
 		$con = $this->getConnection();
 
@@ -414,7 +426,8 @@ class PropelSchemaReverseTask extends PDOTask {
 	 * @todo       find out how to evaluate the appropriate size and adjust maxValue rule values appropriate
 	 * @todo       find out if float type column values must always notMatch('[^\d\.]+'), i.e. digits and point for any db vendor, language etc.
 	 */
-	protected function addValidators(Database $database) {
+	protected function addValidators(Database $database)
+	{
 
 		$platform = $this->getGeneratorConfig()->getConfiguredPlatform();
 
@@ -424,54 +437,26 @@ class PropelSchemaReverseTask extends PDOTask {
 
 			foreach ($table->getColumns() as $col) {
 
-				if ($col->isNotNull()
-						&& $this
-								->isValidatorRequired(self::VALIDATORS_REQUIRED)) {
+				if ($col->isNotNull() && $this->isValidatorRequired(self::VALIDATORS_REQUIRED)) {
 					$validator = $set->getValidator($col);
-					$validator
-							->addRule($this->getValidatorRule($col, 'required'));
+					$validator->addRule($this->getValidatorRule($col, 'required'));
 				}
 
-				if (in_array($col->getType(),
-						array(PropelTypes::CHAR, PropelTypes::VARCHAR,
-								PropelTypes::LONGVARCHAR)) && $col->getSize()
-						&& $this
-								->isValidatorRequired(
-										self::VALIDATORS_MAXLENGTH)) {
+				if (in_array($col->getType(), array(PropelTypes::CHAR, PropelTypes::VARCHAR, PropelTypes::LONGVARCHAR))
+						&& $col->getSize() && $this->isValidatorRequired(self::VALIDATORS_MAXLENGTH)) {
 					$validator = $set->getValidator($col);
-					$validator
-							->addRule(
-									$this
-											->getValidatorRule($col,
-													'maxLength',
-													$col->getSize()));
+					$validator->addRule($this->getValidatorRule($col, 'maxLength', $col->getSize()));
 				}
 
-				if ($col->isNumericType()
-						&& $this
-								->isValidatorRequired(self::VALIDATORS_MAXVALUE)) {
-					$this
-							->log(
-									"WARNING: maxValue validator added for column "
-											. $col->getName()
-											. ". You will have to adjust the size value manually.",
-									Project::MSG_WARN);
+				if ($col->isNumericType() && $this->isValidatorRequired(self::VALIDATORS_MAXVALUE)) {
+					$this->log("WARNING: maxValue validator added for column ".$col->getName().". You will have to adjust the size value manually.", Project::MSG_WARN);
 					$validator = $set->getValidator($col);
-					$validator
-							->addRule(
-									$this
-											->getValidatorRule($col, 'maxSize',
-													'REPLACEME'));
+					$validator->addRule($this->getValidatorRule($col, 'maxSize', 'REPLACEME'));
 				}
 
-				if ($col->isPhpPrimitiveType()
-						&& $this->isValidatorRequired(self::VALIDATORS_TYPE)) {
+				if ($col->isPhpPrimitiveType() && $this->isValidatorRequired(self::VALIDATORS_TYPE)) {
 					$validator = $set->getValidator($col);
-					$validator
-							->addRule(
-									$this
-											->getValidatorRule($col, 'type',
-													$col->getPhpType()));
+					$validator->addRule($this->getValidatorRule($col, 'type', $col->getPhpType()));
 				}
 
 			}
@@ -481,8 +466,7 @@ class PropelSchemaReverseTask extends PDOTask {
 				if (count($colnames) == 1) { // currently 'unique' validator only works w/ single columns.
 					$col = $table->getColumn($colnames[0]);
 					$validator = $set->getValidator($col);
-					$validator
-							->addRule($this->getValidatorRule($col, 'unique'));
+					$validator->addRule($this->getValidatorRule($col, 'unique'));
 				}
 			}
 
@@ -501,7 +485,8 @@ class PropelSchemaReverseTask extends PDOTask {
 	 * @param      string $type The type (string) for validator (e.g. 'required').
 	 * @param      mixed $value The value for the validator (if applicable)
 	 */
-	protected function getValidatorRule(Column $column, $type, $value = null) {
+	protected function getValidatorRule(Column $column, $type, $value = null)
+	{
 		$rule = new Rule();
 		$rule->setName($type);
 		if ($value !== null) {
@@ -518,7 +503,8 @@ class PropelSchemaReverseTask extends PDOTask {
 	 * @param      string $type
 	 * @param      mixed $value
 	 */
-	protected function getRuleMessage(Column $column, $type, $value) {
+	protected function getRuleMessage(Column $column, $type, $value)
+	{
 		// create message
 		$colName = $column->getName();
 		$tableName = $column->getTable()->getName();
@@ -549,7 +535,8 @@ class PropelSchemaReverse_ValidatorSet {
 	 * @param      Column $column
 	 * @return     Validator
 	 */
-	public function getValidator(Column $column) {
+	public function getValidator(Column $column)
+	{
 		$key = $column->getName();
 		if (!isset($this->validators[$key])) {
 			$this->validators[$key] = new Validator();
@@ -562,7 +549,8 @@ class PropelSchemaReverse_ValidatorSet {
 	 * Gets all validators.
 	 * @return     array Validator[]
 	 */
-	public function getValidators() {
+	public function getValidators()
+	{
 		return $this->validators;
 	}
 }

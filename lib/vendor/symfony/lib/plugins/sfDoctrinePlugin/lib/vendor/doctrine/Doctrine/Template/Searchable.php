@@ -30,62 +30,66 @@
  * @link        www.doctrine-project.org
  * @since       1.0
  */
-class Doctrine_Template_Searchable extends Doctrine_Template {
-	/**
-	 * __construct
-	 *
-	 * @param array $options 
-	 * @return void
-	 */
-	public function __construct(array $options = array()) {
-		parent::__construct($options);
-		$this->_plugin = new Doctrine_Search($this->_options);
-	}
+class Doctrine_Template_Searchable extends Doctrine_Template
+{
+    /**
+     * __construct
+     *
+     * @param array $options 
+     * @return void
+     */
+    public function __construct(array $options = array())
+    {
+	      parent::__construct($options);
+        $this->_plugin = new Doctrine_Search($this->_options); 
+    }
 
-	/**
-	 * Setup the Searchable template behavior
-	 *
-	 * @return void
-	 */
-	public function setUp() {
-		$this->_plugin->initialize($this->_table);
+    /**
+     * Setup the Searchable template behavior
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        $this->_plugin->initialize($this->_table);
 
-		$this->addListener(new Doctrine_Search_Listener($this->_plugin));
-	}
+        $this->addListener(new Doctrine_Search_Listener($this->_plugin));
+    }
 
-	/**
-	 * Make the batchUpdateIndex() function available to the template so Doctrine_Record child classes
-	 * with the behavior enabled can all the function
-	 *
-	 * @param integer $limit 
-	 * @param integer $offset 
-	 * @return void
-	 */
-	public function batchUpdateIndex($limit = null, $offset = null,
-			$encoding = null) {
-		$this->_plugin->batchUpdateIndex($limit, $offset, $encoding);
-	}
+    /**
+     * Make the batchUpdateIndex() function available to the template so Doctrine_Record child classes
+     * with the behavior enabled can all the function
+     *
+     * @param integer $limit 
+     * @param integer $offset 
+     * @return void
+     */
+    public function batchUpdateIndex($limit = null, $offset = null, $encoding = null)
+    {
+        $this->_plugin->batchUpdateIndex($limit, $offset, $encoding);
+    }
 
-	/**
-	 * Proxy method so the batch updating can be called from table classes
-	 *
-	 * @param integer $limit 
-	 * @param integer $offset 
-	 * @return void
-	 */
-	public function batchUpdateIndexTableProxy($limit = null, $offset = null,
-			$encoding = null) {
-		$this->batchUpdateIndex($limit, $offset, $encoding);
-	}
+    /**
+     * Proxy method so the batch updating can be called from table classes
+     *
+     * @param integer $limit 
+     * @param integer $offset 
+     * @return void
+     */
+    public function batchUpdateIndexTableProxy($limit = null, $offset = null, $encoding = null)
+    {
+        $this->batchUpdateIndex($limit, $offset, $encoding);
+    }
 
-	/**
-	 * Searchable keyword search proxy for Doctrine_Table
-	 * 
-	 * @param string $string Keyword string to search for
-	 * @param Doctrine_Query $query Query object to alter. Adds where condition to limit the results using the search index
-	 * @return array    ids and relevancy
-	 */
-	public function searchTableProxy($string, $query = null) {
-		return $this->_plugin->search($string, $query);
-	}
+    /**
+     * Searchable keyword search proxy for Doctrine_Table
+     * 
+     * @param string $string Keyword string to search for
+     * @param Doctrine_Query $query Query object to alter. Adds where condition to limit the results using the search index
+     * @return array    ids and relevancy
+     */
+    public function searchTableProxy($string, $query = null)
+    {
+        return $this->_plugin->search($string, $query);
+    }
 }

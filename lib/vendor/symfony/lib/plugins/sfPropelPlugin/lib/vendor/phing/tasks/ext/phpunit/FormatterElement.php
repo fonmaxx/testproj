@@ -29,92 +29,122 @@ require_once 'phing/system/io/PhingFile.php';
  * @package phing.tasks.ext.phpunit
  * @since 2.1.0
  */
-class FormatterElement {
+class FormatterElement
+{
 	protected $formatter = NULL;
-
+	
 	protected $type = "";
-
+	
 	protected $useFile = true;
-
+	
 	protected $toDir = ".";
-
+	
 	protected $outfile = "";
 
-	function setType($type) {
+	function setType($type)
+	{
 		$this->type = $type;
-
-		if ($this->type == "summary") {
-			if (PHPUnitUtil::$installedVersion == 3) {
+		
+		if ($this->type == "summary")
+		{
+			if (PHPUnitUtil::$installedVersion == 3)
+			{
 				require_once 'phing/tasks/ext/phpunit/phpunit3/SummaryPHPUnit3ResultFormatter.php';
 				$this->formatter = new SummaryPHPUnit3ResultFormatter();
-			} else {
+			}
+			else			
+			{
 				require_once 'phing/tasks/ext/phpunit/phpunit2/SummaryPHPUnit2ResultFormatter.php';
 				$this->formatter = new SummaryPHPUnit2ResultFormatter();
 			}
-		} else if ($this->type == "xml") {
+		}
+		else
+		if ($this->type == "xml")
+		{
 			$destFile = new PhingFile($this->toDir, 'testsuites.xml');
 
-			if (PHPUnitUtil::$installedVersion == 3) {
+			if (PHPUnitUtil::$installedVersion == 3)
+			{
 				require_once 'phing/tasks/ext/phpunit/phpunit3/XMLPHPUnit3ResultFormatter.php';
 				$this->formatter = new XMLPHPUnit3ResultFormatter();
-			} else {
+			}
+			else
+			{
 				require_once 'phing/tasks/ext/phpunit/phpunit2/XMLPHPUnit2ResultFormatter.php';
 				$this->formatter = new XMLPHPUnit2ResultFormatter();
 			}
-		} else if ($this->type == "plain") {
-			if (PHPUnitUtil::$installedVersion == 3) {
+		}
+		else
+		if ($this->type == "plain")
+		{
+			if (PHPUnitUtil::$installedVersion == 3)
+			{
 				require_once 'phing/tasks/ext/phpunit/phpunit3/PlainPHPUnit3ResultFormatter.php';
 				$this->formatter = new PlainPHPUnit3ResultFormatter();
-			} else {
+			}
+			else
+			{
 				require_once 'phing/tasks/ext/phpunit/phpunit2/PlainPHPUnit2ResultFormatter.php';
 				$this->formatter = new PlainPHPUnit2ResultFormatter();
 			}
-		} else {
-			throw new BuildException(
-					"Formatter '" . $this->type . "' not implemented");
+		}
+		else
+		{
+			throw new BuildException("Formatter '" . $this->type . "' not implemented");
 		}
 	}
 
-	function setClassName($className) {
+	function setClassName($className)
+	{
 		$classNameNoDot = Phing::import($className);
 
 		$this->formatter = new $classNameNoDot();
 	}
 
-	function setUseFile($useFile) {
+	function setUseFile($useFile)
+	{
 		$this->useFile = $useFile;
 	}
-
-	function getUseFile() {
+	
+	function getUseFile()
+	{
 		return $this->useFile;
 	}
-
-	function setToDir($toDir) {
+	
+	function setToDir($toDir)
+	{
 		$this->toDir = $toDir;
 	}
-
-	function getToDir() {
+	
+	function getToDir()
+	{
 		return $this->toDir;
 	}
 
-	function setOutfile($outfile) {
+	function setOutfile($outfile)
+	{
 		$this->outfile = $outfile;
 	}
-
-	function getOutfile() {
-		if ($this->outfile) {
+	
+	function getOutfile()
+	{
+		if ($this->outfile)
+		{
 			return $this->outfile;
-		} else {
-			return $this->formatter->getPreferredOutfile()
-					. $this->getExtension();
+		}
+		else
+		{
+			return $this->formatter->getPreferredOutfile() . $this->getExtension();
 		}
 	}
-
-	function getExtension() {
+	
+	function getExtension()
+	{
 		return $this->formatter->getExtension();
 	}
 
-	function getFormatter() {
+	function getFormatter()
+	{
 		return $this->formatter;
 	}
 }

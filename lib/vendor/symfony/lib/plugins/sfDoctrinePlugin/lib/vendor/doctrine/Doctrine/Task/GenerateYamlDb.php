@@ -30,14 +30,16 @@
  * @version     $Revision: 2761 $
  * @author      Jonathan H. Wage <jwage@mac.com>
  */
-class Doctrine_Task_GenerateYamlDb extends Doctrine_Task {
-	public $description = 'Generates a Yaml schema file from an existing database', $requiredArguments = array(
-			'yaml_schema_path' => 'Specify the path to your yaml schema files.'), $optionalArguments = array();
-
-	public function execute() {
-		Doctrine_Core::generateYamlFromDb(
-				$this->getArgument('yaml_schema_path'));
-
-		$this->notify('Generate YAML schema successfully from database');
-	}
+class Doctrine_Task_GenerateYamlDb extends Doctrine_Task
+{
+    public $description          =   'Generates a Yaml schema file from an existing database',
+           $requiredArguments    =   array('yaml_schema_path'   =>  'Specify the path to your yaml schema files.'),
+           $optionalArguments    =   array();
+    
+    public function execute()
+    {
+        Doctrine_Core::generateYamlFromDb($this->getArgument('yaml_schema_path'));
+        
+        $this->notify('Generate YAML schema successfully from database');
+    }
 }

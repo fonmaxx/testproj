@@ -50,7 +50,8 @@ class VendorInfo extends XMLElement {
 	 *
 	 * @param      string $type RDBMS type (optional)
 	 */
-	public function __construct($type = null) {
+	public function __construct($type = null)
+	{
 		$this->type = $type;
 	}
 
@@ -58,7 +59,8 @@ class VendorInfo extends XMLElement {
 	 * Sets up this object based on the attributes that were passed to loadFromXML().
 	 * @see        parent::loadFromXML()
 	 */
-	protected function setupObject() {
+	protected function setupObject()
+	{
 		$this->type = $this->getAttribute("type");
 	}
 
@@ -67,7 +69,8 @@ class VendorInfo extends XMLElement {
 	 *
 	 * @param      string $v
 	 */
-	public function setType($v) {
+	public function setType($v)
+	{
 		$this->type = $v;
 	}
 
@@ -76,7 +79,8 @@ class VendorInfo extends XMLElement {
 	 *
 	 * @return     string
 	 */
-	public function getType() {
+	public function getType()
+	{
 		return $this->type;
 	}
 
@@ -84,7 +88,8 @@ class VendorInfo extends XMLElement {
 	 * Adds a new vendor parameter to this object.
 	 * @param      array $attrib Attributes from XML.
 	 */
-	public function addParameter($attrib) {
+	public function addParameter($attrib)
+	{
 		$name = $attrib["name"];
 		$this->parameters[$name] = $attrib["value"];
 	}
@@ -95,7 +100,8 @@ class VendorInfo extends XMLElement {
 	 * @param      string $name
 	 * @param      mixed $value The value for the parameter.
 	 */
-	public function setParameter($name, $value) {
+	public function setParameter($name, $value)
+	{
 		$this->parameters[$name] = $value;
 	}
 
@@ -105,7 +111,8 @@ class VendorInfo extends XMLElement {
 	 * @param      string $name
 	 * @return     mixed Paramter value.
 	 */
-	public function getParameter($name) {
+	public function getParameter($name)
+	{
 		if (isset($this->parameters[$name])) {
 			return $this->parameters[$name];
 		}
@@ -117,7 +124,8 @@ class VendorInfo extends XMLElement {
 	 *
 	 * @param      string $name
 	 */
-	public function hasParameter($name) {
+	public function hasParameter($name)
+	{
 		return isset($this->parameters[$name]);
 	}
 
@@ -126,7 +134,8 @@ class VendorInfo extends XMLElement {
 	 *
 	 * @param      array $params Paramter data.
 	 */
-	public function setParameters(array $params = array()) {
+	public function setParameters(array $params = array())
+	{
 		$this->parameters = $params;
 	}
 
@@ -135,7 +144,8 @@ class VendorInfo extends XMLElement {
 	 *
 	 * @return     array
 	 */
-	public function getParameters() {
+	public function getParameters()
+	{
 		return $this->parameters;
 	}
 
@@ -144,9 +154,9 @@ class VendorInfo extends XMLElement {
 	 * @param      VendorInfo $info
 	 * @return     VendorInfo new object with merged parameters
 	 */
-	public function getMergedVendorInfo(VendorInfo $merge) {
-		$newParams = array_merge($this->getParameters(),
-				$merge->getParameters());
+	public function getMergedVendorInfo(VendorInfo $merge)
+	{
+		$newParams = array_merge($this->getParameters(), $merge->getParameters());
 		$newInfo = new VendorInfo($this->getType());
 		$newInfo->setParameters($newParams);
 		return $newInfo;
@@ -155,7 +165,8 @@ class VendorInfo extends XMLElement {
 	/**
 	 * @see        XMLElement::appendXml(DOMNode)
 	 */
-	public function appendXml(DOMNode $node) {
+	public function appendXml(DOMNode $node)
+	{
 		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
 
 		$vendorNode = $node->appendChild($doc->createElement("vendor"));

@@ -34,28 +34,26 @@ require_once 'phing/types/selectors/NoneSelector.php';
  */
 class NotSelector extends NoneSelector {
 
-	public function toString() {
-		$buf = "";
-		if ($this->hasSelectors()) {
-			$buf .= "{notselect: ";
-			$buf .= parent::toString();
-			$buf .= "}";
-		}
-		return $buf;
-	}
+    public function toString() {
+        $buf = "";
+        if ($this->hasSelectors()) {
+            $buf .= "{notselect: ";
+            $buf .= parent::toString();
+            $buf .= "}";
+        }
+        return $buf;
+    }
 
-	/**
-	 * Makes sure that there is only one entry, sets an error message if
-	 * not.
-	 */
-	public function verifySettings() {
-		if ($this->selectorCount() != 1) {
-			$this
-					->setError(
-							"One and only one selector is allowed within the "
-									. "<not> tag");
-		}
-	}
+    /**
+     * Makes sure that there is only one entry, sets an error message if
+     * not.
+     */
+    public function verifySettings() {
+        if ($this->selectorCount() != 1) {
+            $this->setError("One and only one selector is allowed within the " .
+                    "<not> tag");
+        }
+    }
 
 }
 

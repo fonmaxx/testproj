@@ -20,6 +20,7 @@
  * <http://propel.phpdb.org>.
  */
 
+
 /**
  * This is a minimalistic interface that any logging class must implement for Propel.
  *

@@ -30,11 +30,13 @@
  * @version     $Revision: 7490 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Collection_Iterator_Normal extends Doctrine_Collection_Iterator {
-	/**
-	 * @return boolean                          whether or not the iteration will continue
-	 */
-	public function valid() {
-		return ($this->index < $this->count);
-	}
+class Doctrine_Collection_Iterator_Normal extends Doctrine_Collection_Iterator
+{
+    /**
+     * @return boolean                          whether or not the iteration will continue
+     */
+    public function valid()
+    {
+        return ($this->index < $this->count);
+    }
 }

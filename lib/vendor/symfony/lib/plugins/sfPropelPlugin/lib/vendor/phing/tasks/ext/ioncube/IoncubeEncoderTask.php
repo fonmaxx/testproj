@@ -31,17 +31,18 @@ require_once 'phing/tasks/ext/ioncube/IoncubeComment.php';
  * @package phing.tasks.ext.ioncube
  * @since 2.2.0
  */
-class IoncubeEncoderTask extends Task {
+class IoncubeEncoderTask extends Task
+{
 	private $ionSwitches = array();
-
+	
 	private $ionOptions = array();
-
+	
 	private $ionOptionsXS = array();
 
 	private $comments = array();
-
+	
 	private $encoderName = 'ioncube_encoder';
-
+	
 	private $fromDir = '';
 
 	private $ioncubePath = '/usr/local/ioncube';
@@ -55,49 +56,56 @@ class IoncubeEncoderTask extends Task {
 	/**
 	 * Adds a comment to be used in encoded files
 	 */
-	function addComment(IoncubeComment $comment) {
+	function addComment(IoncubeComment $comment)
+	{
 		$this->comments[] = $comment;
 	}
 
 	/**
 	 * Sets the allowed server
 	 */
-	function setAllowedServer($value) {
+	function setAllowedServer($value)
+	{
 		$this->ionOptionsXS['allowed-server'] = $value;
 	}
 
 	/**
 	 * Returns the allowed server setting
 	 */
-	function getAllowedServer() {
+	function getAllowedServer()
+	{
 		return $this->ionOptionsXS['allowed-server'];
 	}
 
 	/**
 	 * Sets the binary option
 	 */
-	function setBinary($value) {
+	function setBinary($value)
+	{
 		$this->ionSwitches['binary'] = $value;
 	}
 
 	/**
 	 * Returns the binary option
 	 */
-	function getBinary() {
+	function getBinary()
+	{
 		return $this->ionSwitches['binary'];
 	}
 
 	/**
 	 * Sets files or folders to copy (separated by space)
 	 */
-	function setCopy($value) {
+	function setCopy($value)
+	{
 		$this->ionOptionsXS['copy'] = $value;
 	}
 
 	/**
 	 * Returns the copy setting
 	 */
-	function getCopy() {
+	function getCopy()
+	{
 		return $this->ionOptionsXS['copy'];
 	}
 
@@ -105,70 +113,80 @@ class IoncubeEncoderTask extends Task {
 	 * Sets additional file patterns, files or directories to encode,
 	 * or to reverse the effect of copy (separated by space)
 	 */
-	function setEncode($value) {
+	function setEncode($value)
+	{
 		$this->ionOptionsXS['encode'] = $value;
 	}
-
+	
 	/**
 	 * Returns the encode setting
 	 */
-	function getEncode() {
+	function getEncode()
+	{
 		return $this->enionOptionsXS['encode'];
 	}
 
 	/**
 	 * Sets regexps of additional files to encrypt (separated by space)
 	 */
-	function setEncrypt($value) {
+	function setEncrypt($value)
+	{
 		$this->ionOptionsXS['encrypt'] = $value;
 	}
-
+	
 	/**
 	 * Returns regexps of additional files to encrypt (separated by space)
 	 */
-	function getEncrypt() {
+	function getEncrypt()
+	{
 		return $this->ionOptionsXS['encrypt'];
 	}
 
 	/**
 	 * Sets a period after which the files expire
 	 */
-	function setExpirein($value) {
+	function setExpirein($value)
+	{
 		$this->ionOptions['expire-in'] = $value;
 	}
-
+	
 	/**
 	 * Returns the expireIn setting
 	 */
-	function getExpirein() {
+	function getExpirein()
+	{
 		return $this->ionOptions['expire-in'];
 	}
 
 	/**
 	 * Sets a YYYY-MM-DD date to expire the files 
 	 */
-	function setExpireon($value) {
+	function setExpireon($value)
+	{
 		$this->ionOptions['expire-on'] = $value;
 	}
-
+	
 	/**
 	 * Returns the expireOn setting
 	 */
-	function getExpireon() {
+	function getExpireon()
+	{
 		return $this->ionOptions['expire-on'];
 	}
 
 	/**
 	 * Sets the source directory
 	 */
-	function setFromDir($value) {
+	function setFromDir($value)
+	{
 		$this->fromDir = $value;
 	}
 
 	/**
 	 * Returns the source directory
 	 */
-	function getFromDir() {
+	function getFromDir()
+	{
 		return $this->fromDir;
 	}
 
@@ -176,261 +194,294 @@ class IoncubeEncoderTask extends Task {
 	 * Set files and directories to ignore entirely and exclude from the target directory
 	 * (separated by space).
 	 */
-	function setIgnore($value) {
+	function setIgnore($value)
+	{
 		$this->ionOptionsXS['ignore'] = $value;
 	}
 
 	/**
 	 * Returns the ignore setting
 	 */
-	function getIgnore() {
+	function getIgnore()
+	{
 		return $this->ionOptionsXS['ignore'];
 	}
 
 	/**
 	 * Sets the path to the ionCube encoder
 	 */
-	function setIoncubePath($value) {
+	function setIoncubePath($value)
+	{
 		$this->ioncubePath = $value;
 	}
 
 	/**
 	 * Returns the path to the ionCube encoder
 	 */
-	function getIoncubePath() {
+	function getIoncubePath()
+	{
 		return $this->ioncubePath;
 	}
 
 	/**
 	 * Set files and directories not to be ignored (separated by space).
 	 */
-	function setKeep($value) {
+	function setKeep($value)
+	{
 		$this->ionOptionsXS['keep'] = $value;
 	}
 
 	/**
 	 * Returns the ignore setting
 	 */
-	function getKeep() {
+	function getKeep()
+	{
 		return $this->ionOptionsXS['keep'];
 	}
 
 	/**
 	 * Sets the path to the license file to use
 	 */
-	function setLicensePath($value) {
+	function setLicensePath($value)
+	{
 		$this->ionOptions['with-license'] = $value;
 	}
 
 	/**
 	 * Returns the path to the license file to use
 	 */
-	function getLicensePath() {
+	function getLicensePath()
+	{
 		return $this->ionOptions['with-license'];
 	}
 
 	/**
 	 * Sets the no-doc-comments option
 	 */
-	function setNoDocComments($value) {
+	function setNoDocComments($value)
+	{
 		$this->ionSwitches['no-doc-comment'] = $value;
 	}
-
+	
 	/**
 	 * Returns the no-doc-comments option
 	 */
-	function getNoDocComments() {
+	function getNoDocComments()
+	{
 		return $this->ionSwitches['no-doc-comment'];
 	}
-
+	
 	/**
 	 * Sets the obfuscate option
 	 */
-	function setObfuscate($value) {
+	function setObfuscate($value)
+	{
 		$this->ionOptionsXS['obfuscate'] = $value;
 	}
-
+	
 	/**
 	 * Returns the optimize option
 	 */
-	function getObfuscate() {
+	function getObfuscate()
+	{
 		return $this->ionOptionsXS['obfuscate'];
 	}
 
 	/**
 	 * Sets the obfuscation key (required if using the obfuscate option)
 	 */
-	function setObfuscationKey($value) {
+	function setObfuscationKey($value)
+	{
 		$this->ionOptions['obfuscation-key'] = $value;
 	}
-
+	
 	/**
 	 * Returns the optimize option
 	 */
-	function getObfuscationKey() {
+	function getObfuscationKey()
+	{
 		return $this->ionOptions['obfuscation-key'];
 	}
 
 	/**
 	 * Sets the optimize option
 	 */
-	function setOptimize($value) {
+	function setOptimize($value)
+	{
 		$this->ionOptions['optimize'] = $value;
 	}
-
+	
 	/**
 	 * Returns the optimize option
 	 */
-	function getOptimize() {
+	function getOptimize()
+	{
 		return $this->ionOptions['optimize'];
 	}
 
 	/**
 	 * Sets the passphrase to use when encoding files
 	 */
-	function setPassPhrase($value) {
+	function setPassPhrase($value)
+	{
 		$this->ionOptions['passphrase'] = $value;
 	}
 
 	/**
 	 * Returns the passphrase to use when encoding files
 	 */
-	function getPassPhrase() {
+	function getPassPhrase()
+	{
 		return $this->ionOptions['passphrase'];
 	}
 
 	/**
 	 * Sets the version of PHP to use (defaults to 5)
 	 */
-	function setPhpVersion($value) {
+	function setPhpVersion($value)
+	{
 		$this->phpVersion = $value;
 	}
 
 	/**
 	 * Returns the version of PHP to use (defaults to 5)
 	 */
-	function getPhpVersion() {
+	function getPhpVersion()
+	{
 		return $this->phpVersion;
 	}
-
+	
 	/**
 	 * Sets the target directory
 	 */
-	function setToDir($value) {
+	function setToDir($value)
+	{
 		$this->toDir = $value;
 	}
 
 	/**
 	 * Returns the target directory
 	 */
-	function getToDir() {
+	function getToDir()
+	{
 		return $this->toDir;
 	}
 
 	/**
 	 * Sets the without-runtime-loader-support option
 	 */
-	function setWithoutRuntimeLoaderSupport($value) {
+	function setWithoutRuntimeLoaderSupport($value)
+	{
 		$this->ionSwitches['without-runtime-loader-support'] = $value;
 	}
-
+	
 	/**
 	 * Returns the without-runtime-loader-support option
 	 */
-	function getWithoutRuntimeLoaderSupport() {
+	function getWithoutRuntimeLoaderSupport()
+	{
 		return $this->ionSwitches['without-runtime-loader-support'];
 	}
-
+	
 	/**
 	 * Sets the option to use when encoding target directory already exists (defaults to none)
 	 */
-	function setTargetOption($targetOption) {
+	function setTargetOption($targetOption)
+	{
 		$this->targetOption = $targetOption;
 	}
 
 	/**
 	 * Returns he option to use when encoding target directory already exists (defaults to none)
 	 */
-	function getTargetOption() {
+	function getTargetOption()
+	{
 		return $this->targetOption;
 	}
-
+	
 	/**
 	 * The main entry point
 	 *
 	 * @throws BuildException
 	 */
-	function main() {
+	function main()
+	{
 		$arguments = $this->constructArguments();
-
-		$encoder = new PhingFile($this->ioncubePath,
-				$this->encoderName . ($this->phpVersion == 5 ? '5' : ''));
-
+		
+		$encoder = new PhingFile($this->ioncubePath, $this->encoderName . ($this->phpVersion == 5 ? '5' : ''));
+		
 		$this->log("Running ionCube Encoder...");
-
-		exec($encoder->__toString() . ' ' . $arguments . " 2>&1", $output,
-				$return);
-
-		if ($return != 0) {
-			throw new BuildException(
-					"Could not execute ionCube Encoder: "
-							. implode(' ', $output));
-		}
+		
+		exec($encoder->__toString() . ' ' . $arguments . " 2>&1", $output, $return);
+		
+        if ($return != 0)
+        {
+			throw new BuildException("Could not execute ionCube Encoder: " . implode(' ', $output));
+        }       
 	}
 
 	/**
 	 * Constructs an argument string for the ionCube encoder
 	 */
-	private function constructArguments() {
+	private function constructArguments()
+	{
 		$arguments = '';
-
-		foreach ($this->ionSwitches as $name => $value) {
-			if ($value) {
-				$arguments .= "--$name ";
+		
+		foreach ($this->ionSwitches as $name => $value)
+		{
+			if ($value)
+			{
+				$arguments.= "--$name ";
 			}
 		}
 
-		foreach ($this->ionOptions as $name => $value) {
-			$arguments .= "--$name '$value' ";
+		foreach ($this->ionOptions as $name => $value)
+		{
+			$arguments.= "--$name '$value' ";
 		}
 
-		foreach ($this->ionOptionsXS as $name => $value) {
-			foreach (explode(' ', $value) as $arg) {
-				$arguments .= "--$name '$arg' ";
+		foreach ($this->ionOptionsXS as $name => $value)
+		{
+			foreach (explode(' ', $value) as $arg)
+			{
+				$arguments.= "--$name '$arg' ";
 			}
 		}
 
-		foreach ($this->comments as $comment) {
-			$arguments .= "--add-comment '" . $comment->getValue() . "' ";
+		foreach ($this->comments as $comment)
+		{
+			$arguments.= "--add-comment '" . $comment->getValue() . "' ";
 		}
-
-		if (!empty($this->targetOption)) {
-			switch ($this->targetOption) {
-			case "replace":
-			case "merge":
-			case "update":
-			case "rename": {
-					$arguments .= "--" . $this->targetOption . "-target ";
-				}
-				break;
-
-			default: {
-					throw new BuildException(
-							"Unknown target option '" . $this->targetOption
-									. "'");
-				}
-				break;
+		
+		if (!empty($this->targetOption))
+		{
+			switch ($this->targetOption)
+			{
+				case "replace":
+				case "merge":
+				case "update":
+				case "rename":
+				{
+					$arguments.= "--" . $this->targetOption . "-target ";
+				} break;
+				
+				default:
+				{
+					throw new BuildException("Unknown target option '" . $this->targetOption . "'");
+				} break;
 			}
 		}
-
-		if ($this->fromDir != '') {
+		
+		if ($this->fromDir != '')
+		{
 			$arguments .= $this->fromDir . ' ';
 		}
 
-		if ($this->toDir != '') {
+		if ($this->toDir != '')
+		{
 			$arguments .= "-o " . $this->toDir . ' ';
 		}
-
+		
 		return $arguments;
 	}
 }

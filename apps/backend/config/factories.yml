@@ -12,7 +12,7 @@ test:
   storage:
     class: sfSessionTestStorage
     param:
-      session_path: %SF_TEST_CACHE_DIR%/sessions
+      session_path: '%SF_TEST_CACHE_DIR%/sessions'
 
   response:
     class: sfWebResponse
@@ -22,6 +22,8 @@ test:
   mailer:
     param:
       delivery_strategy: none
+      transport:
+        class:  Swift_MailTransport
 
 dev:
   mailer:

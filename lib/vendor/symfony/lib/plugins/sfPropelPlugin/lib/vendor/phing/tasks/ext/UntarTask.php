@@ -30,64 +30,60 @@ require_once 'phing/tasks/ext/ExtractBaseTask.php';
  */
 class UntarTask extends ExtractBaseTask {
 
-	/**
-	 * Ensures that PEAR lib exists.
-	 */
-	public function init() {
-		include_once 'Archive/Tar.php';
-		if (!class_exists('Archive_Tar')) {
-			throw new BuildException(
-					"You must have installed the PEAR Archive_Tar class in order to use UntarTask.");
-		}
-	}
+    /**
+     * Ensures that PEAR lib exists.
+     */
+    public function init() {
+        include_once 'Archive/Tar.php';
+        if (!class_exists('Archive_Tar')) {
+            throw new BuildException("You must have installed the PEAR Archive_Tar class in order to use UntarTask.");
+        }
+    }
 
-	protected function extractArchive(PhingFile $tarfile) {
-		$this
-				->log(
-						"Extracting tar file: " . $tarfile->__toString()
-								. ' to ' . $this->todir->__toString(),
-						Project::MSG_INFO);
+    protected function extractArchive(PhingFile $tarfile)
+    {
+        $this->log("Extracting tar file: " . $tarfile->__toString() . ' to ' . $this->todir->__toString(), Project::MSG_INFO);
 
-		try {
-			$tar = $this->initTar($tarfile);
-			if (!$tar
-					->extractModify($this->todir->getAbsolutePath(),
-							$this->removepath)) {
-				throw new BuildException(
-						'Failed to extract tar file: '
-								. $tarfile->getAbsolutePath());
-			}
-		} catch (IOException $ioe) {
-			$msg = "Could not extract tar file: " . $ioe->getMessage();
-			throw new BuildException($msg, $ioe, $this->getLocation());
-		}
-	}
+        try {
+            $tar = $this->initTar($tarfile);
+            if(!$tar->extractModify($this->todir->getAbsolutePath(), $this->removepath)) {
+                throw new BuildException('Failed to extract tar file: ' . $tarfile->getAbsolutePath());
+            }
+        } catch (IOException $ioe) {
+            $msg = "Could not extract tar file: " . $ioe->getMessage();
+            throw new BuildException($msg, $ioe, $this->getLocation());
+        }
+    }
 
-	protected function listArchiveContent(PhingFile $tarfile) {
-		$tar = $this->initTar($tarfile);
-		return $tar->listContent();
-	}
+    protected function listArchiveContent(PhingFile $tarfile)
+    {
+        $tar = $this->initTar($tarfile);
+        return $tar->listContent();
+    }
 
-	/**
-	 * Init a Archive_Tar class with correct compression for the given file.
-	 *
-	 * @param PhingFile $tarfile
-	 * @return Archive_Tar the tar class instance
-	 */
-	private function initTar(PhingFile $tarfile) {
-		$compression = null;
-		$tarfileName = $tarfile->getName();
-		$mode = strtolower(substr($tarfileName, strrpos($tarfileName, '.')));
+    /**
+     * Init a Archive_Tar class with correct compression for the given file.
+     *
+     * @param PhingFile $tarfile
+     * @return Archive_Tar the tar class instance
+     */
+    private function initTar(PhingFile $tarfile)
+    {
+        $compression = null;
+        $tarfileName = $tarfile->getName();
+        $mode = strtolower(substr($tarfileName, strrpos($tarfileName, '.')));
 
-		$compressions = array('gz' => array('.gz', '.tgz',),
-				'bz2' => array('.bz2',),);
-		foreach ($compressions as $algo => $ext) {
-			if (array_search($mode, $ext) !== false) {
-				$compression = $algo;
-				break;
-			}
-		}
+        $compressions = array(
+                'gz' => array('.gz', '.tgz',),
+                'bz2' => array('.bz2',),
+            );
+        foreach ($compressions as $algo => $ext) {
+            if (array_search($mode, $ext) !== false) {
+                $compression = $algo;
+                break;
+            }
+        }
 
-		return new Archive_Tar($tarfile->getAbsolutePath(), $compression);
-	}
+        return new Archive_Tar($tarfile->getAbsolutePath(), $compression);
+    }
 }

@@ -32,51 +32,52 @@
  * @version     $Revision$
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Template_Sluggable extends Doctrine_Template {
-	/**
-	 * Array of Sluggable options
-	 *
-	 * @var string
-	 */
-	protected $_options = array('name' => 'slug', 'alias' => null,
-			'type' => 'string', 'length' => 255, 'unique' => true,
-			'options' => array(), 'fields' => array(),
-			'uniqueBy' => array(), 'uniqueIndex' => true,
-			'canUpdate' => false,
-			'builder' => array('Doctrine_Inflector', 'urlize'),
-			'provider' => null, 'indexName' => null);
+class Doctrine_Template_Sluggable extends Doctrine_Template
+{
+    /**
+     * Array of Sluggable options
+     *
+     * @var string
+     */
+    protected $_options = array(
+        'name'          =>  'slug',
+        'alias'         =>  null,
+        'type'          =>  'string',
+        'length'        =>  255,
+        'unique'        =>  true,
+        'options'       =>  array(),
+        'fields'        =>  array(),
+        'uniqueBy'      =>  array(),
+        'uniqueIndex'   =>  true,
+        'canUpdate'     =>  false,
+        'builder'       =>  array('Doctrine_Inflector', 'urlize'),
+        'provider'      =>  null,
+        'indexName'     =>  null
+    );
 
-	/**
-	 * Set table definition for Sluggable behavior
-	 *
-	 * @return void
-	 */
-	public function setTableDefinition() {
-		$name = $this->_options['name'];
-		if ($this->_options['alias']) {
-			$name .= ' as ' . $this->_options['alias'];
-		}
-		if ($this->_options['indexName'] === null) {
-			$this->_options['indexName'] = $this->getTable()->getTableName()
-					. '_sluggable';
-		}
-		$this
-				->hasColumn($name, $this->_options['type'],
-						$this->_options['length'], $this->_options['options']);
+    /**
+     * Set table definition for Sluggable behavior
+     *
+     * @return void
+     */
+    public function setTableDefinition()
+    {
+        $name = $this->_options['name'];
+        if ($this->_options['alias']) {
+            $name .= ' as ' . $this->_options['alias'];
+        }
+        if ($this->_options['indexName'] === null) {
+            $this->_options['indexName'] = $this->getTable()->getTableName().'_sluggable';
+        }
+        $this->hasColumn($name, $this->_options['type'], $this->_options['length'], $this->_options['options']);
+        
+        if ($this->_options['unique'] == true && $this->_options['uniqueIndex'] == true) {
+            $indexFields = array($this->_options['name']);
+            $indexFields = array_merge($indexFields, $this->_options['uniqueBy']);
+            $this->index($this->_options['indexName'], array('fields' => $indexFields,
+                                                             'type' => 'unique'));
+        }
 
-		if ($this->_options['unique'] == true
-				&& $this->_options['uniqueIndex'] == true) {
-			$indexFields = array($this->_options['name']);
-			$indexFields = array_merge($indexFields,
-					$this->_options['uniqueBy']);
-			$this
-					->index($this->_options['indexName'],
-							array('fields' => $indexFields, 'type' => 'unique'));
-		}
-
-		$this
-				->addListener(
-						new Doctrine_Template_Listener_Sluggable(
-								$this->_options));
-	}
+        $this->addListener(new Doctrine_Template_Listener_Sluggable($this->_options));
+    }
 }

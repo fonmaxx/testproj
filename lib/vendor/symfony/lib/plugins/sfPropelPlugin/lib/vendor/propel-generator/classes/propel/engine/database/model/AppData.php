@@ -63,25 +63,28 @@ class AppData {
 	 *
 	 * @param      Platform $platform The platform object to use for any databases added to this application model.
 	 */
-	public function __construct(Platform $platform) {
+	public function __construct(Platform $platform)
+	{
 		$this->platform = $platform;
 	}
-
+  
 	/**
 	 * Gets the platform object to use for any databases added to this application model. 
 	 *
 	 * @return Platform
 	 */
-	public function getPlatform() {
-		return $this->platform;
+	public function getPlatform()
+	{
+	  return $this->platform;
 	}
-
+	
 	/**
 	 * Set the name of the database.
 	 *
 	 * @param      name of the database.
 	 */
-	public function setName($name) {
+	public function setName($name)
+	{
 		$this->name = $name;
 	}
 
@@ -90,7 +93,8 @@ class AppData {
 	 *
 	 * @return     String name
 	 */
-	public function getName() {
+	public function getName()
+	{
 		return $this->name;
 	}
 
@@ -99,7 +103,8 @@ class AppData {
 	 *
 	 * @return     String name
 	 */
-	public function getShortName() {
+	public function getShortName()
+	{
 		return str_replace("-schema", "", $this->name);
 	}
 
@@ -108,7 +113,8 @@ class AppData {
 	 *
 	 * @return     Array of Database objects
 	 */
-	public function getDatabases($doFinalInit = true) {
+	public function getDatabases($doFinalInit = true)
+	{
 		// this is temporary until we'll have a clean solution
 		// for packaging datamodels/requiring schemas
 		if ($doFinalInit) {
@@ -122,7 +128,8 @@ class AppData {
 	 *
 	 * @return     boolean True if the application has multiple databases
 	 */
-	public function hasMultipleDatabases() {
+	public function hasMultipleDatabases()
+	{
 		return (count($this->dbList) > 1);
 	}
 
@@ -132,7 +139,8 @@ class AppData {
 	 * @param      name database name
 	 * @return     A Database object.  If it does not exist it returns null
 	 */
-	public function getDatabase($name = null, $doFinalInit = true) {
+	public function getDatabase($name = null, $doFinalInit = true)
+	{
 		// this is temporary until we'll have a clean solution
 		// for packaging datamodels/requiring schemas
 		if ($doFinalInit) {
@@ -143,7 +151,7 @@ class AppData {
 			return $this->dbList[0];
 		}
 
-		for ($i = 0, $size = count($this->dbList); $i < $size; $i++) {
+		for ($i=0,$size=count($this->dbList); $i < $size; $i++) {
 			$db = $this->dbList[$i];
 			if ($db->getName() === $name) {
 				return $db;
@@ -158,7 +166,8 @@ class AppData {
 	 *
 	 * @param      db the database to add
 	 */
-	public function addDatabase($db) {
+	public function addDatabase($db)
+	{
 		if ($db instanceof Database) {
 			$db->setAppData($this);
 			if ($db->getPlatform() === null) {
@@ -179,9 +188,10 @@ class AppData {
 	 *
 	 * @return     void
 	 */
-	private function doFinalInitialization() {
+	private function doFinalInitialization()
+	{
 		if (!$this->isInitialized) {
-			for ($i = 0, $size = count($this->dbList); $i < $size; $i++) {
+			for ($i=0, $size=count($this->dbList); $i < $size; $i++) {
 				$this->dbList[$i]->doFinalInitialization();
 			}
 			$this->isInitialized = true;
@@ -194,9 +204,10 @@ class AppData {
 	 *
 	 * @return     string Representation in xml format
 	 */
-	public function toString() {
+	public function toString()
+	{
 		$result = "<app-data>\n";
-		for ($i = 0, $size = count($this->dbList); $i < $size; $i++) {
+		for ($i=0,$size=count($this->dbList); $i < $size; $i++) {
 			$result .= $this->dbList[$i]->toString();
 		}
 		$result .= "</app-data>";

@@ -89,184 +89,182 @@ require_once 'phing/tasks/ext/PearPackageTask.php';
  */
 class PearPackage2Task extends PearPackageTask {
 
-	public function init() {
-		include_once 'PEAR/PackageFileManager2.php';
-		if (!class_exists('PEAR_PackageFileManager2')) {
-			throw new BuildException(
-					"You must have installed PEAR_PackageFileManager in order to create a PEAR package.xml version 2.0 file.");
-		}
-	}
+    public function init() {
+        include_once 'PEAR/PackageFileManager2.php';
+        if (!class_exists('PEAR_PackageFileManager2')) {
+            throw new BuildException("You must have installed PEAR_PackageFileManager in order to create a PEAR package.xml version 2.0 file.");
+        }
+    }
 
-	protected function setVersion2Options() {
-		$this->pkg->setPackage($this->package);
-		$this->pkg->setDate(strftime('%Y-%m-%d'));
-		$this->pkg->setTime(strftime('%H:%M:%S'));
+    protected function setVersion2Options()
+    {
+        $this->pkg->setPackage($this->package);
+        $this->pkg->setDate(strftime('%Y-%m-%d'));
+        $this->pkg->setTime(strftime('%H:%M:%S')); 
 
-		$newopts = array();
-		foreach ($this->options as $opt) {
-			switch ($opt->getName()) {
-			case 'summary':
-				$this->pkg->setSummary($opt->getValue());
-				break;
+        $newopts = array();
+        foreach ($this->options as $opt) {
+            switch ($opt->getName()) {
+                case 'summary':
+                    $this->pkg->setSummary($opt->getValue());
+                    break;
 
-			case 'description':
-				$this->pkg->setDescription($opt->getValue());
-				break;
+                case 'description':
+                    $this->pkg->setDescription($opt->getValue());
+                    break;
 
-			case 'uri':
-				$this->pkg->setUri($opt->getValue());
-				break;
+                case 'uri':
+                    $this->pkg->setUri($opt->getValue());
+                    break;
 
-			case 'license':
-				$this->pkg->setLicense($opt->getValue());
-				break;
+                case 'license':
+                    $this->pkg->setLicense($opt->getValue());
+                    break;
 
-			case 'channel':
-				$this->pkg->setChannel($opt->getValue());
-				break;
+                case 'channel':
+                    $this->pkg->setChannel($opt->getValue());
+                    break;
 
-			case 'apiversion':
-				$this->pkg->setAPIVersion($opt->getValue());
-				break;
+                case 'apiversion':
+                    $this->pkg->setAPIVersion($opt->getValue());
+                    break;
 
-			case 'releaseversion':
-				$this->pkg->setReleaseVersion($opt->getValue());
-				break;
+                case 'releaseversion':
+                    $this->pkg->setReleaseVersion($opt->getValue());
+                    break;
 
-			case 'releasestability':
-				$this->pkg->setReleaseStability($opt->getValue());
-				break;
+                case 'releasestability':
+                    $this->pkg->setReleaseStability($opt->getValue());
+                    break;
 
-			case 'apistability':
-				$this->pkg->setAPIStability($opt->getValue());
-				break;
+                case 'apistability':
+                    $this->pkg->setAPIStability($opt->getValue());
+                    break;
 
-			case 'notes':
-				$this->pkg->setNotes($opt->getValue());
-				break;
+                case 'notes':
+                    $this->pkg->setNotes($opt->getValue());
+                    break;
 
-			case 'packagetype':
-				$this->pkg->setPackageType($opt->getValue());
-				break;
+                case 'packagetype':
+                    $this->pkg->setPackageType($opt->getValue());
+                    break;
 
-			case 'phpdep':
-				$this->pkg->setPhpDep($opt->getValue());
-				break;
+                case 'phpdep':
+                    $this->pkg->setPhpDep($opt->getValue());
+                    break;
 
-			case 'pearinstallerdep':
-				$this->pkg->setPearinstallerDep($opt->getValue());
-				break;
+                case 'pearinstallerdep':
+                    $this->pkg->setPearinstallerDep($opt->getValue());
+                    break;
 
-			default:
-				$newopts[] = $opt;
-				break;
-			}
-		}
-		$this->options = $newopts;
+                default:
+                    $newopts[] = $opt;
+                    break;
+            }
+        }
+        $this->options = $newopts;
 
-		$newmaps = array();
-		foreach ($this->mappings as $map) {
-			switch ($map->getName()) {
-			case 'deps':
-				$deps = $map->getValue();
-				foreach ($deps as $dep) {
-					$type = isset($dep['optional']) ? 'optional' : 'required';
-					$min = isset($dep['min']) ? $dep['min'] : $dep['version'];
-					$max = isset($dep['max']) ? $dep['max'] : $dep['version'];
-					$rec = isset($dep['recommended']) ? $dep['recommended']
-							: $dep['version'];
-					$channel = isset($dep['channel']) ? $dep['channel'] : false;
-					$uri = isset($dep['uri']) ? $dep['uri'] : false;
+        $newmaps = array();
+        foreach ($this->mappings as $map) {
+            switch ($map->getName()) {
+                case 'deps':
+                    $deps = $map->getValue();
+                    foreach ($deps as $dep) {
+                        $type = isset($dep['optional']) ? 'optional' : 'required';
+                        $min = isset($dep['min']) ? $dep['min'] : $dep['version'];
+                        $max = isset($dep['max']) ? $dep['max'] : $dep['version'];
+                        $rec = isset($dep['recommended']) ? $dep['recommended'] : $dep['version'];
+                        $channel = isset($dep['channel']) ? $dep['channel'] : false;
+                        $uri = isset($dep['uri']) ? $dep['uri'] : false;
 
-					if (!empty($channel)) {
-						$this->pkg
-								->addPackageDepWithChannel($type, $dep['name'],
-										$channel, $min, $max, $rec);
-					} elseif (!empty($uri)) {
-						$this->pkg
-								->addPackageDepWithUri($type, $dep['name'],
-										$uri);
+                        if (!empty($channel)) {
+                            $this->pkg->addPackageDepWithChannel(
+                                $type, $dep['name'], $channel, $min, $max, $rec
+                            );
+                        } elseif (!empty($uri)) {
+                            $this->pkg->addPackageDepWithUri(
+                                $type, $dep['name'], $uri
+                            );
+                        }
+                    };
+                    break;
+
+                case 'extdeps':
+                    $deps = $map->getValue();
+                    foreach ($deps as $dep) {
+                        $type = isset($dep['optional']) ? 'optional' : 'required';
+                        $min = isset($dep['min']) ? $dep['min'] : $dep['version'];
+                        $max = isset($dep['max']) ? $dep['max'] : $dep['version'];
+                        $rec = isset($dep['recommended']) ? $dep['recommended'] : $dep['version'];
+
+                        $this->pkg->addExtensionDep(
+                            $type, $dep['name'], $min, $max, $rec
+                        );
+                    };
+                    break;
+
+                case 'maintainers':
+                    $maintainers = $map->getValue();
+
+                    foreach ($maintainers as $maintainer) {
+                        if (!isset($maintainer['active'])) {
+                            $maintainer['active'] = 'yes';
+                        }
+                        $this->pkg->addMaintainer(
+                            $maintainer['role'],
+                            $maintainer['handle'],
+                            $maintainer['name'],
+                            $maintainer['email'],
+                            $maintainer['active']
+                        );
+                    }
+                    break;
+
+                case 'replacements':
+                    $replacements = $map->getValue();
+
+                    foreach($replacements as $replacement) { 
+                        $this->pkg->addReplacement(
+                            $replacement['path'], 
+							$replacement['type'], 
+							$replacement['from'], 
+							$replacement['to']
+						);
 					}
-				}
-				;
-				break;
+				    break;
 
-			case 'extdeps':
-				$deps = $map->getValue();
-				foreach ($deps as $dep) {
-					$type = isset($dep['optional']) ? 'optional' : 'required';
-					$min = isset($dep['min']) ? $dep['min'] : $dep['version'];
-					$max = isset($dep['max']) ? $dep['max'] : $dep['version'];
-					$rec = isset($dep['recommended']) ? $dep['recommended']
-							: $dep['version'];
+                default:
+                    $newmaps[] = $map;
+            }
+        }
+        $this->mappings = $newmaps;
+    }
 
-					$this->pkg
-							->addExtensionDep($type, $dep['name'], $min, $max,
-									$rec);
-				}
-				;
-				break;
+    /**
+     * Main entry point.
+     * @return void
+     */
+    public function main()
+    {
+        if ($this->dir === null) {
+            throw new BuildException("You must specify the \"dir\" attribute for PEAR package 2 task.");
+        }
 
-			case 'maintainers':
-				$maintainers = $map->getValue();
+        if ($this->package === null) {
+            throw new BuildException("You must specify the \"name\" attribute for PEAR package 2 task.");
+        }
 
-				foreach ($maintainers as $maintainer) {
-					if (!isset($maintainer['active'])) {
-						$maintainer['active'] = 'yes';
-					}
-					$this->pkg
-							->addMaintainer($maintainer['role'],
-									$maintainer['handle'], $maintainer['name'],
-									$maintainer['email'],
-									$maintainer['active']);
-				}
-				break;
+        $this->pkg = new PEAR_PackageFileManager2();
 
-			case 'replacements':
-				$replacements = $map->getValue();
+        $this->setVersion2Options();
+        $this->setOptions();
 
-				foreach ($replacements as $replacement) {
-					$this->pkg
-							->addReplacement($replacement['path'],
-									$replacement['type'], $replacement['from'],
-									$replacement['to']);
-				}
-				break;
-
-			default:
-				$newmaps[] = $map;
-			}
-		}
-		$this->mappings = $newmaps;
-	}
-
-	/**
-	 * Main entry point.
-	 * @return void
-	 */
-	public function main() {
-		if ($this->dir === null) {
-			throw new BuildException(
-					"You must specify the \"dir\" attribute for PEAR package 2 task.");
-		}
-
-		if ($this->package === null) {
-			throw new BuildException(
-					"You must specify the \"name\" attribute for PEAR package 2 task.");
-		}
-
-		$this->pkg = new PEAR_PackageFileManager2();
-
-		$this->setVersion2Options();
-		$this->setOptions();
-
-		$this->pkg->addRelease();
-		$this->pkg->generateContents();
-		$e = $this->pkg->writePackageFile();
-		if (PEAR::isError($e)) {
-			throw new BuildException("Unable to write package file.",
-					new Exception($e->getMessage()));
-		}
-	}
+        $this->pkg->addRelease();
+        $this->pkg->generateContents();
+        $e = $this->pkg->writePackageFile();
+        if (PEAR::isError($e)) {
+            throw new BuildException("Unable to write package file.", new Exception($e->getMessage()));
+        }
+    }
 
 }

@@ -10,11 +10,17 @@
 
 $app = 'frontend';
 $fixtures = 'fixtures';
-require_once(dirname(__FILE__) . '/../bootstrap/functional.php');
+require_once(dirname(__FILE__).'/../bootstrap/functional.php');
 
 $browser = new sfTestFunctional(new sfBrowser());
 
-$browser->get('/articles/redirectToShow')->with('response')->begin()
-		->isRedirected()->end()->followRedirect()->with('request')->begin()
-		->isParameter('module', 'articles')->isParameter('action', 'show')
-		->end();
+$browser->get('/articles/redirectToShow')
+  ->with('response')->begin()
+    ->isRedirected()
+  ->end()
+  ->followRedirect()
+  ->with('request')->begin()
+    ->isParameter('module', 'articles')
+    ->isParameter('action', 'show')
+  ->end()
+;

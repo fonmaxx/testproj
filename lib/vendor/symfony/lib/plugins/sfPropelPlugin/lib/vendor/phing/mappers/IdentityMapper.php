@@ -31,26 +31,24 @@ require_once 'phing/mappers/FileNameMapper.php';
  */
 class IdentityMapper implements FileNameMapper {
 
-	/**
-	 * The mapper implementation. Basically does nothing in this case.
-	 *
-	 * @param  string $sourceFileName The data the mapper works on.
-	 * @return array The data after the mapper has been applied
-	 */
-	function main($sourceFileName) {
-		return array($sourceFileName);
-	}
+    /**
+     * The mapper implementation. Basically does nothing in this case.
+     *
+     * @param  string $sourceFileName The data the mapper works on.
+     * @return array The data after the mapper has been applied
+     */
+    function main($sourceFileName) {
+        return array($sourceFileName);
+    }
 
-	/**
-	 * Ignored here.
-	 */
-	function setTo($to) {
-	}
+    /**
+     * Ignored here.
+     */
+    function setTo($to) {}
 
-	/**
-	 * Ignored here.
-	 */
-	function setFrom($from) {
-	}
+    /**
+     * Ignored here.
+     */
+    function setFrom($from) {}
 
 }

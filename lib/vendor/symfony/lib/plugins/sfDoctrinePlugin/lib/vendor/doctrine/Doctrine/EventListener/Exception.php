@@ -30,5 +30,5 @@
  * @version     $Revision: 1344 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_EventListener_Exception extends Doctrine_Exception {
-}
+class Doctrine_EventListener_Exception extends Doctrine_Exception
+{ }

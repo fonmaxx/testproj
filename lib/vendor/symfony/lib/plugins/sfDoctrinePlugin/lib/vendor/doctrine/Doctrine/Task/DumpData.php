@@ -30,31 +30,33 @@
  * @version     $Revision: 2761 $
  * @author      Jonathan H. Wage <jwage@mac.com>
  */
-class Doctrine_Task_DumpData extends Doctrine_Task {
-	public $description = 'Dump data to a yaml data fixture file.', $requiredArguments = array(
-			'data_fixtures_path' => 'Specify path to write the yaml data fixtures file to.',
-			'models_path' => 'Specify path to your Doctrine_Record definitions.'), $optionalArguments = array();
+class Doctrine_Task_DumpData extends Doctrine_Task
+{
+    public $description          =   'Dump data to a yaml data fixture file.',
+           $requiredArguments    =   array('data_fixtures_path' =>  'Specify path to write the yaml data fixtures file to.',
+                                           'models_path'        =>  'Specify path to your Doctrine_Record definitions.'),
+           $optionalArguments    =   array();
 
-	public function execute() {
-		$models = Doctrine_Core::loadModels($this->getArgument('models_path'));
+    public function execute()
+    {
+        $models = Doctrine_Core::loadModels($this->getArgument('models_path')); 
 
-		if (empty($models)) {
-			throw new Doctrine_Task_Exception('No models were loaded');
-		}
+        if (empty($models)) { 
+            throw new Doctrine_Task_Exception('No models were loaded'); 
+        }
 
-		$path = $this->getArgument('data_fixtures_path');
+        $path = $this->getArgument('data_fixtures_path');
 
-		if (is_array($path) && count($path) > 0) {
-			$path = $path[0];
-		}
+        if (is_array($path) && count($path) > 0) {
+            $path = $path[0];
+        }
 
-		if (!empty($path)) {
-			Doctrine_Core::dumpData($path);
+        if ( ! empty($path)) {
+            Doctrine_Core::dumpData($path);
 
-			$this->notify(sprintf('Dumped data successfully to: %s', $path));
-		} else {
-			throw new Doctrine_Task_Exception(
-					'Unable to find data fixtures path.');
-		}
-	}
+            $this->notify(sprintf('Dumped data successfully to: %s', $path));
+        } else {
+            throw new Doctrine_Task_Exception('Unable to find data fixtures path.');
+        }
+    }
 }

@@ -37,16 +37,18 @@
  * @version    $Revision: 1262 $
  * @package    propel.validator
  */
-class MinValueValidator implements BasicValidator {
+class MinValueValidator implements BasicValidator
+{
 
 	/**
 	 * @see        BasicValidator::isValid()
 	 */
-	public function isValid(ValidatorMap $map, $value) {
-		if (is_null($value) == false && is_numeric($value)) {
-			return intval($value) >= intval($map->getValue());
-		}
+	public function isValid (ValidatorMap $map, $value)
+	{
+	  if (is_null($value) == false && is_numeric($value)) {
+		  return intval($value) >= intval($map->getValue());
+	  }
 
-		return false;
+	  return false;
 	}
 }

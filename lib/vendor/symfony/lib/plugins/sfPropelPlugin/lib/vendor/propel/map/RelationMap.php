@@ -36,158 +36,183 @@
  */
 class RelationMap {
 
-	const MANY_TO_ONE = 1,ONE_TO_MANY = 2,ONE_TO_ONE = 3;
+  const
+    MANY_TO_ONE = 1,
+    ONE_TO_MANY = 2,
+    ONE_TO_ONE = 3;
+    
+  protected 
+    $name,
+    $type,
+    $localTable,
+    $foreignTable,
+    $localColumns = array(),
+    $foreignColumns = array(),
+    $onUpdate, $onDelete;
 
-	protected $name, $type, $localTable, $foreignTable, $localColumns = array(), $foreignColumns = array(), $onUpdate, $onDelete;
+  /**
+   * Constructor.
+   *
+   * @param      string $name Name of the database.
+   */
+  public function __construct($name)
+  {
+    $this->name = $name;
+  }
+  
+  /**
+   * Get the name of this database.
+   *
+   * @return     string The name of the database.
+   */
+  public function getName()
+  {
+    return $this->name;
+  }
 
-	/**
-	 * Constructor.
-	 *
-	 * @param      string $name Name of the database.
-	 */
-	public function __construct($name) {
-		$this->name = $name;
-	}
+  /**
+   * Set the type
+   *
+   * @param      integer $type The relation type (either self::HAS_ONE, or self::HAS_MANY)
+   */
+  public function setType($type)
+  {
+    $this->type = $type;
+  }
 
-	/**
-	 * Get the name of this database.
-	 *
-	 * @return     string The name of the database.
-	 */
-	public function getName() {
-		return $this->name;
-	}
+  /**
+   * Get the type
+   *
+   * @return      integer the relation type
+   */
+  public function getType()
+  {
+    return $this->type;
+  }
 
-	/**
-	 * Set the type
-	 *
-	 * @param      integer $type The relation type (either self::HAS_ONE, or self::HAS_MANY)
-	 */
-	public function setType($type) {
-		$this->type = $type;
-	}
+  /**
+   * Set the local table
+   *
+   * @param      TableMap $table The local table for this relationship
+   */
+  public function setLocalTable($table)
+  {
+    $this->localTable = $table;
+  }
 
-	/**
-	 * Get the type
-	 *
-	 * @return      integer the relation type
-	 */
-	public function getType() {
-		return $this->type;
-	}
+  /**
+   * Get the local table
+   *
+   * @return      TableMap The local table for this relationship
+   */
+  public function getLocalTable()
+  {
+    return $this->localTable;
+  }
 
-	/**
-	 * Set the local table
-	 *
-	 * @param      TableMap $table The local table for this relationship
-	 */
-	public function setLocalTable($table) {
-		$this->localTable = $table;
-	}
+  /**
+   * Set the foreign table
+   *
+   * @param      TableMap $table The foreign table for this relationship
+   */
+  public function setForeignTable($table)
+  {
+    $this->foreignTable = $table;
+  }
 
-	/**
-	 * Get the local table
-	 *
-	 * @return      TableMap The local table for this relationship
-	 */
-	public function getLocalTable() {
-		return $this->localTable;
-	}
+  /**
+   * Get the foreign table
+   *
+   * @return      TableMap The foreign table for this relationship
+   */
+  public function getForeignTable()
+  {
+    return $this->foreignTable;
+  }
+  
+  /**
+   * Add a column mapping
+   *
+   * @param   ColumnMap $local The local column
+   * @param   ColumnMap $foreign The foreign column
+   */
+  public function addColumnMapping(ColumnMap $local, ColumnMap $foreign)
+  {
+    $this->localColumns[] = $local;
+    $this->foreignColumns[] = $foreign;
+  }
+  
+  /**
+   * Get an associative array mapping local column names to foreign column names
+   *
+   * @return Array Associative array (local => foreign) of fully qualified column names
+   */
+  public function getColumnMappings()
+  {
+    $h = array();
+    for ($i=0, $size=count($this->localColumns); $i < $size; $i++) {
+      $h[$this->localColumns[$i]->getFullyQualifiedName()] = $this->foreignColumns[$i]->getFullyQualifiedName();
+    }
+    return $h;
+  }
+  
+  /**
+   * Get the local columns
+   *
+   * @return      Array list of ColumnMap objects
+   */
+  public function getLocalColumns()
+  {
+    return $this->localColumns;
+  }
+  
+  /**
+   * Get the foreign columns
+   *
+   * @return      Array list of ColumnMap objects
+   */
+  public function getForeignColumns()
+  {
+    return $this->foreignColumns;
+  }
+  
+  /**
+   * Set the onUpdate behavior
+   *
+   * @param      string $onUpdate
+   */
+  public function setOnUpdate($onUpdate)
+  {
+    $this->onUpdate = $onUpdate;
+  }
 
-	/**
-	 * Set the foreign table
-	 *
-	 * @param      TableMap $table The foreign table for this relationship
-	 */
-	public function setForeignTable($table) {
-		$this->foreignTable = $table;
-	}
+  /**
+   * Get the onUpdate behavior
+   *
+   * @return      integer the relation type
+   */
+  public function getOnUpdate()
+  {
+    return $this->onUpdate;
+  }
+  
+  /**
+   * Set the onDelete behavior
+   *
+   * @param      string $onDelete
+   */
+  public function setOnDelete($onDelete)
+  {
+    $this->onDelete = $onDelete;
+  }
 
-	/**
-	 * Get the foreign table
-	 *
-	 * @return      TableMap The foreign table for this relationship
-	 */
-	public function getForeignTable() {
-		return $this->foreignTable;
-	}
-
-	/**
-	 * Add a column mapping
-	 *
-	 * @param   ColumnMap $local The local column
-	 * @param   ColumnMap $foreign The foreign column
-	 */
-	public function addColumnMapping(ColumnMap $local, ColumnMap $foreign) {
-		$this->localColumns[] = $local;
-		$this->foreignColumns[] = $foreign;
-	}
-
-	/**
-	 * Get an associative array mapping local column names to foreign column names
-	 *
-	 * @return Array Associative array (local => foreign) of fully qualified column names
-	 */
-	public function getColumnMappings() {
-		$h = array();
-		for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
-			$h[$this->localColumns[$i]->getFullyQualifiedName()] = $this
-					->foreignColumns[$i]->getFullyQualifiedName();
-		}
-		return $h;
-	}
-
-	/**
-	 * Get the local columns
-	 *
-	 * @return      Array list of ColumnMap objects
-	 */
-	public function getLocalColumns() {
-		return $this->localColumns;
-	}
-
-	/**
-	 * Get the foreign columns
-	 *
-	 * @return      Array list of ColumnMap objects
-	 */
-	public function getForeignColumns() {
-		return $this->foreignColumns;
-	}
-
-	/**
-	 * Set the onUpdate behavior
-	 *
-	 * @param      string $onUpdate
-	 */
-	public function setOnUpdate($onUpdate) {
-		$this->onUpdate = $onUpdate;
-	}
-
-	/**
-	 * Get the onUpdate behavior
-	 *
-	 * @return      integer the relation type
-	 */
-	public function getOnUpdate() {
-		return $this->onUpdate;
-	}
-
-	/**
-	 * Set the onDelete behavior
-	 *
-	 * @param      string $onDelete
-	 */
-	public function setOnDelete($onDelete) {
-		$this->onDelete = $onDelete;
-	}
-
-	/**
-	 * Get the onDelete behavior
-	 *
-	 * @return      integer the relation type
-	 */
-	public function getOnDelete() {
-		return $this->onDelete;
-	}
+  /**
+   * Get the onDelete behavior
+   *
+   * @return      integer the relation type
+   */
+  public function getOnDelete()
+  {
+    return $this->onDelete;
+  }
 }

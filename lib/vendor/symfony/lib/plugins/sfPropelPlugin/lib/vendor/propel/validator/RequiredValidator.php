@@ -36,12 +36,14 @@
  * @version    $Revision: 1262 $
  * @package    propel.validator
  */
-class RequiredValidator implements BasicValidator {
+class RequiredValidator implements BasicValidator
+{
 
 	/**
 	 * @see        BasicValidator::isValid()
 	 */
-	public function isValid(ValidatorMap $map, $str) {
+	public function isValid (ValidatorMap $map, $str)
+	{
 		return ($str !== null && $str !== "");
 	}
 }

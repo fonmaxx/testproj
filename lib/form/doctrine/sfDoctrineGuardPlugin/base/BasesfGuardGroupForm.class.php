@@ -33,9 +33,11 @@ abstract class BasesfGuardGroupForm extends BaseFormDoctrine
       'users_list'       => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'sfGuardUser', 'required' => false)),
       'permissions_list' => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'sfGuardPermission', 'required' => false)),
     ));
+
     $this->validatorSchema->setPostValidator(
       new sfValidatorDoctrineUnique(array('model' => 'sfGuardGroup', 'column' => array('name')))
     );
+
     $this->widgetSchema->setNameFormat('sf_guard_group[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
@@ -49,17 +51,21 @@ abstract class BasesfGuardGroupForm extends BaseFormDoctrine
   {
     return 'sfGuardGroup';
   }
+
   public function updateDefaultsFromObject()
   {
     parent::updateDefaultsFromObject();
+
     if (isset($this->widgetSchema['users_list']))
     {
       $this->setDefault('users_list', $this->object->Users->getPrimaryKeys());
     }
+
     if (isset($this->widgetSchema['permissions_list']))
     {
       $this->setDefault('permissions_list', $this->object->Permissions->getPrimaryKeys());
     }
+
   }
 
   protected function doSave($con = null)
@@ -69,6 +75,7 @@ abstract class BasesfGuardGroupForm extends BaseFormDoctrine
 
     parent::doSave($con);
   }
+
   public function saveUsersList($con = null)
   {
     if (!$this->isValid())
@@ -106,6 +113,7 @@ abstract class BasesfGuardGroupForm extends BaseFormDoctrine
       $this->object->link('Users', array_values($link));
     }
   }
+
   public function savePermissionsList($con = null)
   {
     if (!$this->isValid())
@@ -143,4 +151,5 @@ abstract class BasesfGuardGroupForm extends BaseFormDoctrine
       $this->object->link('Permissions', array_values($link));
     }
   }
+
 }

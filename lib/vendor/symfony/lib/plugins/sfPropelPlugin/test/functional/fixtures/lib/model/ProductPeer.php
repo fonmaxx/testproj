@@ -8,5 +8,6 @@
  * @package    lib.model
  * @subpackage model
  */
-class ProductPeer extends BaseProductPeer {
+class ProductPeer extends BaseProductPeer
+{
 }

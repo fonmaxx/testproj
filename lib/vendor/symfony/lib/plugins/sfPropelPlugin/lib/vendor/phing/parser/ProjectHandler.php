@@ -34,126 +34,120 @@ require_once 'phing/system/io/PhingFile.php';
  */
 class ProjectHandler extends AbstractHandler {
 
-	/**
-	 * The phing project configurator object.
-	 * @var ProjectConfigurator
-	 */
-	private $configurator;
+    /**
+     * The phing project configurator object.
+     * @var ProjectConfigurator
+     */
+    private $configurator;
 
-	/**
-	 * Constructs a new ProjectHandler
-	 *
-	 * @param  object  the ExpatParser object
-	 * @param  object  the parent handler that invoked this handler
-	 * @param  object  the ProjectConfigurator object
-	 * @access public
-	 */
-	function __construct($parser, $parentHandler, $configurator) {
-		$this->configurator = $configurator;
-		parent::__construct($parser, $parentHandler);
-	}
+    /**
+     * Constructs a new ProjectHandler
+     *
+     * @param  object  the ExpatParser object
+     * @param  object  the parent handler that invoked this handler
+     * @param  object  the ProjectConfigurator object
+     * @access public
+     */
+    function __construct($parser, $parentHandler, $configurator) {
+        $this->configurator = $configurator;
+        parent::__construct($parser, $parentHandler);
+    }
 
-	/**
-	 * Executes initialization actions required to setup the project. Usually
-	 * this method handles the attributes of a tag.
-	 *
-	 * @param  string  the tag that comes in
-	 * @param  array   attributes the tag carries
-	 * @param  object  the ProjectConfigurator object
-	 * @throws ExpatParseException if attributes are incomplete or invalid
-	 * @access public
-	 */
-	function init($tag, $attrs) {
-		$def = null;
-		$name = null;
-		$id = null;
-		$desc = null;
-		$baseDir = null;
+    /**
+     * Executes initialization actions required to setup the project. Usually
+     * this method handles the attributes of a tag.
+     *
+     * @param  string  the tag that comes in
+     * @param  array   attributes the tag carries
+     * @param  object  the ProjectConfigurator object
+     * @throws ExpatParseException if attributes are incomplete or invalid
+     * @access public
+     */
+    function init($tag, $attrs) {
+        $def = null;
+        $name = null;
+        $id    = null;
+        $desc = null;
+        $baseDir = null;
 
-		// some shorthands
+        // some shorthands
+        $project = $this->configurator->project;
+        $buildFileParent = $this->configurator->buildFileParent;
+
+        foreach ($attrs as $key => $value) {
+            if ($key === "default") {
+                $def = $value;
+            } elseif ($key === "name") {
+                $name = $value;
+            } elseif ($key === "id") {
+                $id = $value;
+            } elseif ($key === "basedir") {
+                $baseDir = $value;
+            } elseif ($key === "description") {
+                $desc = $value;
+            } else {
+                throw new ExpatParseException("Unexpected attribute '$key'");
+            }
+        }
+        if ($def === null) {
+            throw new ExpatParseException("The default attribute of project is required");
+        }
+        $project->setDefaultTarget($def);
+
+        if ($name !== null) {
+            $project->setName($name);
+            $project->addReference($name, $project);
+        }
+
+        if ($id !== null) {
+            $project->addReference($id, $project);
+        }
+        
+        if ($desc !== null) {
+            $project->setDescription($desc);
+        }        
+
+        if ($project->getProperty("project.basedir") !== null) {
+            $project->setBasedir($project->getProperty("project.basedir"));
+        } else {
+            if ($baseDir === null) {
+                $project->setBasedir($buildFileParent->getAbsolutePath());
+            } else {
+                // check whether the user has specified an absolute path
+                $f = new PhingFile($baseDir);
+                if ($f->isAbsolute()) {
+                    $project->setBasedir($baseDir);
+                } else {
+                    $project->setBaseDir($project->resolveFile($baseDir, $buildFileParent));
+                }
+            }
+        }
+    }
+
+    /**
+     * Handles start elements within the <project> tag by creating and
+     * calling the required handlers for the detected element.
+     *
+     * @param  string  the tag that comes in
+     * @param  array   attributes the tag carries
+     * @throws ExpatParseException if a unxepected element occurs
+     * @access public
+     */
+    function startElement($name, $attrs) {
+    
 		$project = $this->configurator->project;
-		$buildFileParent = $this->configurator->buildFileParent;
-
-		foreach ($attrs as $key => $value) {
-			if ($key === "default") {
-				$def = $value;
-			} elseif ($key === "name") {
-				$name = $value;
-			} elseif ($key === "id") {
-				$id = $value;
-			} elseif ($key === "basedir") {
-				$baseDir = $value;
-			} elseif ($key === "description") {
-				$desc = $value;
-			} else {
-				throw new ExpatParseException("Unexpected attribute '$key'");
-			}
-		}
-		if ($def === null) {
-			throw new ExpatParseException(
-					"The default attribute of project is required");
-		}
-		$project->setDefaultTarget($def);
-
-		if ($name !== null) {
-			$project->setName($name);
-			$project->addReference($name, $project);
-		}
-
-		if ($id !== null) {
-			$project->addReference($id, $project);
-		}
-
-		if ($desc !== null) {
-			$project->setDescription($desc);
-		}
-
-		if ($project->getProperty("project.basedir") !== null) {
-			$project->setBasedir($project->getProperty("project.basedir"));
-		} else {
-			if ($baseDir === null) {
-				$project->setBasedir($buildFileParent->getAbsolutePath());
-			} else {
-				// check whether the user has specified an absolute path
-				$f = new PhingFile($baseDir);
-				if ($f->isAbsolute()) {
-					$project->setBasedir($baseDir);
-				} else {
-					$project
-							->setBaseDir(
-									$project
-											->resolveFile($baseDir,
-													$buildFileParent));
-				}
-			}
-		}
-	}
-
-	/**
-	 * Handles start elements within the <project> tag by creating and
-	 * calling the required handlers for the detected element.
-	 *
-	 * @param  string  the tag that comes in
-	 * @param  array   attributes the tag carries
-	 * @throws ExpatParseException if a unxepected element occurs
-	 * @access public
-	 */
-	function startElement($name, $attrs) {
-
-		$project = $this->configurator->project;
-		$types = $project->getDataTypeDefinitions();
-
+        $types = $project->getDataTypeDefinitions();
+		
 		if ($name == "target") {
 			$tf = new TargetHandler($this->parser, $this, $this->configurator);
 			$tf->init($name, $attrs);
 		} elseif (isset($types[$name])) {
-			$tyf = new DataTypeHandler($this->parser, $this,
-					$this->configurator);
-			$tyf->init($name, $attrs);
-		} else {
+           $tyf = new DataTypeHandler($this->parser, $this, $this->configurator);
+           $tyf->init($name, $attrs);
+        } else {
 			$tf = new TaskHandler($this->parser, $this, $this->configurator);
 			$tf->init($name, $attrs);
-		}
-	}
+        }
+    }
 }
 

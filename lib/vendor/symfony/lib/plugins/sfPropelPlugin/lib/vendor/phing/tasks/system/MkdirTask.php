@@ -31,38 +31,34 @@ include_once 'phing/system/io/PhingFile.php';
  */
 class MkdirTask extends Task {
 
-	/** directory to create*/
-	private $dir;
+    /** directory to create*/
+    private $dir;
 
-	/**
-	 * create the directory and all parents
-	 *
-	 * @throws BuildException if dir is somehow invalid, or creation failed.
-	 */
-	function main() {
-		if ($this->dir === null) {
-			throw new BuildException("dir attribute is required",
-					$this->location);
-		}
-		if ($this->dir->isFile()) {
-			throw new BuildException(
-					"Unable to create directory as a file already exists with that name: "
-							. $this->dir->getAbsolutePath());
-		}
-		if (!$this->dir->exists()) {
-			$result = $this->dir->mkdirs();
-			if (!$result) {
-				$msg = "Directory " . $this->dir->getAbsolutePath()
-						. " creation was not successful for an unknown reason";
-				throw new BuildException($msg, $this->location);
-			}
-			$this->log("Created dir: " . $this->dir->getAbsolutePath());
-		}
-	}
+    /**
+     * create the directory and all parents
+     *
+     * @throws BuildException if dir is somehow invalid, or creation failed.
+     */
+    function main() {
+        if ($this->dir === null) {
+            throw new BuildException("dir attribute is required", $this->location);
+        }
+        if ($this->dir->isFile()) {
+            throw new BuildException("Unable to create directory as a file already exists with that name: " . $this->dir->getAbsolutePath());
+        }
+        if (!$this->dir->exists()) {
+            $result = $this->dir->mkdirs();
+            if (!$result) {
+                $msg = "Directory " . $this->dir->getAbsolutePath() . " creation was not successful for an unknown reason";
+                throw new BuildException($msg, $this->location);
+            }
+            $this->log("Created dir: " . $this->dir->getAbsolutePath());
+        }
+    }
 
-	/** the directory to create; required. */
-	function setDir(PhingFile $dir) {
-		$this->dir = $dir;
-	}
+    /** the directory to create; required. */
+    function setDir(PhingFile $dir) {
+        $this->dir = $dir;
+    }
 
 }

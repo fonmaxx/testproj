@@ -1,7 +1,7 @@
 <?php
 include(dirname(__FILE__).'/../../bootstrap/Doctrine.php');
 
-$t = new lime_test(3);
+$t = new lime_test(9,new lime_output_color());
 $t->comment('->getCompanySlug()');
 $job = Doctrine_Core::getTable('JobeetJob')->createQuery()->fetchOne();
 $t->is($job->getCompanySlug(), Jobeet::slugify($job->getCompany()),
@@ -15,6 +15,37 @@ $t->is($job->getDateTimeObject('expires_at')->format('Y-m-d'), $expiresAt, '->sa
 $job = create_job(array('expires_at' => '2008-08-08'));
 $job->save();
 $t->is($job->getDateTimeObject('expires_at')->format('Y-m-d'), '2008-08-08', '->save() does not update expires_at if set');
+
+$t->comment('::getForToken()');
+
+$param=make_array("programming-design");
+$asd=Doctrine_Core::getTable('JobeetJob')->getForToken($param)->getFirst()->getData();
+$query=token_query(array('programming','design'))->execute()->getFirst()->getData();
+
+$t->is($asd,$query,'::getForToken()::- на вход строка, 2-й параметр фалс по дефолту');
+
+$query=token_query(array('programming','design'))->execute()->getFirst()->getData();
+$param= make_array(array('programming','design'));
+$asd= Doctrine_Core::getTable('JobeetJob')->getForToken($param,true)->getFirst()->getData();
+
+$t->is($asd,$query,'::getForToken()::- на вход массив, 2-й парам тру');
+
+$t->comment('->getForLuceneQuery()');
+$job = create_job(array('position' => 'foobar', 'is_activated' => false));
+$job->save();
+$jobs = Doctrine_Core::getTable('JobeetJob')->getForLuceneQuery('position:foobar');
+$t->is(count($jobs), 0, '::getForLuceneQuery() does not return non activated jobs');
+
+$job = create_job(array('position' => 'foobar', 'is_activated' => true));
+$job->save();
+$jobs = Doctrine_Core::getTable('JobeetJob')->getForLuceneQuery('position:foobar');
+$t->is(count($jobs), 1, '::getForLuceneQuery() returns jobs matching the criteria');
+$t->is($jobs[0]->getId(), $job->getId(), '::getForLuceneQuery() returns jobs matching the criteria');
+
+$job->delete();
+$jobs = Doctrine_Core::getTable('JobeetJob')->getForLuceneQuery('position:foobar');
+$t->is(count($jobs), 0, '::getForLuceneQuery() does not return deleted jobs');
+
 
 function create_job($defaults = array())
 {
@@ -42,4 +73,29 @@ function create_job($defaults = array())
 	), $defaults));
 
 	return $job;
+}
+function make_array($cat,$token='sensio_labs',$num=10)
+{
+	$param=array(
+			'cat'=>$cat,
+			'type'=>'xml',
+			'num'=>$num,
+			'token'=>$token
+	);
+	return $param;
+}
+function token_query($cat,$token='sensio_labs',$num=10)
+{
+	$q=Doctrine_Query::create()
+        ->select('j.*')
+		->from('JobeetJob j')
+		->leftJoin('j.JobeetCategory c')
+		->leftJoin('c.JobeetAffiliates a')
+		->where('a.token =?',$token)
+		->andWhereIn('c.slug',$cat)
+		->andWhere('j.expires_at > ?', date('Y-m-d H:i:s', time()))
+		->addOrderBy( 'j.created_at DESC')
+		->andWhere('j.is_activated = ?', 1)
+		->limit($num);
+	return $q;
 }

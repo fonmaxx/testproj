@@ -23,11 +23,12 @@
  * PropelConfigurationIterator is used internally by PropelConfiguration to
  * build a flat array from nesting configuration arrays.
  *
- * @author     Veikko Mï¿½kinen <veikko@veikko.fi>
+ * @author     Veikko Mäkinen <veikko@veikko.fi>
  * @version    $Revision: 1262 $
  * @package    propel
  */
-class PropelConfigurationIterator extends RecursiveIteratorIterator {
+class PropelConfigurationIterator extends RecursiveIteratorIterator
+{
 	/**
 	 * Node is a parent node
 	 */
@@ -57,7 +58,8 @@ class PropelConfigurationIterator extends RecursiveIteratorIterator {
 	 *
 	 * @return     string
 	 */
-	public function getNamespace() {
+	public function getNamespace()
+	{
 		return implode('.', $this->namespaceStack);
 	}
 
@@ -70,7 +72,8 @@ class PropelConfigurationIterator extends RecursiveIteratorIterator {
 	 *             - self::NODE_PARENT
 	 *             - self::NODE_ITEM
 	 */
-	public function getNodeType() {
+	public function getNodeType()
+	{
 		return $this->nodeType;
 	}
 
@@ -80,12 +83,14 @@ class PropelConfigurationIterator extends RecursiveIteratorIterator {
 	 * @see        http://www.php.net/RecursiveIteratorIterator
 	 * @return     mixed
 	 */
-	public function current() {
+	public function current()
+	{
 		$current = parent::current();
 		if (is_array($current)) {
 			$this->namespaceStack[] = $this->key();
 			$this->nodeType = self::NODE_PARENT;
-		} else {
+		}
+		else {
 			$this->nodeType = self::NODE_ITEM;
 		}
 
@@ -97,7 +102,8 @@ class PropelConfigurationIterator extends RecursiveIteratorIterator {
 	 *
 	 * @see        http://www.php.net/RecursiveIteratorIterator
 	 */
-	public function endChildren() {
+	public function endChildren()
+	{
 		if ($this->namespaceStack) {
 			array_pop($this->namespaceStack);
 		}

@@ -17,7 +17,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>.
- */
+*/
 
 include_once 'phing/types/TokenReader.php';
 include_once 'phing/system/io/IOException.php';
@@ -32,65 +32,66 @@ include_once 'phing/filters/ReplaceTokens.php'; // For class Token
  */
 class IniFileTokenReader extends TokenReader {
 
-	/**
-	 * Holds the path to the INI file that is to be read.
-	 * @var object  Reference to a PhingFile Object representing
-	 *              the path to the INI file.
-	 */
-	private $file = null;
+    /**
+     * Holds the path to the INI file that is to be read.
+     * @var object  Reference to a PhingFile Object representing
+     *              the path to the INI file.
+     */
+    private $file = null;
 
-	/**
-	 * @var string  Sets the section to load from the INI file.
-	 *              if omitted, all sections are loaded.
-	 */
-	private $section = null;
+    /**
+     * @var string  Sets the section to load from the INI file.
+     *              if omitted, all sections are loaded.
+     */
+    private $section = null;
 
-	/**
-	 * Reads the next token from the INI file
-	 *
-	 * @throws  IOException     On error
-	 * @return Token
-	 */
-	function readToken() {
-		if ($this->file === null) {
-			throw new BuildException("No File set for IniFileTokenReader");
-		}
+    /**
+     * Reads the next token from the INI file
+     *
+     * @throws  IOException     On error
+     * @return Token
+     */
+    function readToken() {
+        if ($this->file === null) {
+            throw new BuildException("No File set for IniFileTokenReader");
+        }
 
-		static $tokens = null;
-		if ($tokens === null) {
-			$tokens = array();
-			$arr = parse_ini_file($this->file->getAbsolutePath(), true);
-			if ($this->section === null) {
-				foreach ($arr as $sec_name => $values) {
-					foreach ($arr[$sec_name] as $key => $value) {
-						$tok = new Token;
-						$tok->setKey($key);
-						$tok->setValue($value);
-						$tokens[] = $tok;
-					}
-				}
-			} else if (isset($arr[$this->section])) {
-				foreach ($arr[$this->section] as $key => $value) {
-					$tok = new Token;
-					$tok->setKey($key);
-					$tok->setValue($value);
-					$tokens[] = $tok;
-				}
-			}
-		}
+        static $tokens = null;
+        if ($tokens === null) {
+            $tokens = array();
+            $arr = parse_ini_file($this->file->getAbsolutePath(), true);
+            if ($this->section === null) {
+                foreach ($arr as $sec_name => $values) {
+                    foreach($arr[$sec_name] as $key => $value) {
+                        $tok = new Token;
+                        $tok->setKey($key);
+                        $tok->setValue($value);
+                        $tokens[] = $tok;
+                    }
+                }
+            } else if (isset($arr[$this->section])) {
+                foreach ($arr[$this->section] as $key => $value) {
+                    $tok = new Token;
+                    $tok->setKey($key);
+                    $tok->setValue($value);
+                    $tokens[] = $tok;
+                }
+            }
+        }
 
-		if (count($tokens) > 0) {
-			return array_pop($tokens);
-		} else
-			return null;
-	}
+        if (count($tokens) > 0) {
+            return array_pop($tokens);
+        } else
+            return null;
+    }
+    
+    function setFile(PhingFile $file) {
+        $this->file = $file;
+    }
 
-	function setFile(PhingFile $file) {
-		$this->file = $file;
-	}
-
-	function setSection($str) {
-		$this->section = (string) $str;
-	}
+    function setSection($str) {
+        $this->section = (string) $str;
+    }
 }
+
 

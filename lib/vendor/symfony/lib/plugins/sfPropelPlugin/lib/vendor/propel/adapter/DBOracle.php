@@ -40,7 +40,8 @@ class DBOracle extends DBAdapter {
 	 * @param      string $in The string to transform to upper case.
 	 * @return     string The upper case string.
 	 */
-	public function toUpperCase($in) {
+	public function toUpperCase($in)
+	{
 		return "UPPER(" . $in . ")";
 	}
 
@@ -50,7 +51,8 @@ class DBOracle extends DBAdapter {
 	 * @param      string $in The string whose case to ignore.
 	 * @return     string The string in a case that can be ignored.
 	 */
-	public function ignoreCase($in) {
+	public function ignoreCase($in)
+	{
 		return "UPPER(" . $in . ")";
 	}
 
@@ -61,7 +63,8 @@ class DBOracle extends DBAdapter {
 	 * @param      string String to append.
 	 * @return     string
 	 */
-	public function concatString($s1, $s2) {
+	public function concatString($s1, $s2)
+	{
 		return "CONCAT($s1, $s2)";
 	}
 
@@ -73,7 +76,8 @@ class DBOracle extends DBAdapter {
 	 * @param      int Number of characters to extract.
 	 * @return     string
 	 */
-	public function subString($s, $pos, $len) {
+	public function subString($s, $pos, $len)
+	{
 		return "SUBSTR($s, $pos, $len)";
 	}
 
@@ -83,37 +87,45 @@ class DBOracle extends DBAdapter {
 	 * @param      string String to calculate length of.
 	 * @return     string
 	 */
-	public function strLength($s) {
+	public function strLength($s)
+	{
 		return "LENGTH($s)";
 	}
 
 	/**
 	 * @see        DBAdapter::applyLimit()
 	 */
-	public function applyLimit(&$sql, $offset, $limit) {
-		$sql = 'SELECT B.* FROM (  '
-				. 'SELECT A.*, rownum AS PROPEL$ROWNUM FROM (  ' . $sql
-				. '  ) A ' . ' ) B WHERE ';
+	public function applyLimit(&$sql, $offset, $limit)
+	{
+		 $sql =
+			'SELECT B.* FROM (  '
+			.  'SELECT A.*, rownum AS PROPEL$ROWNUM FROM (  '
+			. $sql
+			. '  ) A '
+			.  ' ) B WHERE ';
 
-		if ($offset > 0) {
-			$sql .= ' B.PROPEL$ROWNUM > ' . $offset;
+		if ( $offset > 0 ) {
+			$sql				.= ' B.PROPEL$ROWNUM > ' . $offset;
 
-			if ($limit > 0) {
-				$sql .= ' AND B.PROPEL$ROWNUM <= ' . ($offset + $limit);
+			if ( $limit > 0 )
+			{
+				$sql			.= ' AND B.PROPEL$ROWNUM <= '
+									. ( $offset + $limit );
 			}
 		} else {
-			$sql .= ' B.PROPEL$ROWNUM <= ' . $limit;
+			$sql				.= ' B.PROPEL$ROWNUM <= ' . $limit;
 		}
 	}
 
-	protected function getIdMethod() {
+	protected function getIdMethod()
+	{
 		return DBAdapter::ID_METHOD_SEQUENCE;
 	}
 
-	public function getId(PDO $con, $name = null) {
+	public function getId(PDO $con, $name = null)
+	{
 		if ($name === null) {
-			throw new PropelException(
-					"Unable to fetch next sequence ID without sequence name.");
+			throw new PropelException("Unable to fetch next sequence ID without sequence name.");
 		}
 
 		$stmt = $con->query("SELECT " . $name . ".nextval FROM dual");
@@ -122,8 +134,10 @@ class DBOracle extends DBAdapter {
 		return $row[0];
 	}
 
-	public function random($seed = NULL) {
+	public function random($seed=NULL)
+	{
 		return 'dbms_random.value';
 	}
+
 
 }

@@ -29,18 +29,23 @@ require_once 'phing/tasks/ext/simpletest/SimpleTestResultFormatter.php';
  * @package phing.tasks.ext.simpletest
  * @since 2.2.0
  */
-class SimpleTestCountResultFormatter extends SimpleTestResultFormatter {
+class SimpleTestCountResultFormatter extends SimpleTestResultFormatter
+{
 	const SUCCESS = 0;
 	const FAILURES = 1;
 	const ERRORS = 2;
-
-	function getRetCode() {
-		if ($this->getExceptionCount() != 0) {
+	
+	function getRetCode()
+	{
+		if ($this->getExceptionCount() != 0)
+		{
 			return self::ERRORS;
-		} else if ($this->getFailCount() != 0) {
+		}
+		else if ($this->getFailCount() != 0)
+		{
 			return self::FAILURES;
 		}
-
+		
 		return self::SUCCESS;
-	}
+	}	
 }

@@ -45,7 +45,8 @@ require_once 'PEAR.php';
  * @author Jorrit Schippers <jorrit at ncode dot nl>
  * @since 2.3.1
  */
-class FtpDeployTask extends Task {
+class FtpDeployTask extends Task
+{
 	private $host = null;
 	private $port = 0;
 	private $username = null;
@@ -55,144 +56,120 @@ class FtpDeployTask extends Task {
 	private $completeDirMap;
 	private $mode = null;
 	private $clearFirst = false;
-
+	
 	public function __construct() {
 		$this->filesets = array();
 		$this->completeDirMap = array();
 	}
-
+	
 	public function setHost($host) {
 		$this->host = $host;
 	}
-
+	
 	public function setPort($port) {
 		$this->port = (int) $port;
 	}
-
+	
 	public function setUsername($username) {
 		$this->username = $username;
 	}
-
+	
 	public function setPassword($password) {
 		$this->password = $password;
 	}
-
+	
 	public function setDir($dir) {
 		$this->dir = $dir;
 	}
-
+	
 	public function setMode($mode) {
-		switch (strtolower($mode)) {
-		case 'ascii':
-			$this->mode = FTP_ASCII;
-			break;
-		case 'binary':
-		case 'bin':
-			$this->mode = FTP_BINARY;
-			break;
+		switch(strtolower($mode)) {
+			case 'ascii':
+				$this->mode = FTP_ASCII;
+				break;
+			case 'binary':
+			case 'bin':
+				$this->mode = FTP_BINARY;
+				break;
 		}
 	}
-
+	
 	public function setClearFirst($clearFirst) {
 		$this->clearFirst = (bool) $clearFirst;
 	}
-
+	
 	function createFileSet() {
 		$num = array_push($this->filesets, new FileSet());
-		return $this->filesets[$num - 1];
+		return $this->filesets[$num-1];
 	}
-
+	
 	/**
 	 * The init method: check if Net_FTP is available
 	 */
 	public function init() {
 		$paths = explode(PATH_SEPARATOR, get_include_path());
-		foreach ($paths as $path) {
-			if (file_exists(
-					$path . DIRECTORY_SEPARATOR . 'Net' . DIRECTORY_SEPARATOR
-							. 'FTP.php')) {
+		foreach($paths as $path) {
+			if(file_exists($path.DIRECTORY_SEPARATOR.'Net'.DIRECTORY_SEPARATOR.'FTP.php')) {
 				return true;
 			}
 		}
-		throw new BuildException(
-				'The FTP Deploy task requires the Net_FTP PEAR package.');
+		throw new BuildException('The FTP Deploy task requires the Net_FTP PEAR package.');
 	}
-
+	
 	/**
 	 * The main entry point method.
 	 */
 	public function main() {
 		$project = $this->getProject();
-
+		
 		require_once 'Net/FTP.php';
 		$ftp = new Net_FTP($this->host, $this->port);
 		$ret = $ftp->connect();
-		if (PEAR::isError($ret))
-			throw new BuildException(
-					'Could not connect to FTP server ' . $this->host
-							. ' on port ' . $this->port . ': '
-							. $ret->getMessage());
+		if(PEAR::isError($ret))
+			throw new BuildException('Could not connect to FTP server '.$this->host.' on port '.$this->port.': '.$ret->getMessage());
 		$ret = $ftp->login($this->username, $this->password);
-		if (PEAR::isError($ret))
-			throw new BuildException(
-					'Could not login to FTP server ' . $this->host
-							. ' on port ' . $this->port . ' with username '
-							. $this->username . ': ' . $ret->getMessage());
-
-		if ($this->clearFirst) {
+		if(PEAR::isError($ret))
+			throw new BuildException('Could not login to FTP server '.$this->host.' on port '.$this->port.' with username '.$this->username.': '.$ret->getMessage());
+		
+		if($this->clearFirst) {
 			// TODO change to a loop through all files and directories within current directory
-			$this->log('Clearing directory ' . $this->dir, Project::MSG_INFO);
-			$dir = substr($this->dir, -1) == '/' ? $this->dir : $this->dir
-					. '/';
+			$this->log('Clearing directory '.$this->dir, Project::MSG_INFO);
+			$dir = substr($this->dir, -1) == '/' ? $this->dir : $this->dir.'/';
 			$ftp->rm($dir, true);
 			$ftp->mkdir($dir);
 		}
-
+		
 		$ret = $ftp->cd($this->dir);
-		if (PEAR::isError($ret))
-			throw new BuildException(
-					'Could not change to directory ' . $this->dir . ': '
-							. $ret->getMessage());
-
+		if(PEAR::isError($ret))
+			throw new BuildException('Could not change to directory '.$this->dir.': '.$ret->getMessage());
+		
 		$fs = FileSystem::getFileSystem();
 		$convert = $fs->getSeparator() == '\\';
-
-		foreach ($this->filesets as $fs) {
+		
+		foreach($this->filesets as $fs) {
 			$ds = $fs->getDirectoryScanner($project);
-			$fromDir = $fs->getDir($project);
+			$fromDir  = $fs->getDir($project);
 			$srcFiles = $ds->getIncludedFiles();
-			$srcDirs = $ds->getIncludedDirectories();
-			foreach ($srcDirs as $dirname) {
-				if ($convert)
+			$srcDirs  = $ds->getIncludedDirectories();
+			foreach($srcDirs as $dirname) {
+				if($convert)
 					$dirname = str_replace('\\', '/', $dirname);
-				$this
-						->log('Will create directory ' . $dirname,
-								Project::MSG_VERBOSE);
+				$this->log('Will create directory '.$dirname, Project::MSG_VERBOSE);
 				$ret = $ftp->mkdir($dirname, true);
-				if (PEAR::isError($ret))
-					throw new BuildException(
-							'Could not create directory ' . $dirname . ': '
-									. $ret->getMessage());
+				if(PEAR::isError($ret))
+					throw new BuildException('Could not create directory '.$dirname.': '.$ret->getMessage());
 			}
-			foreach ($srcFiles as $filename) {
+			foreach($srcFiles as $filename) {
 				$file = new PhingFile($fromDir->getAbsolutePath(), $filename);
-				if ($convert)
+				if($convert)
 					$filename = str_replace('\\', '/', $filename);
-				$this
-						->log(
-								'Will copy ' . $file->getCanonicalPath()
-										. ' to ' . $filename,
-								Project::MSG_VERBOSE);
-				$ret = $ftp
-						->put($file->getCanonicalPath(), $filename, true,
-								$this->mode);
-				if (PEAR::isError($ret))
-					throw new BuildException(
-							'Could not deploy file ' . $filename . ': '
-									. $ret->getMessage());
+				$this->log('Will copy '.$file->getCanonicalPath().' to '.$filename, Project::MSG_VERBOSE);
+				$ret = $ftp->put($file->getCanonicalPath(), $filename, true, $this->mode);
+				if(PEAR::isError($ret))
+					throw new BuildException('Could not deploy file '.$filename.': '.$ret->getMessage());
 			}
 		}
-
+		
 		$ftp->disconnect();
 	}
 }

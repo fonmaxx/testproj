@@ -29,45 +29,61 @@ require_once 'phing/system/util/Properties.php';
  * @package phing.tasks.ext.coverage
  * @since 2.1.0
  */
-class CoverageMerger {
-	private static function mergeCodeCoverage($left, $right) {
+class CoverageMerger
+{
+	private static function mergeCodeCoverage($left, $right)
+	{
 		$coverageMerged = array();
 
 		reset($left);
 		reset($right);
 
-		while (current($left) && current($right)) {
+		while (current($left) && current($right))
+		{
 			$linenr_left = key($left);
 			$linenr_right = key($right);
 
-			if ($linenr_left < $linenr_right) {
+			if ($linenr_left < $linenr_right)
+			{
 				$coverageMerged[$linenr_left] = current($left);
 
 				next($left);
-			} else if ($linenr_right < $linenr_left) {
+			}
+			else
+			if ($linenr_right < $linenr_left)
+			{
 				$coverageMerged[$linenr_right] = current($right);
 				next($right);
-			} else {
-				if (current($left) < 0) {
+			}
+			else
+			{
+				if (current($left) < 0)
+				{
 					$coverageMerged[$linenr_right] = current($right);
-				} else if (current($right) < 0) {
-					$coverageMerged[$linenr_right] = current($left);
-				} else {
-					$coverageMerged[$linenr_right] = current($left)
-							+ current($right);
 				}
-
+				else
+				if (current($right) < 0)
+				{
+					$coverageMerged[$linenr_right] = current($left);
+				}
+				else
+				{
+					$coverageMerged[$linenr_right] = current($left) + current($right);
+				}
+				
 				next($left);
 				next($right);
 			}
 		}
 
-		while (current($left)) {
+		while (current($left))
+		{
 			$coverageMerged[key($left)] = current($left);
 			next($left);
 		}
 
-		while (current($right)) {
+		while (current($right))
+		{
 			$coverageMerged[key($right)] = current($right);
 			next($right);
 		}
@@ -75,39 +91,42 @@ class CoverageMerger {
 		return $coverageMerged;
 	}
 
-	static function merge($project, $codeCoverageInformation) {
+	static function merge($project, $codeCoverageInformation)
+	{
 		$database = new PhingFile($project->getProperty('coverage.database'));
 
 		$props = new Properties();
 		$props->load($database);
-
+		
 		$coverageTotal = $codeCoverageInformation;
-
-		foreach ($coverageTotal as $coverage) {
-			foreach ($coverage as $filename => $coverageFile) {
+		
+		foreach ($coverageTotal as $coverage)
+		{
+			foreach ($coverage as $filename => $coverageFile)
+			{
 				$filename = strtolower($filename);
-
-				if ($props->getProperty($filename) != null) {
+				
+				if ($props->getProperty($filename) != null)
+				{
 					$file = unserialize($props->getProperty($filename));
 					$left = $file['coverage'];
 					$right = $coverageFile;
 					if (!is_array($right)) {
-						$right = array_shift(
-								PHPUnit_Util_CodeCoverage::bitStringToCodeCoverage(
-										array($right), 1));
+						$right = array_shift(PHPUnit_Util_CodeCoverage::bitStringToCodeCoverage(array($right), 1)); 
 					}
-
-					$coverageMerged = CoverageMerger::mergeCodeCoverage($left,
-							$right);
-
-					foreach ($coverageMerged as $key => $value) {
-						if ($value == -2) {
+						
+					$coverageMerged = CoverageMerger::mergeCodeCoverage($left, $right);
+					
+					foreach ($coverageMerged as $key => $value)
+					{
+						if ($value == -2)
+						{
 							unset($coverageMerged[$key]);
 						}
 					}
-
+					
 					$file['coverage'] = $coverageMerged;
-
+					
 					$props->setProperty($filename, serialize($file));
 				}
 			}

@@ -41,27 +41,28 @@ class Rule extends XMLElement {
 	 * Sets up the Rule object based on the attributes that were passed to loadFromXML().
 	 * @see        parent::loadFromXML()
 	 */
-	protected function setupObject() {
+	protected function setupObject()
+	{
 		$this->name = $this->getAttribute("name");
 		$this->value = $this->getAttribute("value");
 		$this->classname = $this->getAttribute("class");
 
 		/*
-		 * Set some default values if they are not specified.
-		 * This is escpecially useful for maxLength; the size
-		 * is already known by the column and this way it is
-		 * not necessary to manage the same size two times.
-		 *
-		 * Currently there is only one such supported default:
-		 *   - maxLength value = column max length
-		 *   (this default cannot be easily set at runtime w/o changing
-		 *   design of class system in undesired ways)
-		 */
+		* Set some default values if they are not specified.
+		* This is escpecially useful for maxLength; the size
+		* is already known by the column and this way it is
+		* not necessary to manage the same size two times.
+		*
+		* Currently there is only one such supported default:
+		*   - maxLength value = column max length
+		*   (this default cannot be easily set at runtime w/o changing
+		*   design of class system in undesired ways)
+		*/
 		if ($this->value === null) {
-			switch ($this->name) {
-			case 'maxLength':
-				$this->value = $this->validator->getColumn()->getSize();
-				break;
+			switch($this->name) {
+				case 'maxLength':
+					$this->value = $this->validator->getColumn()->getSize();
+					break;
 			}
 		}
 
@@ -73,7 +74,8 @@ class Rule extends XMLElement {
 	 * @param      Validator $validator
 	 * @see        Validator::addRule()
 	 */
-	public function setValidator(Validator $validator) {
+	public function setValidator(Validator $validator)
+	{
 		$this->validator = $validator;
 	}
 
@@ -81,7 +83,8 @@ class Rule extends XMLElement {
 	 * Gets the owning validator for this rule.
 	 * @return     Validator
 	 */
-	public function getValidator() {
+	public function getValidator()
+	{
 		return $this->validator;
 	}
 
@@ -91,7 +94,8 @@ class Rule extends XMLElement {
 	 * be built based on the 'name' attrib.
 	 * @param      string $classname dot-path classname (e.g. myapp.propel.MyValidator)
 	 */
-	public function setClass($classname) {
+	public function setClass($classname)
+	{
 		$this->classname = $classname;
 	}
 
@@ -101,7 +105,8 @@ class Rule extends XMLElement {
 	 * based on the 'name' attribute.  E.g. 'maxLength' -> 'propel.validator.MaxLengthValidator'
 	 * @return     string dot-path classname (e.g. myapp.propel.MyValidator)
 	 */
-	public function getClass() {
+	public function getClass()
+	{
 		if ($this->classname === null && $this->name !== null) {
 			return "propel.validator." . ucfirst($this->name) . "Validator";
 		}
@@ -114,7 +119,8 @@ class Rule extends XMLElement {
 	 * @param      string $name Validator name for this rule (e.g. "maxLength", "required").
 	 * @see        getClass()
 	 */
-	public function setName($name) {
+	public function setName($name)
+	{
 		$this->name = $name;
 	}
 
@@ -122,7 +128,8 @@ class Rule extends XMLElement {
 	 * Gets the name of the validator for this rule.
 	 * @return     string Validator name for this rule (e.g. "maxLength", "required").
 	 */
-	public function getName() {
+	public function getName()
+	{
 		return $this->name;
 	}
 
@@ -132,7 +139,8 @@ class Rule extends XMLElement {
 	 * does not).
 	 * @param      string $value
 	 */
-	public function setValue($value) {
+	public function setValue($value)
+	{
 		$this->value = $value;
 	}
 
@@ -140,7 +148,8 @@ class Rule extends XMLElement {
 	 * Gets the value parameter for this validator rule.
 	 * @return     string
 	 */
-	public function getValue() {
+	public function getValue()
+	{
 		return $this->value;
 	}
 
@@ -152,7 +161,8 @@ class Rule extends XMLElement {
 	 * @param      string $message
 	 * @see        setTranslation()
 	 */
-	public function setMessage($message) {
+	public function setMessage($message)
+	{
 		$this->message = $message;
 	}
 
@@ -164,7 +174,8 @@ class Rule extends XMLElement {
 	 * @return     string
 	 * @see        setTranslation()
 	 */
-	public function getMessage() {
+	public function getMessage()
+	{
 		$message = str_replace('${value}', $this->getValue(), $this->message);
 		return $message;
 	}
@@ -172,7 +183,8 @@ class Rule extends XMLElement {
 	/**
 	 * @see        XMLElement::appendXml(DOMNode)
 	 */
-	public function appendXml(DOMNode $node) {
+	public function appendXml(DOMNode $node)
+	{
 		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
 
 		$ruleNode = $node->appendChild($doc->createElement('rule'));

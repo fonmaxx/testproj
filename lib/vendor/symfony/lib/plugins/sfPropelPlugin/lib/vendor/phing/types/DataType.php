@@ -35,154 +35,148 @@ include_once 'phing/BuildException.php';
  */
 class DataType extends ProjectComponent {
 
-	/** The descriptin the user has set. */
-	public $description = null;
+    /** The descriptin the user has set. */
+    public $description = null;
 
-	/** Value to the refid attribute. Type of Reference*/
-	public $ref = null;
+    /** Value to the refid attribute. Type of Reference*/
+    public $ref = null;
 
-	/**
-	 * Are we sure we don't hold circular references?
-	 *
-	 * Subclasses are responsible for setting this value to false
-	 * if we'd need to investigate this condition (usually because a
-	 * child element has been added that is a subclass of DataType).
-	 * @var boolean
-	 */
-	protected $checked = true;
+    /**
+     * Are we sure we don't hold circular references?
+     *
+     * Subclasses are responsible for setting this value to false
+     * if we'd need to investigate this condition (usually because a
+     * child element has been added that is a subclass of DataType).
+     * @var boolean
+     */
+    protected $checked = true;
+  
+    /**
+     * Sets a description of the current data type. It will be useful
+     * in commenting what we are doing.
+     */
+    function setDescription($desc) {
+        $this->description = (string) $desc;
+    }
 
-	/**
-	 * Sets a description of the current data type. It will be useful
-	 * in commenting what we are doing.
-	 */
-	function setDescription($desc) {
-		$this->description = (string) $desc;
-	}
+    /** Return the description for the current data type. */
+    function getDescription() {
+        return $this->description;
+    }
 
-	/** Return the description for the current data type. */
-	function getDescription() {
-		return $this->description;
-	}
+    /** Has the refid attribute of this element been set? */
+    function isReference() {
+        return ($this->ref !== null);
+    }
 
-	/** Has the refid attribute of this element been set? */
-	function isReference() {
-		return ($this->ref !== null);
-	}
-
-	/**
-	 * Set the value of the refid attribute.
-	 *
-	 * Subclasses may need to check whether any other attributes
-	 * have been set as well or child elements have been created and
-	 * thus override this method. if they do they must call parent::setRefid()
+    /**
+     * Set the value of the refid attribute.
+     *
+     * Subclasses may need to check whether any other attributes
+     * have been set as well or child elements have been created and
+     * thus override this method. if they do they must call parent::setRefid()
 	 * 
 	 * @param Reference $r
 	 * @return void
-	 */
-	function setRefid(Reference $r) {
-		$this->ref = $r;
-		$this->checked = false;
-	}
+     */
+    function setRefid(Reference $r) {
+        $this->ref = $r;
+        $this->checked = false;
+    }
 
-	/**
-	 * Check to see whether any DataType we hold references to is
-	 * included in the Stack (which holds all DataType instances that
-	 * directly or indirectly reference this instance, including this
-	 * instance itself).
-	 *
-	 * If one is included, throw a BuildException created by circularReference
-	 *
-	 * This implementation is appropriate only for a DataType that
-	 * cannot hold other DataTypes as children.
-	 *
-	 * The general contract of this method is that it shouldn't do
-	 * anything if checked is true and set it to true on exit.
-	 */
-	function dieOnCircularReference(&$stk, Project $p) {
-		if ($this->checked || !$this->isReference()) {
-			return;
-		}
+    /**
+     * Check to see whether any DataType we hold references to is
+     * included in the Stack (which holds all DataType instances that
+     * directly or indirectly reference this instance, including this
+     * instance itself).
+     *
+     * If one is included, throw a BuildException created by circularReference
+     *
+     * This implementation is appropriate only for a DataType that
+     * cannot hold other DataTypes as children.
+     *
+     * The general contract of this method is that it shouldn't do
+     * anything if checked is true and set it to true on exit.
+     */
+    function dieOnCircularReference(&$stk, Project $p) {
+        if ($this->checked || !$this->isReference()) {
+            return;
+        }
 
-		$o = $this->ref->getReferencedObject($p);
+        $o = $this->ref->getReferencedObject($p);
 
-		if ($o instanceof DataType) {
+        if ($o instanceof DataType) {
+            
+            // TESTME - make sure that in_array() works just as well here
+            //
+            // check if reference is in stack
+            //$contains = false;
+            //for ($i=0, $size=count($stk); $i < $size; $i++) {
+            //    if ($stk[$i] === $o) {
+            //        $contains = true;
+            //        break;
+            //    }
+            //}
 
-			// TESTME - make sure that in_array() works just as well here
-			//
-			// check if reference is in stack
-			//$contains = false;
-			//for ($i=0, $size=count($stk); $i < $size; $i++) {
-			//    if ($stk[$i] === $o) {
-			//        $contains = true;
-			//        break;
-			//    }
-			//}
+            if (in_array($o, $stk, true)) {
+                // throw build exception
+                throw $this->circularReference();
+            } else {
+                array_push($stk, $o);
+                $o->dieOnCircularReference($stk, $p);
+                array_pop($stk);
+            }
+        }
+        $this->checked = true;
+    }
 
-			if (in_array($o, $stk, true)) {
-				// throw build exception
-				throw $this->circularReference();
-			} else {
-				array_push($stk, $o);
-				$o->dieOnCircularReference($stk, $p);
-				array_pop($stk);
-			}
-		}
-		$this->checked = true;
-	}
+    /** Performs the check for circular references and returns the referenced object. */
+    function getCheckedRef($requiredClass, $dataTypeName) {
+    
+        if (!$this->checked) {
+            // should be in stack
+            $stk = array();
+            $stk[] = $this;
+            $this->dieOnCircularReference($stk, $this->getProject());            
+        }
 
-	/** Performs the check for circular references and returns the referenced object. */
-	function getCheckedRef($requiredClass, $dataTypeName) {
+        $o = $this->ref->getReferencedObject($this->getProject());
+        if (!($o instanceof $requiredClass) ) {
+            throw new BuildException($this->ref->getRefId()." doesn't denote a " . $dataTypeName);
+        } else {
+            return $o;
+        }
+    }
 
-		if (!$this->checked) {
-			// should be in stack
-			$stk = array();
-			$stk[] = $this;
-			$this->dieOnCircularReference($stk, $this->getProject());
-		}
+    /**
+     * Creates an exception that indicates that refid has to be the
+     * only attribute if it is set.
+     */
+    function tooManyAttributes() {
+        return new BuildException( "You must not specify more than one attribute when using refid" );
+    }
 
-		$o = $this->ref->getReferencedObject($this->getProject());
-		if (!($o instanceof $requiredClass)) {
-			throw new BuildException(
-					$this->ref->getRefId() . " doesn't denote a "
-							. $dataTypeName);
-		} else {
-			return $o;
-		}
-	}
+    /**
+     * Creates an exception that indicates that this XML element must
+     * not have child elements if the refid attribute is set.
+     */
+    function noChildrenAllowed() {
+        return new BuildException("You must not specify nested elements when using refid");
+    }
 
-	/**
-	 * Creates an exception that indicates that refid has to be the
-	 * only attribute if it is set.
-	 */
-	function tooManyAttributes() {
-		return new BuildException(
-				"You must not specify more than one attribute when using refid");
-	}
-
-	/**
-	 * Creates an exception that indicates that this XML element must
-	 * not have child elements if the refid attribute is set.
-	 */
-	function noChildrenAllowed() {
-		return new BuildException(
-				"You must not specify nested elements when using refid");
-	}
-
-	/**
-	 * Creates an exception that indicates the user has generated a
-	 * loop of data types referencing each other.
-	 */
-	function circularReference() {
-		return new BuildException(
-				"This data type contains a circular reference.");
-	}
-
-	/**
-	 * Template method being called when the data type has been 
-	 * parsed completely.
-	 * @return void
-	 */
-	function parsingComplete() {
-	}
+    /**
+     * Creates an exception that indicates the user has generated a
+     * loop of data types referencing each other.
+     */
+    function circularReference() {
+        return new BuildException("This data type contains a circular reference.");
+    }
+    
+    /**
+     * Template method being called when the data type has been 
+     * parsed completely.
+     * @return void
+     */
+    function parsingComplete() {}
 }
 

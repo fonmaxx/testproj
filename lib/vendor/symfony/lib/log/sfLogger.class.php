@@ -26,239 +26,267 @@
  * @author     Fabien Potencier <fabien.potencier@symfony-project.com>
  * @version    SVN: $Id: sfLogger.class.php 23810 2009-11-12 11:07:44Z Kris.Wallsmith $
  */
-abstract class sfLogger {
-	const EMERG = 0; // System is unusable
-	const ALERT = 1; // Immediate action required
-	const CRIT = 2; // Critical conditions
-	const ERR = 3; // Error conditions
-	const WARNING = 4; // Warning conditions
-	const NOTICE = 5; // Normal but significant
-	const INFO = 6; // Informational
-	const DEBUG = 7; // Debug-level messages
+abstract class sfLogger
+{
+  const EMERG   = 0; // System is unusable
+  const ALERT   = 1; // Immediate action required
+  const CRIT    = 2; // Critical conditions
+  const ERR     = 3; // Error conditions
+  const WARNING = 4; // Warning conditions
+  const NOTICE  = 5; // Normal but significant
+  const INFO    = 6; // Informational
+  const DEBUG   = 7; // Debug-level messages
 
-	protected $dispatcher = null, $options = array(), $level = self::INFO;
+  protected
+    $dispatcher = null,
+    $options = array(),
+    $level = self::INFO;
 
-	/**
-	 * Class constructor.
-	 *
-	 * @see initialize()
-	 */
-	public function __construct(sfEventDispatcher $dispatcher,
-			$options = array()) {
-		$this->initialize($dispatcher, $options);
+  /**
+   * Class constructor.
+   *
+   * @see initialize()
+   */
+  public function __construct(sfEventDispatcher $dispatcher, $options = array())
+  {
+    $this->initialize($dispatcher, $options);
 
-		if (!isset($options['auto_shutdown']) || $options['auto_shutdown']) {
-			register_shutdown_function(array($this, 'shutdown'));
-		}
-	}
+    if (!isset($options['auto_shutdown']) || $options['auto_shutdown'])
+    {
+      register_shutdown_function(array($this, 'shutdown'));
+    }
+  }
 
-	/**
-	 * Initializes this sfLogger instance.
-	 *
-	 * Available options:
-	 *
-	 * - level: The log level.
-	 *
-	 * @param  sfEventDispatcher $dispatcher  A sfEventDispatcher instance
-	 * @param  array             $options     An array of options.
-	 *
-	 * @return Boolean      true, if initialization completes successfully, otherwise false.
-	 *
-	 * @throws <b>sfInitializationException</b> If an error occurs while initializing this sfLogger.
-	 */
-	public function initialize(sfEventDispatcher $dispatcher,
-			$options = array()) {
-		$this->dispatcher = $dispatcher;
-		$this->options = $options;
+  /**
+   * Initializes this sfLogger instance.
+   *
+   * Available options:
+   *
+   * - level: The log level.
+   *
+   * @param  sfEventDispatcher $dispatcher  A sfEventDispatcher instance
+   * @param  array             $options     An array of options.
+   *
+   * @return Boolean      true, if initialization completes successfully, otherwise false.
+   *
+   * @throws <b>sfInitializationException</b> If an error occurs while initializing this sfLogger.
+   */
+  public function initialize(sfEventDispatcher $dispatcher, $options = array())
+  {
+    $this->dispatcher = $dispatcher;
+    $this->options = $options;
+    
+    if (isset($this->options['level']))
+    {
+      $this->setLogLevel($this->options['level']);
+    }
 
-		if (isset($this->options['level'])) {
-			$this->setLogLevel($this->options['level']);
-		}
+    $dispatcher->connect('application.log', array($this, 'listenToLogEvent'));
+  }
+  
+  /**
+   * Returns the options for the logger instance.
+   */
+  public function getOptions()
+  {
+    return $this->options;
+  }
+  
+  /**
+   * Returns the options for the logger instance.
+   */
+  public function setOption($name, $value)
+  {
+    $this->options[$name] = $value;
+  }
 
-		$dispatcher
-				->connect('application.log', array($this, 'listenToLogEvent'));
-	}
+  /**
+   * Retrieves the log level for the current logger instance.
+   *
+   * @return string Log level
+   */
+  public function getLogLevel()
+  {
+    return $this->level;
+  }
 
-	/**
-	 * Returns the options for the logger instance.
-	 */
-	public function getOptions() {
-		return $this->options;
-	}
+  /**
+   * Sets a log level for the current logger instance.
+   *
+   * @param string $level Log level
+   */
+  public function setLogLevel($level)
+  {
+    if (!is_int($level))
+    {
+      $level = constant('sfLogger::'.strtoupper($level));
+    }
 
-	/**
-	 * Returns the options for the logger instance.
-	 */
-	public function setOption($name, $value) {
-		$this->options[$name] = $value;
-	}
+    $this->level = $level;
+  }
 
-	/**
-	 * Retrieves the log level for the current logger instance.
-	 *
-	 * @return string Log level
-	 */
-	public function getLogLevel() {
-		return $this->level;
-	}
+  /**
+   * Logs a message.
+   *
+   * @param string $message   Message
+   * @param string $priority  Message priority
+   */
+  public function log($message, $priority = self::INFO)
+  {
+    if ($this->getLogLevel() < $priority)
+    {
+      return false;
+    }
 
-	/**
-	 * Sets a log level for the current logger instance.
-	 *
-	 * @param string $level Log level
-	 */
-	public function setLogLevel($level) {
-		if (!is_int($level)) {
-			$level = constant('sfLogger::' . strtoupper($level));
-		}
+    return $this->doLog($message, $priority);
+  }
 
-		$this->level = $level;
-	}
+  /**
+   * Logs a message.
+   *
+   * @param string $message   Message
+   * @param string $priority  Message priority
+   */
+  abstract protected function doLog($message, $priority);
 
-	/**
-	 * Logs a message.
-	 *
-	 * @param string $message   Message
-	 * @param string $priority  Message priority
-	 */
-	public function log($message, $priority = self::INFO) {
-		if ($this->getLogLevel() < $priority) {
-			return false;
-		}
+  /**
+   * Logs an emerg message.
+   *
+   * @param string $message Message
+   */
+  public function emerg($message)
+  {
+    $this->log($message, self::EMERG);
+  }
 
-		return $this->doLog($message, $priority);
-	}
+  /**
+   * Logs an alert message.
+   *
+   * @param string $message Message
+   */
+  public function alert($message)
+  {
+    $this->log($message, self::ALERT);
+  }
 
-	/**
-	 * Logs a message.
-	 *
-	 * @param string $message   Message
-	 * @param string $priority  Message priority
-	 */
-	abstract protected function doLog($message, $priority);
+  /**
+   * Logs a critical message.
+   *
+   * @param string $message Message
+   */
+  public function crit($message)
+  {
+    $this->log($message, self::CRIT);
+  }
 
-	/**
-	 * Logs an emerg message.
-	 *
-	 * @param string $message Message
-	 */
-	public function emerg($message) {
-		$this->log($message, self::EMERG);
-	}
+  /**
+   * Logs an error message.
+   *
+   * @param string $message Message
+   */
+  public function err($message)
+  {
+    $this->log($message, self::ERR);
+  }
 
-	/**
-	 * Logs an alert message.
-	 *
-	 * @param string $message Message
-	 */
-	public function alert($message) {
-		$this->log($message, self::ALERT);
-	}
+  /**
+   * Logs a warning message.
+   *
+   * @param string $message Message
+   */
+  public function warning($message)
+  {
+    $this->log($message, self::WARNING);
+  }
 
-	/**
-	 * Logs a critical message.
-	 *
-	 * @param string $message Message
-	 */
-	public function crit($message) {
-		$this->log($message, self::CRIT);
-	}
+  /**
+   * Logs a notice message.
+   *
+   * @param string $message Message
+   */
+  public function notice($message)
+  {
+    $this->log($message, self::NOTICE);
+  }
 
-	/**
-	 * Logs an error message.
-	 *
-	 * @param string $message Message
-	 */
-	public function err($message) {
-		$this->log($message, self::ERR);
-	}
+  /**
+   * Logs an info message.
+   *
+   * @param string $message Message
+   */
+  public function info($message)
+  {
+    $this->log($message, self::INFO);
+  }
 
-	/**
-	 * Logs a warning message.
-	 *
-	 * @param string $message Message
-	 */
-	public function warning($message) {
-		$this->log($message, self::WARNING);
-	}
+  /**
+   * Logs a debug message.
+   *
+   * @param string $message Message
+   */
+  public function debug($message)
+  {
+    $this->log($message, self::DEBUG);
+  }
 
-	/**
-	 * Logs a notice message.
-	 *
-	 * @param string $message Message
-	 */
-	public function notice($message) {
-		$this->log($message, self::NOTICE);
-	}
+  /**
+   * Listens to application.log events.
+   *
+   * @param sfEvent $event An sfEvent instance
+   */
+  public function listenToLogEvent(sfEvent $event)
+  {
+    $priority = isset($event['priority']) ? $event['priority'] : self::INFO;
 
-	/**
-	 * Logs an info message.
-	 *
-	 * @param string $message Message
-	 */
-	public function info($message) {
-		$this->log($message, self::INFO);
-	}
+    $subject  = $event->getSubject();
+    $subject  = is_object($subject) ? get_class($subject) : (is_string($subject) ? $subject : 'main');
+    foreach ($event->getParameters() as $key => $message)
+    {
+      if ('priority' === $key)
+      {
+        continue;
+      }
 
-	/**
-	 * Logs a debug message.
-	 *
-	 * @param string $message Message
-	 */
-	public function debug($message) {
-		$this->log($message, self::DEBUG);
-	}
+      $this->log(sprintf('{%s} %s', $subject, $message), $priority);
+    }
+  }
 
-	/**
-	 * Listens to application.log events.
-	 *
-	 * @param sfEvent $event An sfEvent instance
-	 */
-	public function listenToLogEvent(sfEvent $event) {
-		$priority = isset($event['priority']) ? $event['priority'] : self::INFO;
+  /**
+   * Executes the shutdown procedure.
+   *
+   * Cleans up the current logger instance.
+   */
+  public function shutdown()
+  {
+  }
 
-		$subject = $event->getSubject();
-		$subject = is_object($subject) ? get_class($subject)
-				: (is_string($subject) ? $subject : 'main');
-		foreach ($event->getParameters() as $key => $message) {
-			if ('priority' === $key) {
-				continue;
-			}
+  /**
+   * Returns the priority name given a priority class constant
+   *
+   * @param  integer $priority A priority class constant
+   *
+   * @return string  The priority name
+   *
+   * @throws sfException if the priority level does not exist
+   */
+  static public function getPriorityName($priority)
+  {
+    static $levels  = array(
+      self::EMERG   => 'emerg',
+      self::ALERT   => 'alert',
+      self::CRIT    => 'crit',
+      self::ERR     => 'err',
+      self::WARNING => 'warning',
+      self::NOTICE  => 'notice',
+      self::INFO    => 'info',
+      self::DEBUG   => 'debug',
+    );
 
-			$this->log(sprintf('{%s} %s', $subject, $message), $priority);
-		}
-	}
+    if (!isset($levels[$priority]))
+    {
+      throw new sfException(sprintf('The priority level "%s" does not exist.', $priority));
+    }
 
-	/**
-	 * Executes the shutdown procedure.
-	 *
-	 * Cleans up the current logger instance.
-	 */
-	public function shutdown() {
-	}
-
-	/**
-	 * Returns the priority name given a priority class constant
-	 *
-	 * @param  integer $priority A priority class constant
-	 *
-	 * @return string  The priority name
-	 *
-	 * @throws sfException if the priority level does not exist
-	 */
-	static public function getPriorityName($priority) {
-		static $levels = array(self::EMERG => 'emerg',
-				self::ALERT => 'alert', self::CRIT => 'crit',
-				self::ERR => 'err', self::WARNING => 'warning',
-				self::NOTICE => 'notice', self::INFO => 'info',
-				self::DEBUG => 'debug',);
-
-		if (!isset($levels[$priority])) {
-			throw new sfException(
-					sprintf('The priority level "%s" does not exist.',
-							$priority));
-		}
-
-		return $levels[$priority];
-	}
+    return $levels[$priority];
+  }
 }

@@ -35,104 +35,103 @@ include_once 'phing/filters/ChainableReader.php';
  */
 class XincludeFilter extends BaseParamFilterReader implements ChainableReader {
 
-	private $basedir = null;
+    private $basedir = null;
 
-	public function setBasedir(PhingFile $dir) {
-		$this->basedir = $dir;
-	}
+    public function setBasedir(PhingFile $dir)
+    {
+        $this->basedir = $dir;
+    }
 
-	public function getBasedir() {
-		return $this->basedir;
-	}
+    public function getBasedir()
+    {
+        return $this->basedir;
+    }
 
-	/**
-	 * Reads stream, applies XSLT and returns resulting stream.
-	 * @return string transformed buffer.
-	 * @throws BuildException - if XSLT support missing, if error in xslt processing
-	 */
-	function read($len = null) {
+    /**
+     * Reads stream, applies XSLT and returns resulting stream.
+     * @return string transformed buffer.
+     * @throws BuildException - if XSLT support missing, if error in xslt processing
+     */
+    function read($len = null) {
+        
+        if (!class_exists('DomDocument')) {
+            throw new BuildException("Could not find the DomDocument class. Make sure PHP has been compiled/configured to support DOM XML.");
+        }
+        
+        if ($this->processed === true) {
+            return -1; // EOF
+        }
+        
+        // Read XML
+        $_xml = null;
+        while ( ($data = $this->in->read($len)) !== -1 )
+            $_xml .= $data;
 
-		if (!class_exists('DomDocument')) {
-			throw new BuildException(
-					"Could not find the DomDocument class. Make sure PHP has been compiled/configured to support DOM XML.");
-		}
+        if ($_xml === null ) { // EOF?
+            return -1;
+        }
 
-		if ($this->processed === true) {
-			return -1; // EOF
-		}
+        if (empty($_xml)) {
+            $this->log("XML file is empty!", Project::MSG_WARN);
+            return ''; 
+        }
+       
+        $this->log("Transforming XML " . $this->in->getResource() . " using Xinclude ", Project::MSG_VERBOSE);
+        
+        $out = '';
+        try {
+            $out = $this->process($_xml);
+            $this->processed = true;
+        } catch (IOException $e) {            
+            throw new BuildException($e);
+        }
 
-		// Read XML
-		$_xml = null;
-		while (($data = $this->in->read($len)) !== -1)
-			$_xml .= $data;
+        return $out;
+    }
 
-		if ($_xml === null) { // EOF?
-			return -1;
-		}
+    /**
+     * Try to process the Xinclude transformation
+     *
+     * @param   string  XML to process.
+     *
+     * @throws BuildException   On errors
+     */
+    protected function process($xml) {    
+                
+        if ($this->basedir) {
+            $cwd = getcwd();
+            chdir($this->basedir);
+        }
 
-		if (empty($_xml)) {
-			$this->log("XML file is empty!", Project::MSG_WARN);
-			return '';
-		}
+        $xmlDom = new DomDocument();
+        $xmlDom->loadXML($xml);
+        
+        $xmlDom->xinclude();
 
-		$this
-				->log(
-						"Transforming XML " . $this->in->getResource()
-								. " using Xinclude ", Project::MSG_VERBOSE);
+        if ($this->basedir) {
+            chdir($cwd);
+        }
 
-		$out = '';
-		try {
-			$out = $this->process($_xml);
-			$this->processed = true;
-		} catch (IOException $e) {
-			throw new BuildException($e);
-		}
+        return $xmlDom->saveXML();
+    }    
 
-		return $out;
-	}
-
-	/**
-	 * Try to process the Xinclude transformation
-	 *
-	 * @param   string  XML to process.
-	 *
-	 * @throws BuildException   On errors
-	 */
-	protected function process($xml) {
-
-		if ($this->basedir) {
-			$cwd = getcwd();
-			chdir($this->basedir);
-		}
-
-		$xmlDom = new DomDocument();
-		$xmlDom->loadXML($xml);
-
-		$xmlDom->xinclude();
-
-		if ($this->basedir) {
-			chdir($cwd);
-		}
-
-		return $xmlDom->saveXML();
-	}
-
-	/**
-	 * Creates a new XincludeFilter using the passed in
-	 * Reader for instantiation.
-	 *
-	 * @param Reader A Reader object providing the underlying stream.
-	 *               Must not be <code>null</code>.
-	 *
-	 * @return Reader A new filter based on this configuration, but filtering
-	 *         the specified reader
-	 */
-	function chain(Reader $reader) {
-		$newFilter = new XincludeFilter($reader);
-		$newFilter->setProject($this->getProject());
-		$newFilter->setBasedir($this->getBasedir());
-		return $newFilter;
-	}
+    /**
+     * Creates a new XincludeFilter using the passed in
+     * Reader for instantiation.
+     *
+     * @param Reader A Reader object providing the underlying stream.
+     *               Must not be <code>null</code>.
+     *
+     * @return Reader A new filter based on this configuration, but filtering
+     *         the specified reader
+     */
+    function chain(Reader $reader) {
+        $newFilter = new XincludeFilter($reader);
+        $newFilter->setProject($this->getProject());
+        $newFilter->setBasedir($this->getBasedir());
+        return $newFilter;
+    }
 
 }
+
 

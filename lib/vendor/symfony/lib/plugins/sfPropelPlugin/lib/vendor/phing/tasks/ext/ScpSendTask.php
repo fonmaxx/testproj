@@ -29,7 +29,8 @@ require_once 'phing/Task.php';
  * @package phing.tasks.ext
  * @since 2.3.0
  */
-class ScpSendTask extends Task {
+class ScpSendTask extends Task
+{
 	private $localFile = "";
 
 	private $remoteFile = "";
@@ -49,128 +50,142 @@ class ScpSendTask extends Task {
 	/**
 	 * Sets the remote host
 	 */
-	function setHost($h) {
+	function setHost($h)
+	{
 		$this->host = $h;
 	}
 
 	/**
 	 * Returns the remote host
 	 */
-	function getHost() {
+	function getHost()
+	{
 		return $this->host;
 	}
 
 	/**
 	 * Sets the remote host port
 	 */
-	function setPort($p) {
+	function setPort($p)
+	{
 		$this->port = $p;
 	}
 
 	/**
 	 * Returns the remote host port
 	 */
-	function getPort() {
+	function getPort()
+	{
 		return $this->port;
 	}
 
 	/**
 	 * Sets the mode value
 	 */
-	function setMode($value) {
+	function setMode($value)
+	{
 		$this->mode = $value;
 	}
 
 	/**
 	 * Returns the mode value
 	 */
-	function getMode() {
+	function getMode()
+	{
 		return $this->mode;
 	}
 
 	/**
 	 * Sets the username of the user to scp
 	 */
-	function setUsername($username) {
+	function setUsername($username)
+	{
 		$this->username = $username;
 	}
 
 	/**
 	 * Returns the username
 	 */
-	function getUsername() {
+	function getUsername()
+	{
 		return $this->username;
 	}
 
 	/**
 	 * Sets the password of the user to scp
 	 */
-	function setPassword($password) {
+	function setPassword($password)
+	{
 		$this->password = $password;
 	}
 
 	/**
 	 * Returns the password
 	 */
-	function getPassword() {
+	function getPassword()
+	{
 		return $this->password;
 	}
 
 	/**
 	 * Sets the local path to scp from
 	 */
-	function setLocalFile($lFile) {
+	function setLocalFile($lFile)
+	{
 		$this->localFile = $lFile;
 	}
 
 	/**
 	 * Returns the local path to scp from
 	 */
-	function getLocalFile($lFile) {
+	function getLocalFile($lFile)
+	{
 		return $this->localFile;
 	}
 
 	/**
 	 * Sets the remote path to scp to
 	 */
-	function setRemoteFile($rFile) {
+	function setRemoteFile($rFile)
+	{
 		$this->remoteFile = $rFile;
 	}
 
 	/**
 	 * Returns the remote path to scp to
 	 */
-	function getRemoteFile($rFile) {
+	function getRemoteFile($rFile)
+	{
 		return $this->remoteFile;
 	}
 
 	/**
-	 * The init method: Do init steps.
-	 */
-	public function init() {
+	* The init method: Do init steps.
+	*/
+	public function init()
+	{
 		if (function_exists('ssh2_connect')) {
 			$this->_connection = ssh2_connect($this->host, $this->port);
-			ssh2_auth_password($this->_connection, $this->username,
-					$this->password);
+			ssh2_auth_password($this->_connection, $this->username, $this->password);
 		} else {
-			print("ERROR: SSH Extension is not installed");
+			print ("ERROR: SSH Extension is not installed");
 		}
 	}
 
 	/**
 	 * The main entry point method.
 	 */
-	public function main() {
-		if (function_exists('ssh2_scp_send') && !is_null($this->_connection)) {
+	public function main()
+	{
+		if (function_exists('ssh2_scp_send') && !is_null($this->_connection))
+		{
 			if (!is_null($this->mode)) {
-				ssh2_scp_send($this->_connection, $this->localFile,
-						$this->remoteFile, $this->mode);
+				ssh2_scp_send($this->_connection, $this->localFile, $this->remoteFile, $this->mode);
 			} else {
-				ssh2_scp_send($this->_connection, $this->localFile,
-						$this->remoteFile);
+				ssh2_scp_send($this->_connection, $this->localFile, $this->remoteFile);
 			}
 		} else {
-			print("ERROR: No SSH Connection Available");
+			print ("ERROR: No SSH Connection Available");
 		}
 	}
 }

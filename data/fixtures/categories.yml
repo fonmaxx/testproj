@@ -1,9 +1,25 @@
 JobeetCategory:
   design:
-    name: Design
+    Translation:
+      en:
+        name: Design
+      ru:
+        name: Дизайн
   programming:
-    name: Programming
+    Translation:
+      en:
+        name: Programming
+      ru:
+        name: Программирование
   manager:
-    name: Manager
+    Translation:
+      en:
+        name: Manager
+      ru:
+        name: Менеджер
   administrator:
-    name: Administrator
+    Translation:
+      en:
+        name: Administrator
+      ru:
+        name: Администратор

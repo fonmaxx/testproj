@@ -62,7 +62,8 @@ class NameFactory {
 	 * @param      name The fully qualified class name of the name
 	 * generation algorithm to retrieve.
 	 */
-	protected static function getAlgorithm($name) {
+	protected static function getAlgorithm($name)
+	{
 		if (!isset(self::$algorithms[$name])) {
 			self::$algorithms[$name] = new $name();
 		}
@@ -79,7 +80,8 @@ class NameFactory {
 	 * @return     The generated name.
 	 * @throws     EngineException
 	 */
-	public static function generateName($algorithmName, $inputs) {
+	public static function generateName($algorithmName, $inputs)
+	{
 		$algorithm = self::getAlgorithm($algorithmName);
 		return $algorithm->generateName($inputs);
 	}

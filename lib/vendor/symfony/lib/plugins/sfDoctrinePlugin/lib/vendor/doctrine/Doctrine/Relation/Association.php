@@ -33,107 +33,105 @@
  * @version     $Revision: 7490 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Relation_Association extends Doctrine_Relation {
-	/**
-	 * @return Doctrine_Table
-	 */
-	public function getAssociationFactory() {
-		return $this->definition['refTable'];
-	}
+class Doctrine_Relation_Association extends Doctrine_Relation
+{
+    /**
+     * @return Doctrine_Table
+     */
+    public function getAssociationFactory()
+    {
+        return $this->definition['refTable'];
+    }
 
-	public function getAssociationTable() {
-		return $this->definition['refTable'];
-	}
+    public function getAssociationTable()
+    {
+        return $this->definition['refTable'];
+    }
 
-	/**
-	 * getRelationDql
-	 *
-	 * @param integer $count
-	 * @return string
-	 */
-	public function getRelationDql($count, $context = 'record') {
-		$table = $this->definition['refTable'];
-		$component = $this->definition['refTable']->getComponentName();
+    /**
+     * getRelationDql
+     *
+     * @param integer $count
+     * @return string
+     */
+    public function getRelationDql($count, $context = 'record')
+    {
+        $table = $this->definition['refTable'];
+        $component = $this->definition['refTable']->getComponentName();
+        
+        switch ($context) {
+            case "record":
+                $sub  = substr(str_repeat("?, ", $count),0,-2);
+                $dql  = 'FROM ' . $this->getTable()->getComponentName();
+                $dql .= '.' . $component;
+                $dql .= ' WHERE ' . $this->getTable()->getComponentName()
+                . '.' . $component . '.' . $this->getLocalRefColumnName() . ' IN (' . $sub . ')';
+                $dql .= $this->getOrderBy($this->getTable()->getComponentName(), false);
+                break;
+            case "collection":
+                $sub  = substr(str_repeat("?, ", $count),0,-2);
+                $dql  = 'FROM ' . $component . '.' . $this->getTable()->getComponentName();
+                $dql .= ' WHERE ' . $component . '.' . $this->getLocalRefColumnName() . ' IN (' . $sub . ')';
+                $dql .= $this->getOrderBy($component, false);
+                break;
+        }
 
-		switch ($context) {
-		case "record":
-			$sub = substr(str_repeat("?, ", $count), 0, -2);
-			$dql = 'FROM ' . $this->getTable()->getComponentName();
-			$dql .= '.' . $component;
-			$dql .= ' WHERE ' . $this->getTable()->getComponentName() . '.'
-					. $component . '.' . $this->getLocalRefColumnName()
-					. ' IN (' . $sub . ')';
-			$dql .= $this
-					->getOrderBy($this->getTable()->getComponentName(), false);
-			break;
-		case "collection":
-			$sub = substr(str_repeat("?, ", $count), 0, -2);
-			$dql = 'FROM ' . $component . '.'
-					. $this->getTable()->getComponentName();
-			$dql .= ' WHERE ' . $component . '.'
-					. $this->getLocalRefColumnName() . ' IN (' . $sub . ')';
-			$dql .= $this->getOrderBy($component, false);
-			break;
-		}
-
-		return $dql;
-	}
-
-	/**
-	 * getLocalRefColumnName
-	 * returns the column name of the local reference column
-	 */
-	final public function getLocalRefColumnName() {
-		return $this->definition['refTable']
-				->getColumnName($this->definition['local']);
-	}
+        return $dql;
+    }
 
 	/**
-	 * getLocalRefFieldName
-	 * returns the field name of the local reference column
-	 */
-	final public function getLocalRefFieldName() {
-		return $this->definition['refTable']
-				->getFieldName($this->definition['local']);
-	}
+     * getLocalRefColumnName
+     * returns the column name of the local reference column
+     */
+    final public function getLocalRefColumnName()
+    {
+	    return $this->definition['refTable']->getColumnName($this->definition['local']);
+    }
 
-	/**
-	 * getForeignRefColumnName
-	 * returns the column name of the foreign reference column
-	 */
-	final public function getForeignRefColumnName() {
-		return $this->definition['refTable']
-				->getColumnName($this->definition['foreign']);
-	}
+    /**
+     * getLocalRefFieldName
+     * returns the field name of the local reference column
+     */
+    final public function getLocalRefFieldName()
+    {
+	    return $this->definition['refTable']->getFieldName($this->definition['local']);
+    }
 
-	/**
-	 * getForeignRefFieldName
-	 * returns the field name of the foreign reference column
-	 */
-	final public function getForeignRefFieldName() {
-		return $this->definition['refTable']
-				->getFieldName($this->definition['foreign']);
-	}
+    /**
+     * getForeignRefColumnName
+     * returns the column name of the foreign reference column
+     */
+    final public function getForeignRefColumnName()
+    {
+	    return $this->definition['refTable']->getColumnName($this->definition['foreign']);
+    }
 
-	/**
-	 * fetchRelatedFor
-	 *
-	 * fetches a component related to given record
-	 *
-	 * @param Doctrine_Record $record
-	 * @return Doctrine_Record|Doctrine_Collection
-	 */
-	public function fetchRelatedFor(Doctrine_Record $record) {
-		$id = $record->getIncremented();
-		if (empty($id)
-				|| !$this->definition['table']
-						->getAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES)) {
-			$coll = Doctrine_Collection::create($this->getTable());
-		} else {
-			$coll = $this->getTable()->getConnection()
-					->query($this->getRelationDql(1), array($id));
-		}
-		$coll->setReference($record, $this);
-		return $coll;
-	}
+    /**
+     * getForeignRefFieldName
+     * returns the field name of the foreign reference column
+     */
+    final public function getForeignRefFieldName()
+    {
+	    return $this->definition['refTable']->getFieldName($this->definition['foreign']);
+    }
+
+    /**
+     * fetchRelatedFor
+     *
+     * fetches a component related to given record
+     *
+     * @param Doctrine_Record $record
+     * @return Doctrine_Record|Doctrine_Collection
+     */
+    public function fetchRelatedFor(Doctrine_Record $record)
+    {
+        $id = $record->getIncremented();
+        if (empty($id) || ! $this->definition['table']->getAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES)) {
+            $coll = Doctrine_Collection::create($this->getTable());
+        } else {
+            $coll = $this->getTable()->getConnection()->query($this->getRelationDql(1), array($id));
+        }
+        $coll->setReference($record, $this);
+        return $coll;
+    }
 }

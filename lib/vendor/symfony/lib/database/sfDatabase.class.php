@@ -19,138 +19,152 @@
  * @author     Sean Kerr <sean@code-box.org>
  * @version    SVN: $Id: sfDatabase.class.php 23810 2009-11-12 11:07:44Z Kris.Wallsmith $
  */
-abstract class sfDatabase {
-	protected $parameterHolder = null, $connection = null, $resource = null;
+abstract class sfDatabase
+{
+  protected
+    $parameterHolder = null,
+    $connection      = null,
+    $resource        = null;
 
-	/**
-	 * Class constructor.
-	 *
-	 * @see initialize()
-	 */
-	public function __construct($parameters = array()) {
-		$this->initialize($parameters);
-	}
+  /**
+   * Class constructor.
+   *
+   * @see initialize()
+   */
+  public function __construct($parameters = array())
+  {
+    $this->initialize($parameters);
+  }
 
-	/**
-	 * Initializes this sfDatabase object.
-	 *
-	 * @param array $parameters An associative array of initialization parameters
-	 *
-	 * @return bool true, if initialization completes successfully, otherwise false
-	 *
-	 * @throws <b>sfInitializationException</b> If an error occurs while initializing this sfDatabase object
-	 */
-	public function initialize($parameters = array()) {
-		$this->parameterHolder = new sfParameterHolder();
-		$this->parameterHolder->add($parameters);
-	}
+  /**
+   * Initializes this sfDatabase object.
+   *
+   * @param array $parameters An associative array of initialization parameters
+   *
+   * @return bool true, if initialization completes successfully, otherwise false
+   *
+   * @throws <b>sfInitializationException</b> If an error occurs while initializing this sfDatabase object
+   */
+  public function initialize($parameters = array())
+  {
+    $this->parameterHolder = new sfParameterHolder();
+    $this->parameterHolder->add($parameters);
+  }
 
-	/**
-	 * Connects to the database.
-	 *
-	 * @throws <b>sfDatabaseException</b> If a connection could not be created
-	 */
-	abstract function connect();
+  /**
+   * Connects to the database.
+   *
+   * @throws <b>sfDatabaseException</b> If a connection could not be created
+   */
+  abstract function connect();
 
-	/**
-	 * Retrieves the database connection associated with this sfDatabase implementation.
-	 *
-	 * When this is executed on a Database implementation that isn't an
-	 * abstraction layer, a copy of the resource will be returned.
-	 *
-	 * @return mixed A database connection
-	 *
-	 * @throws <b>sfDatabaseException</b> If a connection could not be retrieved
-	 */
-	public function getConnection() {
-		if (null === $this->connection) {
-			$this->connect();
-		}
+  /**
+   * Retrieves the database connection associated with this sfDatabase implementation.
+   *
+   * When this is executed on a Database implementation that isn't an
+   * abstraction layer, a copy of the resource will be returned.
+   *
+   * @return mixed A database connection
+   *
+   * @throws <b>sfDatabaseException</b> If a connection could not be retrieved
+   */
+  public function getConnection()
+  {
+    if (null === $this->connection)
+    {
+      $this->connect();
+    }
 
-		return $this->connection;
-	}
+    return $this->connection;
+  }
 
-	/**
-	 * Retrieves a raw database resource associated with this sfDatabase implementation.
-	 *
-	 * @return mixed A database resource
-	 *
-	 * @throws <b>sfDatabaseException</b> If a resource could not be retrieved
-	 */
-	public function getResource() {
-		if (null === $this->resource) {
-			$this->connect();
-		}
+  /**
+   * Retrieves a raw database resource associated with this sfDatabase implementation.
+   *
+   * @return mixed A database resource
+   *
+   * @throws <b>sfDatabaseException</b> If a resource could not be retrieved
+   */
+  public function getResource()
+  {
+    if (null === $this->resource)
+    {
+      $this->connect();
+    }
 
-		return $this->resource;
-	}
+    return $this->resource;
+  }
 
-	/**
-	 * Gets the parameter holder for this object.
-	 *
-	 * @return sfParameterHolder A sfParameterHolder instance
-	 */
-	public function getParameterHolder() {
-		return $this->parameterHolder;
-	}
+  /**
+   * Gets the parameter holder for this object.
+   *
+   * @return sfParameterHolder A sfParameterHolder instance
+   */
+  public function getParameterHolder()
+  {
+    return $this->parameterHolder;
+  }
 
-	/**
-	 * Gets the parameter associated with the given key.
-	 *
-	 * This is a shortcut for:
-	 *
-	 * <code>$this->getParameterHolder()->get()</code>
-	 *
-	 * @param string $name    The key name
-	 * @param string $default The default value
-	 *
-	 * @return string The value associated with the key
-	 *
-	 * @see sfParameterHolder
-	 */
-	public function getParameter($name, $default = null) {
-		return $this->parameterHolder->get($name, $default);
-	}
+  /**
+   * Gets the parameter associated with the given key.
+   *
+   * This is a shortcut for:
+   *
+   * <code>$this->getParameterHolder()->get()</code>
+   *
+   * @param string $name    The key name
+   * @param string $default The default value
+   *
+   * @return string The value associated with the key
+   *
+   * @see sfParameterHolder
+   */
+  public function getParameter($name, $default = null)
+  {
+    return $this->parameterHolder->get($name, $default);
+  }
 
-	/**
-	 * Returns true if the given key exists in the parameter holder.
-	 *
-	 * This is a shortcut for:
-	 *
-	 * <code>$this->getParameterHolder()->has()</code>
-	 *
-	 * @param string $name The key name
-	 *
-	 * @return boolean true if the given key exists, false otherwise
-	 *
-	 * @see sfParameterHolder
-	 */
-	public function hasParameter($name) {
-		return $this->parameterHolder->has($name);
-	}
+  /**
+   * Returns true if the given key exists in the parameter holder.
+   *
+   * This is a shortcut for:
+   *
+   * <code>$this->getParameterHolder()->has()</code>
+   *
+   * @param string $name The key name
+   *
+   * @return boolean true if the given key exists, false otherwise
+   *
+   * @see sfParameterHolder
+   */
+  public function hasParameter($name)
+  {
+    return $this->parameterHolder->has($name);
+  }
 
-	/**
-	 * Sets the value for the given key.
-	 *
-	 * This is a shortcut for:
-	 *
-	 * <code>$this->getParameterHolder()->set()</code>
-	 *
-	 * @param string $name  The key name
-	 * @param string $value The value
-	 *
-	 * @see sfParameterHolder
-	 */
-	public function setParameter($name, $value) {
-		$this->parameterHolder->set($name, $value);
-	}
+  /**
+   * Sets the value for the given key.
+   *
+   * This is a shortcut for:
+   *
+   * <code>$this->getParameterHolder()->set()</code>
+   *
+   * @param string $name  The key name
+   * @param string $value The value
+   *
+   * @see sfParameterHolder
+   */
+  public function setParameter($name, $value)
+  {
+    $this->parameterHolder->set($name, $value);
+  }
 
-	/**
-	 * Executes the shutdown procedure.
-	 *
-	 * @return void
-	 *
-	 * @throws <b>sfDatabaseException</b> If an error occurs while shutting down this database
-	 */
-	abstract function shutdown();
+  /**
+   * Executes the shutdown procedure.
+   *
+   * @return void
+   *
+   * @throws <b>sfDatabaseException</b> If an error occurs while shutting down this database
+   */
+  abstract function shutdown();
 }

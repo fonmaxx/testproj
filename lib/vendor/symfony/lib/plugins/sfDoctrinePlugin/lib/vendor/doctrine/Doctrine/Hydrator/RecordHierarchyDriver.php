@@ -30,9 +30,10 @@
  * @version     $Revision$
  * @author      Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class Doctrine_Hydrator_RecordHierarchyDriver extends
-		Doctrine_Hydrator_RecordDriver {
-	public function hydrateResultSet($stmt) {
-		return parent::hydrateResultSet($stmt)->toHierarchy();
-	}
+class Doctrine_Hydrator_RecordHierarchyDriver extends Doctrine_Hydrator_RecordDriver
+{
+    public function hydrateResultSet($stmt)
+    {
+        return parent::hydrateResultSet($stmt)->toHierarchy();
+    }
 }

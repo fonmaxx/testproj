@@ -53,9 +53,11 @@ abstract class BaseJobeetJobForm extends BaseFormDoctrine
       'created_at'   => new sfValidatorDateTime(),
       'updated_at'   => new sfValidatorDateTime(),
     ));
+
     $this->validatorSchema->setPostValidator(
       new sfValidatorDoctrineUnique(array('model' => 'JobeetJob', 'column' => array('token')))
     );
+
     $this->widgetSchema->setNameFormat('jobeet_job[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
@@ -69,4 +71,5 @@ abstract class BaseJobeetJobForm extends BaseFormDoctrine
   {
     return 'JobeetJob';
   }
+
 }

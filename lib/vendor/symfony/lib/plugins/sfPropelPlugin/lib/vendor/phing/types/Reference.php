@@ -24,33 +24,33 @@
  */
 class Reference {
 
-	protected $refid;
+    protected $refid;
 
-	function __construct($id = null) {
-		if ($id !== null) {
-			$this->setRefId($id);
-		}
-	}
+    function __construct($id = null) {
+        if ($id !== null) {
+            $this->setRefId($id);
+        }
+    }
 
-	function setRefId($id) {
-		$this->refid = (string) $id;
-	}
+    function setRefId($id) {
+        $this->refid = (string) $id;
+    }
 
-	function getRefId() {
-		return $this->refid;
-	}
+    function getRefId() {
+        return $this->refid;
+    }
 
-	/** returns reference to object in references container of project */
-	function getReferencedObject($project) {
-		if ($this->refid === null) {
-			throw new BuildException("No reference specified");
-		}
-		$refs = $project->getReferences();
-		$o = @$refs[$this->refid];
-		if (!is_object($o)) {
-			throw new BuildException("Reference {$this->refid} not found.");
-		}
-		return $o;
-	}
+    /** returns reference to object in references container of project */
+    function getReferencedObject($project) {    
+        if ($this->refid === null) {
+            throw new BuildException("No reference specified");
+        }
+        $refs = $project->getReferences();
+        $o = @$refs[$this->refid];
+        if (!is_object($o)) {       
+            throw new BuildException("Reference {$this->refid} not found.");
+        }
+        return $o;
+    }
 }
 

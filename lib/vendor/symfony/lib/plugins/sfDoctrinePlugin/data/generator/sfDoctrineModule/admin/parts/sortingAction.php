@@ -15,8 +15,7 @@
 
   protected function getSort()
   {
-    if (null !== $sort = $this->getUser()->getAttribute('<?php echo $this
-		->getModuleName() ?>.sort', null, 'admin_module'))
+    if (null !== $sort = $this->getUser()->getAttribute('<?php echo $this->getModuleName() ?>.sort', null, 'admin_module'))
     {
       return $sort;
     }

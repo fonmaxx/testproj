@@ -28,7 +28,8 @@ include_once 'phing/system/io/Win32FileSystem.php';
 
 class WinNTFileSystem extends Win32FileSystem {
 
-	/* -- class only for convenience and future use everything is inherinted --*/
+    /* -- class only for convenience and future use everything is inherinted --*/
+
 
 }
 

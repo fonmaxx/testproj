@@ -18,7 +18,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>.
  */
-
+ 
 include_once 'phing/system/io/PhingFile.php';
 require_once 'phing/system/io/Writer.php';
 
@@ -36,49 +36,49 @@ class OutputStreamWriter extends Writer {
 	/**
 	 * @var OutputStream
 	 */
-	protected $outStream;
-
-	/**
-	 * Construct a new OutputStreamWriter.
-	 * @param OutputStream $outStream OutputStream to write to
-	 */
-	public function __construct(OutputStream $outStream) {
-		$this->outStream = $outStream;
-	}
-
-	/**
-	 * Close the stream.
-	 */
-	public function close() {
-		return $this->outStream->close();
-	}
-
-	/**
-	 * Write char data to stream.
-	 *
-	 * @param unknown_type $buf
-	 * @param unknown_type $off
-	 * @param unknown_type $len
-	 * @return unknown
-	 */
-	public function write($buf, $off = null, $len = null) {
-		return $this->outStream->write($buf, $off, $len);
-	}
-
-	/**
-	 * Flush output to the stream.
-	 */
+    protected $outStream;
+    
+    /**
+     * Construct a new OutputStreamWriter.
+     * @param OutputStream $outStream OutputStream to write to
+     */
+    public function __construct(OutputStream $outStream) {
+        $this->outStream = $outStream;
+    }
+	
+    /**
+     * Close the stream.
+     */
+    public function close() {
+    	return $this->outStream->close();
+    }
+	
+    /**
+     * Write char data to stream.
+     *
+     * @param unknown_type $buf
+     * @param unknown_type $off
+     * @param unknown_type $len
+     * @return unknown
+     */
+    public function write($buf, $off = null, $len = null) {
+    	return $this->outStream->write($buf, $off, $len);
+    }
+    
+    /**
+     * Flush output to the stream.
+     */
 	public function flush() {
-		$this->outStream->flush();
-	}
-
-	/**
-	 * Gets a string representation of attached stream resource.
-	 *
-	 * @return string String representation of output stream
-	 */
-	public function getResource() {
-		return $this->outStream->__toString();
-	}
+    	$this->outStream->flush();
+    }
+    
+    /**
+     * Gets a string representation of attached stream resource.
+     *
+     * @return string String representation of output stream
+     */
+    public function getResource() {
+    	return $this->outStream->__toString();
+    }
 }
 

@@ -30,21 +30,21 @@
  * @version     $Revision: 2761 $
  * @author      Jonathan H. Wage <jwage@mac.com>
  */
-class Doctrine_Task_CreateDb extends Doctrine_Task {
-	public $description = 'Create all databases for your connections. If the database already exists, nothing happens.', $optionalArguments = array();
-
-	public function execute() {
-		$manager = Doctrine_Manager::getInstance();
-		foreach ($manager as $name => $connection) {
-			try {
-				$connection->createDatabase();
-				$this
-						->notify(
-								"Successfully created database for connection named '"
-										. $name . "'");
-			} catch (Exception $e) {
-				$this->notify($e->getMessage());
-			}
-		}
-	}
+class Doctrine_Task_CreateDb extends Doctrine_Task
+{
+    public $description          =   'Create all databases for your connections. If the database already exists, nothing happens.',
+           $optionalArguments    =   array();
+    
+    public function execute()
+    {
+        $manager = Doctrine_Manager::getInstance();
+        foreach ($manager as $name => $connection) {
+            try {
+                $connection->createDatabase();
+                $this->notify("Successfully created database for connection named '" . $name . "'");
+            } catch (Exception $e) {
+                $this->notify($e->getMessage());
+            }
+        }
+    }
 }

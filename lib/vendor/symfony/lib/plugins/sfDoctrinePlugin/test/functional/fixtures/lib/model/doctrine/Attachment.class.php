@@ -10,5 +10,6 @@
  * @author     Your name here
  * @version    SVN: $Id: Attachment.class.php 24068 2009-11-17 06:39:35Z Kris.Wallsmith $
  */
-class Attachment extends BaseAttachment {
+class Attachment extends BaseAttachment
+{
 }

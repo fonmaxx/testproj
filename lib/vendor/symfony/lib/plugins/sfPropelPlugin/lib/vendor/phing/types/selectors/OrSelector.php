@@ -20,7 +20,7 @@
  */
 
 require_once 'phing/types/selectors/BaseSelectorContainer.php';
-
+ 
 /**
  * This selector has a collection of other selectors, any of which have to
  * select a file in order for this selector to select it.
@@ -31,42 +31,42 @@ require_once 'phing/types/selectors/BaseSelectorContainer.php';
  */
 class OrSelector extends BaseSelectorContainer {
 
-	public function toString() {
-		$buf = "";
-		if ($this->hasSelectors()) {
-			$buf .= "{orselect: ";
-			$buf .= parent::toString();
-			$buf .= "}";
-		}
-		return $buf;
-	}
+    public function toString() {
+        $buf = "";
+        if ($this->hasSelectors()) {
+            $buf .= "{orselect: ";
+            $buf .= parent::toString();
+            $buf .= "}";
+        }
+        return $buf;
+    }
 
-	/**
-	 * Returns true (the file is selected) if any of the other selectors
-	 * agree that the file should be selected.
-	 *
-	 * @param basedir the base directory the scan is being done from
-	 * @param filename the name of the file to check
-	 * @param file a PhingFile object for the filename that the selector
-	 * can use
-	 * @return boolean Whether the file should be selected or not
-	 */
-	public function isSelected(PhingFile $basedir, $filename, PhingFile $file) {
+    /**
+     * Returns true (the file is selected) if any of the other selectors
+     * agree that the file should be selected.
+     *
+     * @param basedir the base directory the scan is being done from
+     * @param filename the name of the file to check
+     * @param file a PhingFile object for the filename that the selector
+     * can use
+     * @return boolean Whether the file should be selected or not
+     */
+    public function isSelected(PhingFile $basedir, $filename, PhingFile $file) {
+        
+        $this->validate();
+        
+        $selectors = $this->selectorElements();
 
-		$this->validate();
-
-		$selectors = $this->selectorElements();
-
-		// First, check that all elements are correctly configured
-
-		for ($i = 0, $size = count($selectors); $i < $size; $i++) {
-			$result = $selectors[$i]->isSelected($basedir, $filename, $file);
-			if ($result) {
-				return true;
-			}
-		}
-		return false;
-	}
+        // First, check that all elements are correctly configured
+        
+        for($i=0,$size=count($selectors); $i < $size; $i++) {
+            $result = $selectors[$i]->isSelected($basedir, $filename, $file);
+            if ($result) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
 

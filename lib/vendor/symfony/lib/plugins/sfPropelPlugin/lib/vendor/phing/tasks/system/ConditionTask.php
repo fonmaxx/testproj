@@ -17,7 +17,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>.
- */
+*/
 
 require_once 'phing/tasks/system/condition/ConditionBase.php';
 
@@ -31,46 +31,44 @@ require_once 'phing/tasks/system/condition/ConditionBase.php';
  *  ConditionBase.</p>
  *
  *  @author    Andreas Aderhold <andi@binarycloud.com>
- *  @copyright ï¿½ 2001,2002 THYRELL. All rights reserved
+ *  @copyright © 2001,2002 THYRELL. All rights reserved
  *  @version   $Revision: 1.7 $ $Date: 2006-03-10 15:31:51 +0100 (Fri, 10 Mar 2006) $
  *  @access    public
  *  @package   phing.tasks.system
  */
 class ConditionTask extends ConditionBase {
 
-	private $property;
-	private $value = "true";
+    private $property;
+    private $value = "true";
 
-	/**
-	 * The name of the property to set. Required.
-	 */
-	function setProperty($p) {
-		$this->property = $p;
-	}
+    /**
+     * The name of the property to set. Required.
+     */
+    function setProperty($p) {
+        $this->property = $p;
+    }
 
-	/**
-	 * The value for the property to set. Defaults to "true".
-	 */
-	function setValue($v) {
-		$this->value = $v;
-	}
+    /**
+     * The value for the property to set. Defaults to "true".
+     */
+    function setValue($v) {
+        $this->value = $v;
+    }
 
-	/**
-	 * See whether our nested condition holds and set the property.
-	 */
-	function main() {
+    /**
+     * See whether our nested condition holds and set the property.
+     */
+    function main() {
 
-		if ($this->countConditions() > 1) {
-			throw new BuildException(
-					"You must not nest more than one condition into <condition>");
-		}
-		if ($this->countConditions() < 1) {
-			throw new BuildException(
-					"You must nest a condition into <condition>");
-		}
-		$cs = $this->getIterator();
-		if ($cs->current()->evaluate()) {
-			$this->project->setProperty($this->property, $this->value);
-		}
-	}
+        if ($this->countConditions() > 1) {
+            throw new BuildException("You must not nest more than one condition into <condition>");
+        }
+        if ($this->countConditions() < 1) {
+            throw new BuildException("You must nest a condition into <condition>");
+        }
+        $cs = $this->getIterator();        
+        if ($cs->current()->evaluate()) {
+            $this->project->setProperty($this->property, $this->value);
+        }
+    }
 }

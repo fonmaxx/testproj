@@ -10,11 +10,12 @@
 
 $app = 'crud';
 $fixtures = 'fixtures/fixtures.yml';
-if (!include(dirname(__FILE__) . '/../../bootstrap/functional.php')) {
-	return;
+if (!include(dirname(__FILE__).'/../../bootstrap/functional.php'))
+{
+  return;
 }
 
-require_once(dirname(__FILE__) . '/restBrowser.class.php');
+require_once(dirname(__FILE__).'/restBrowser.class.php');
 
 $b = new RestBrowser();
 $b->browse(array('non-verbose-templates'));

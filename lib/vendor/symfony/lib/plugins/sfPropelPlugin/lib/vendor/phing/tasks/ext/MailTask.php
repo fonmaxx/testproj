@@ -18,7 +18,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>.
  */
-
+ 
 include_once 'phing/Task.php';
 
 /**
@@ -32,45 +32,46 @@ include_once 'phing/Task.php';
  */
 class MailTask extends Task {
 
-	protected $recipient;
+    protected $recipient;
+      
+    protected $subject;
+    
+    protected $msg;
 
-	protected $subject;
+    function main() {
+        $this->log('Sending mail to ' . $this->recipient );    
+        mail($this->recipient, $this->subject, $this->msg);
+    }
 
-	protected $msg;
+    /** setter for message */
+    function setMsg($msg) {
+        $this->setMessage($msg);
+    }
 
-	function main() {
-		$this->log('Sending mail to ' . $this->recipient);
-		mail($this->recipient, $this->subject, $this->msg);
-	}
+    /** alias setter */
+    function setMessage($msg) {
+        $this->msg = (string) $msg;
+    }
+    
+    /** setter for subject **/
+    function setSubject($subject) {
+        $this->subject = (string) $subject;    
+    }
 
-	/** setter for message */
-	function setMsg($msg) {
-		$this->setMessage($msg);
-	}
+    /** setter for recipient **/
+    function setRecipient($recipient) {
+        $this->recipient = (string) $recipient;
+    }
 
-	/** alias setter */
-	function setMessage($msg) {
-		$this->msg = (string) $msg;
-	}
-
-	/** setter for subject **/
-	function setSubject($subject) {
-		$this->subject = (string) $subject;
-	}
-
-	/** setter for recipient **/
-	function setRecipient($recipient) {
-		$this->recipient = (string) $recipient;
-	}
-
-	/** alias for recipient **/
-	function setTo($recipient) {
-		$this->recipient = (string) $recipient;
-	}
-
-	/** Supporting the <mail>Message</mail> syntax. */
-	function addText($msg) {
-		$this->msg = (string) $msg;
-	}
+    /** alias for recipient **/
+    function setTo($recipient) {
+        $this->recipient = (string) $recipient;
+    }
+        
+    /** Supporting the <mail>Message</mail> syntax. */
+    function addText($msg)
+    {
+        $this->msg = (string) $msg;
+    }
 }
 

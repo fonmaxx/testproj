@@ -10,8 +10,9 @@
 
 $app = 'frontend';
 $fixtures = 'fixtures/fixtures.yml';
-if (!include(dirname(__FILE__) . '/../bootstrap/functional.php')) {
-	return;
+if (!include(dirname(__FILE__).'/../bootstrap/functional.php'))
+{
+  return;
 }
 
 $browser = new sfTestFunctional(new sfBrowser());
@@ -19,13 +20,20 @@ $browser = new sfTestFunctional(new sfBrowser());
 ArticlePeer::doDeleteAll();
 $category = CategoryPeer::doSelectOne(new Criteria());
 
-foreach (range(1, 20) as $n) {
-	$article = new Article();
-	$article->setTitle(sprintf('Article #%s', $n));
-	$article->setCategory($category);
-	$article->save();
+foreach (range(1, 20) as $n)
+{
+  $article = new Article();
+  $article->setTitle(sprintf('Article #%s', $n));
+  $article->setCategory($category);
+  $article->save();
 }
 
-$browser->getAndCheck('pager', 'interfaces')
-		->with('response')->begin()->checkElement('#pagerResults li', 10)
-		->checkElement('#pagerCount:contains(20)')->end();
+$browser
+  ->getAndCheck('pager', 'interfaces')
+
+  ->with('response')->begin()
+    ->checkElement('#pagerResults li', 10)
+    
+    ->checkElement('#pagerCount:contains(20)')
+  ->end()
+;

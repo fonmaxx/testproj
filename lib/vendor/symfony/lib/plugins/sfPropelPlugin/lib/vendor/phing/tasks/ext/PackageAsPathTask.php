@@ -31,33 +31,35 @@ require_once 'phing/Task.php';
  */
 class PackageAsPathTask extends Task {
 
-	/** The package to convert. */
-	protected $pckg;
+    /** The package to convert. */
+    protected $pckg;
 
-	/** The value to store the conversion in. */
-	protected $name;
+    /** The value to store the conversion in. */
+    protected $name;
+    
+    /**
+     * Executes the package to patch converstion and stores it
+     * in the user property <code>value</code>.
+     */
+    public function main()
+    {
+        $this->project->setUserProperty($this->name, strtr($this->pckg, '.', '/'));        
+    }
 
-	/**
-	 * Executes the package to patch converstion and stores it
-	 * in the user property <code>value</code>.
-	 */
-	public function main() {
-		$this->project
-				->setUserProperty($this->name, strtr($this->pckg, '.', '/'));
-	}
+    /**
+     * @param string $pckg the package to convert
+     */
+    public function setPackage($pckg)
+    {
+        $this->pckg = $pckg;
+    }
 
-	/**
-	 * @param string $pckg the package to convert
-	 */
-	public function setPackage($pckg) {
-		$this->pckg = $pckg;
-	}
-
-	/**
-	 * @param string $name the Ant variable to store the path in
-	 */
-	public function setName($name) {
-		$this->name = $name;
-	}
-
+    /**
+     * @param string $name the Ant variable to store the path in
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+    
 }

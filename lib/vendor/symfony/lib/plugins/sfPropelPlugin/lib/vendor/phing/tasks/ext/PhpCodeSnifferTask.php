@@ -29,7 +29,7 @@ require_once 'phing/Task.php';
  */
 class PhpCodeSnifferTask extends Task {
 
-	protected $file; // the source file (from xml attribute)
+	protected $file;	// the source file (from xml attribute)
 	protected $filesets = array(); // all fileset objects assigned to this task
 
 	// parameters for php code sniffer
@@ -62,16 +62,16 @@ class PhpCodeSnifferTask extends Task {
 	 */
 	function createFileSet() {
 		$num = array_push($this->filesets, new FileSet());
-		return $this->filesets[$num - 1];
+		return $this->filesets[$num-1];
 	}
 
 	/**
 	 * Sets the standard to test for
 	 * @param string $standard
 	 */
-	public function setStandard($standard) {
-		if (DIRECTORY_SEPARATOR != '/')
-			$standard = str_replace('/', DIRECTORY_SEPARATOR, $standard);
+	public function setStandard($standard)
+	{
+		if (DIRECTORY_SEPARATOR != '/') $standard = str_replace('/', DIRECTORY_SEPARATOR, $standard);
 		$this->standard = $standard;
 	}
 
@@ -79,7 +79,8 @@ class PhpCodeSnifferTask extends Task {
 	 * Sets the sniffs which the standard should be restricted to
 	 * @param string $sniffs
 	 */
-	public function setSniffs($sniffs) {
+	public function setSniffs($sniffs)
+	{
 		$token = ' ,;';
 		$sniff = strtok($sniffs, $token);
 		while ($sniff !== false) {
@@ -92,7 +93,8 @@ class PhpCodeSnifferTask extends Task {
 	 * Sets the flag if warnings should be shown
 	 * @param boolean $show
 	 */
-	public function setShowWarnings($show) {
+	public function setShowWarnings($show)
+	{
 		$this->showWarnings = StringHelper::booleanValue($show);
 	}
 
@@ -100,23 +102,26 @@ class PhpCodeSnifferTask extends Task {
 	 * Sets the verbosity level
 	 * @param int $level
 	 */
-	public function setVerbosity($level) {
-		$this->verbosity = (int) $level;
+	public function setVerbosity($level)
+	{
+		$this->verbosity = (int)$level;
 	}
 
 	/**
 	 * Sets the tab width to replace tabs with spaces
 	 * @param int $width
 	 */
-	public function setTabWidth($width) {
-		$this->tabWidth = (int) $width;
+	public function setTabWidth($width)
+	{
+		$this->tabWidth = (int)$width;
 	}
 
 	/**
 	 * Sets the allowed file extensions when using directories instead of specific files
 	 * @param array $extensions
 	 */
-	public function setAllowedFileExtensions($extensions) {
+	public function setAllowedFileExtensions($extensions)
+	{
 		$this->allowedFileExtensions = array();
 		$token = ' ,;';
 		$ext = strtok($extensions, $token);
@@ -130,7 +135,8 @@ class PhpCodeSnifferTask extends Task {
 	 * Sets the ignore patterns to skip files when using directories instead of specific files
 	 * @param array $extensions
 	 */
-	public function setIgnorePatterns($patterns) {
+	public function setIgnorePatterns($patterns)
+	{
 		$this->ignorePatterns = array();
 		$token = ' ,;';
 		$pattern = strtok($patterns, $token);
@@ -144,7 +150,8 @@ class PhpCodeSnifferTask extends Task {
 	 * Sets the flag if subdirectories should be skipped
 	 * @param boolean $subdirectories
 	 */
-	public function setNoSubdirectories($subdirectories) {
+	public function setNoSubdirectories($subdirectories)
+	{
 		$this->noSubdirectories = StringHelper::booleanValue($subdirectories);
 	}
 
@@ -155,14 +162,15 @@ class PhpCodeSnifferTask extends Task {
 	 */
 	public function createConfig() {
 		$num = array_push($this->configData, new Parameter());
-		return $this->configData[$num - 1];
+		return $this->configData[$num-1];
 	}
 
 	/**
 	 * Sets the flag if the used sniffs should be listed
 	 * @param boolean $show
 	 */
-	public function setShowSniffs($show) {
+	public function setShowSniffs($show)
+	{
 		$this->showSniffs = StringHelper::booleanValue($show);
 	}
 
@@ -170,7 +178,8 @@ class PhpCodeSnifferTask extends Task {
 	 * Sets the output format
 	 * @param string $format
 	 */
-	public function setFormat($format) {
+	public function setFormat($format)
+	{
 		$this->outputFormat = $format;
 	}
 
@@ -178,26 +187,20 @@ class PhpCodeSnifferTask extends Task {
 	 * Executes PHP code sniffer against PhingFile or a FileSet
 	 */
 	public function main() {
-		if (!isset($this->file) and count($this->filesets) == 0) {
-			throw new BuildException(
-					"Missing either a nested fileset or attribute 'file' set");
+		if(!isset($this->file) and count($this->filesets) == 0) {
+			throw new BuildException("Missing either a nested fileset or attribute 'file' set");
 		}
 
 		require_once 'PHP/CodeSniffer.php';
 		$codeSniffer = new PHP_CodeSniffer($this->verbosity, $this->tabWidth);
 		$codeSniffer->setAllowedFileExtensions($this->allowedFileExtensions);
-		if (is_array($this->ignorePatterns))
-			$codeSniffer->setIgnorePatterns($this->ignorePatterns);
+		if (is_array($this->ignorePatterns)) $codeSniffer->setIgnorePatterns($this->ignorePatterns);
 		foreach ($this->configData as $configData) {
-			$codeSniffer
-					->setConfigData($configData->getName(),
-							$configData->getValue(), true);
+			$codeSniffer->setConfigData($configData->getName(), $configData->getValue(), true);
 		}
 
 		if ($this->file instanceof PhingFile) {
-			$codeSniffer
-					->process($this->file->getPath(), $this->standard,
-							$this->sniffs, $this->noSubdirectories);
+			$codeSniffer->process($this->file->getPath(), $this->standard, $this->sniffs, $this->noSubdirectories);
 
 		} else {
 			$fileList = array();
@@ -207,12 +210,10 @@ class PhpCodeSnifferTask extends Task {
 				$files = $ds->getIncludedFiles();
 				$dir = $fs->getDir($this->project)->getPath();
 				foreach ($files as $file) {
-					$fileList[] = $dir . DIRECTORY_SEPARATOR . $file;
+					$fileList[] = $dir.DIRECTORY_SEPARATOR.$file;
 				}
 			}
-			$codeSniffer
-					->process($fileList, $this->standard, $this->sniffs,
-							$this->noSubdirectories);
+			$codeSniffer->process($fileList, $this->standard, $this->sniffs, $this->noSubdirectories);
 		}
 		$this->output($codeSniffer);
 	}
@@ -226,43 +227,36 @@ class PhpCodeSnifferTask extends Task {
 			$sniffs = $codeSniffer->getSniffs();
 			$sniffStr = '';
 			foreach ($sniffs as $sniff) {
-				$sniffStr .= '- ' . $sniff . PHP_EOL;
+				$sniffStr .= '- ' . $sniff.PHP_EOL;
 			}
-			$this
-					->log(
-							'The list of used sniffs (#' . count($sniffs)
-									. '): ' . PHP_EOL . $sniffStr,
-							Project::MSG_INFO);
+			$this->log('The list of used sniffs (#' . count($sniffs) . '): ' . PHP_EOL . $sniffStr, Project::MSG_INFO);
 		}
 
 		switch ($this->outputFormat) {
-		case 'default':
-			$this->outputCustomFormat($codeSniffer);
-			break;
-		case 'xml':
-			$codeSniffer->printXMLErrorReport($this->showWarnings);
-			break;
-		case 'checkstyle':
-			$codeSniffer->printCheckstyleErrorReport($this->showWarnings);
-			break;
-		case 'csv':
-			$codeSniffer->printCSVErrorReport($this->showWarnings);
-			break;
-		case 'report':
-			$codeSniffer->printErrorReport($this->showWarnings);
-			break;
-		case 'summary':
-			$codeSniffer->printErrorReportSummary($this->showWarnings);
-			break;
-		case 'doc':
-			$codeSniffer->generateDocs($this->standard, $this->sniffs);
-			break;
-		default:
-			$this
-					->log(
-							'Unknown output format "' . $this->outputFormat
-									. '"', Project::MSG_INFO);
-			break;
+			case 'default':
+				$this->outputCustomFormat($codeSniffer);
+				break;
+			case 'xml':
+				$codeSniffer->printXMLErrorReport($this->showWarnings);
+				break;
+			case 'checkstyle':
+				$codeSniffer->printCheckstyleErrorReport($this->showWarnings);
+				break;
+			case 'csv':
+				$codeSniffer->printCSVErrorReport($this->showWarnings);
+				break;
+			case 'report':
+				$codeSniffer->printErrorReport($this->showWarnings);
+				break;
+			case 'summary':
+				$codeSniffer->printErrorReportSummary($this->showWarnings);
+				break;
+			case 'doc':
+				$codeSniffer->generateDocs($this->standard, $this->sniffs);
+				break;
+			default:
+				$this->log('Unknown output format "' . $this->outputFormat . '"', Project::MSG_INFO);
+				break;
 		}
 	}
 
@@ -279,23 +273,13 @@ class PhpCodeSnifferTask extends Task {
 			$warnings = $attributes['warnings'];
 			$messages = $attributes['messages'];
 			if ($errors > 0) {
-				$this
-						->log(
-								$file . ': ' . $errors . ' error'
-										. ($errors > 1 ? 's' : '')
-										. ' detected', Project::MSG_ERR);
+				$this->log($file . ': ' . $errors . ' error' . ($errors > 1 ? 's' : '') . ' detected', Project::MSG_ERR);
 				$this->outputCustomFormatMessages($messages, 'ERROR');
 			} else {
-				$this
-						->log($file . ': No syntax errors detected',
-								Project::MSG_VERBOSE);
+				$this->log($file . ': No syntax errors detected', Project::MSG_VERBOSE);
 			}
 			if ($warnings > 0) {
-				$this
-						->log(
-								$file . ': ' . $warnings . ' warning'
-										. ($warnings > 1 ? 's' : '')
-										. ' detected', Project::MSG_WARN);
+				$this->log($file . ': ' . $warnings . ' warning' . ($warnings > 1 ? 's' : '') . ' detected', Project::MSG_WARN);
 				$this->outputCustomFormatMessages($messages, 'WARNING');
 			}
 		}
@@ -304,20 +288,12 @@ class PhpCodeSnifferTask extends Task {
 		$totalWarnings = $report['totals']['warnings'];
 		$this->log(count($files) . ' files where checked', Project::MSG_INFO);
 		if ($totalErrors > 0) {
-			$this
-					->log(
-							$totalErrors . ' error'
-									. ($totalErrors > 1 ? 's' : '')
-									. ' detected', Project::MSG_ERR);
+			$this->log($totalErrors . ' error' . ($totalErrors > 1 ? 's' : '') . ' detected', Project::MSG_ERR);
 		} else {
 			$this->log('No syntax errors detected', Project::MSG_INFO);
 		}
 		if ($totalWarnings > 0) {
-			$this
-					->log(
-							$totalWarnings . ' warning'
-									. ($totalWarnings > 1 ? 's' : '')
-									. ' detected', Project::MSG_INFO);
+			$this->log($totalWarnings . ' warning' . ($totalWarnings > 1 ? 's' : '') . ' detected', Project::MSG_INFO);
 		}
 	}
 
@@ -339,8 +315,7 @@ class PhpCodeSnifferTask extends Task {
 							$logLevel = Project::MSG_WARN;
 						}
 						$text = $message['message'];
-						$string = $msgType . ' in line ' . $line . ' column '
-								. $column . ': ' . $text;
+						$string = $msgType . ' in line ' . $line . ' column ' . $column . ': ' . $text;
 						$this->log($string, $logLevel);
 					}
 				}

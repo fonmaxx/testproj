@@ -36,91 +36,89 @@ require_once 'phing/types/selectors/AndSelector.php';
  * @package   phing.types.selectors
  */
 class SelectSelector extends AndSelector {
+         
+    public function toString() {
+        $buf = "";
+        if ($this->hasSelectors()) {
+            $buf .= "{select: ";
+            $buf .= parent::toString();
+            $buf .= "}";
+        }
+        return $buf;
+    }
 
-	public function toString() {
-		$buf = "";
-		if ($this->hasSelectors()) {
-			$buf .= "{select: ";
-			$buf .= parent::toString();
-			$buf .= "}";
-		}
-		return $buf;
-	}
+    /**
+     * Performs the check for circular references and returns the
+     * referenced Selector.
+     */
+    private function getRef() {
+        $o = $this->getCheckedRef(get_class($this), "SelectSelector");
+        return $o;
+    }
 
-	/**
-	 * Performs the check for circular references and returns the
-	 * referenced Selector.
-	 */
-	private function getRef() {
-		$o = $this->getCheckedRef(get_class($this), "SelectSelector");
-		return $o;
-	}
+    /**
+     * Indicates whether there are any selectors here.
+     */
+    public function hasSelectors() {
+        if ($this->isReference()) {
+            return $this->getRef()->hasSelectors();
+        }
+        return parent::hasSelectors();
+    }
 
-	/**
-	 * Indicates whether there are any selectors here.
-	 */
-	public function hasSelectors() {
-		if ($this->isReference()) {
-			return $this->getRef()->hasSelectors();
-		}
-		return parent::hasSelectors();
-	}
+    /**
+     * Gives the count of the number of selectors in this container
+     */
+    public function selectorCount() {
+        if ($this->isReference()) {
+            return $this->getRef()->selectorCount();
+        }
+        return parent::selectorCount();
+    }
 
-	/**
-	 * Gives the count of the number of selectors in this container
-	 */
-	public function selectorCount() {
-		if ($this->isReference()) {
-			return $this->getRef()->selectorCount();
-		}
-		return parent::selectorCount();
-	}
+    /**
+     * Returns the set of selectors as an array.
+     */
+    public function getSelectors(Project $p) {
+        if ($this->isReference()) {
+            return $this->getRef()->getSelectors($p);
+        }
+        return parent::getSelectors($p);
+    }
 
-	/**
-	 * Returns the set of selectors as an array.
-	 */
-	public function getSelectors(Project $p) {
-		if ($this->isReference()) {
-			return $this->getRef()->getSelectors($p);
-		}
-		return parent::getSelectors($p);
-	}
+    /**
+     * Returns an enumerator for accessing the set of selectors.
+     */
+    public function selectorElements() {
+        if ($this->isReference()) {
+            return $this->getRef()->selectorElements();
+        }
+        return parent::selectorElements();
+    }
 
-	/**
-	 * Returns an enumerator for accessing the set of selectors.
-	 */
-	public function selectorElements() {
-		if ($this->isReference()) {
-			return $this->getRef()->selectorElements();
-		}
-		return parent::selectorElements();
-	}
+    /**
+     * Add a new selector into this container.
+     *
+     * @param selector the new selector to add
+     * @return the selector that was added
+     */
+    public function appendSelector(FileSelector $selector) {
+        if ($this->isReference()) {
+            throw $this->noChildrenAllowed();
+        }
+        parent::appendSelector($selector);
+    }
 
-	/**
-	 * Add a new selector into this container.
-	 *
-	 * @param selector the new selector to add
-	 * @return the selector that was added
-	 */
-	public function appendSelector(FileSelector $selector) {
-		if ($this->isReference()) {
-			throw $this->noChildrenAllowed();
-		}
-		parent::appendSelector($selector);
-	}
-
-	/**
-	 * Makes sure that there is only one entry, sets an error message if
-	 * not.
-	 */
-	public function verifySettings() {
-		if ($this->selectorCount() != 1) {
-			$this
-					->setError(
-							"One and only one selector is allowed within the "
-									. "<selector> tag");
-		}
-	}
+    /**
+     * Makes sure that there is only one entry, sets an error message if
+     * not.
+     */
+    public function verifySettings() {
+        if ($this->selectorCount() != 1) {
+            $this->setError("One and only one selector is allowed within the "
+            . "<selector> tag");
+        }
+    }
 
 }
 

@@ -7,11 +7,13 @@
  *
  * @package lib.model
  */ 
-class CategoryPeer extends BaseCategoryPeer {
-	static public function getByName($name) {
-		$c = new Criteria();
-		$c->add(self::NAME, $name);
+class CategoryPeer extends BaseCategoryPeer
+{
+  static public function getByName($name)
+  {
+    $c = new Criteria();
+    $c->add(self::NAME, $name);
 
-		return self::doSelectOne($c);
-	}
+    return self::doSelectOne($c);
+  }
 }

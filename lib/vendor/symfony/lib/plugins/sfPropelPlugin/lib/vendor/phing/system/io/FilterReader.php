@@ -26,43 +26,43 @@ require_once 'phing/system/io/Reader.php';
  * @package phing.system.io
  */
 class FilterReader extends Reader {
-
+    
 	/** 
 	 * @var Reader
 	 */
-	protected $in;
+    protected $in;
+    
+    function __construct(Reader $in = null) {
+        $this->in = $in;
+    }
+    
+    public function setReader(Reader $in) {
+        $this->in = $in;
+    }
+    
+    public function skip($n) {
+        return $this->in->skip($n);
+    }
+    
+    /**
+     * Read data from source.
+     * FIXME: Clean up this function signature, as it a) params aren't being used
+     * and b) it doesn't make much sense.
+     */
+    public function read($len = null) {
+        return $this->in->read($len);
+    }
 
-	function __construct(Reader $in = null) {
-		$this->in = $in;
-	}
-
-	public function setReader(Reader $in) {
-		$this->in = $in;
-	}
-
-	public function skip($n) {
-		return $this->in->skip($n);
-	}
-
-	/**
-	 * Read data from source.
-	 * FIXME: Clean up this function signature, as it a) params aren't being used
-	 * and b) it doesn't make much sense.
-	 */
-	public function read($len = null) {
-		return $this->in->read($len);
-	}
-
-	public function reset() {
-		return $this->in->reset();
-	}
-
-	public function close() {
-		return $this->in->close();
-	}
-
-	function getResource() {
-		return $this->in->getResource();
-	}
+    public function reset() {
+        return $this->in->reset();
+    }
+    
+    public function close() {
+        return $this->in->close();
+    }
+    
+    function getResource() {
+        return $this->in->getResource();
+    }
 }
 

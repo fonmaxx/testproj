@@ -17,7 +17,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>.
- */
+*/
 
 require_once 'phing/types/DataType.php';
 include_once 'phing/util/StringHelper.php';
@@ -48,112 +48,110 @@ include_once 'phing/util/StringHelper.php';
  */
 class TokenSource extends DataType {
 
-	/**
-	 * String to hold the path to the TokenReader
-	 * @var     string
-	 */
-	protected $classname = null;
+    /**
+     * String to hold the path to the TokenReader
+     * @var     string
+     */
+    protected $classname = null;
 
-	/**
-	 * Array holding parameters for the wrapped TokenReader.
-	 * @var array
-	 */
-	protected $parameters = array();
+    /**
+     * Array holding parameters for the wrapped TokenReader.
+     * @var array
+     */
+    protected $parameters = array();
 
-	/**
-	 * Reference to the TokenReader used by this TokenSource
-	 * @var TokenReader
-	 */
-	protected $reader;
+    /**
+     * Reference to the TokenReader used by this TokenSource
+     * @var TokenReader
+     */
+    protected $reader;
 
-	/**
-	 * Array with key/value pairs of tokens
-	 */
-	protected $tokens = array();
+    /**
+     * Array with key/value pairs of tokens
+     */
+    protected $tokens = array();
 
-	/**
-	 * This method is called to load the sources from the reader
-	 * into the buffer of the source.
-	 */
-	function load() {
-		// Create new Reader
-		if ($this->classname === null) {
-			throw new BuildException("No Classname given to TokenSource.");
-		}
+    /**
+     * This method is called to load the sources from the reader
+     * into the buffer of the source.
+     */
+    function load() {
+        // Create new Reader
+        if ($this->classname === null) {
+            throw new BuildException("No Classname given to TokenSource.");
+        }
+        
+        $classname = Phing::import($this->classname);        
+        $this->reader = new $classname($this->project);
 
-		$classname = Phing::import($this->classname);
-		$this->reader = new $classname($this->project);
+        // Configure Reader
+        $this->configureTokenReader($this->reader);
 
-		// Configure Reader
-		$this->configureTokenReader($this->reader);
+        // Load Tokens
+        try {
+            while ($token = $this->reader->readToken()) {
+                $this->tokens[] = $token;
+            }
+        } catch (BuildException $e) {
+            $this->log("Error reading TokenSource: " . $e->getMessage(), Project::MSG_WARN);
+        } catch (IOException $e) {
+            $this->log("Error reading TokenSource: " . $e->getMessage(), Project::MSG_WARN);
+        }
+    }
 
-		// Load Tokens
-		try {
-			while ($token = $this->reader->readToken()) {
-				$this->tokens[] = $token;
-			}
-		} catch (BuildException $e) {
-			$this
-					->log("Error reading TokenSource: " . $e->getMessage(),
-							Project::MSG_WARN);
-		} catch (IOException $e) {
-			$this
-					->log("Error reading TokenSource: " . $e->getMessage(),
-							Project::MSG_WARN);
-		}
-	}
+    /**
+     * This function uses the wrapper to read the tokens and then
+     * returns them.
+     *
+     * @access  public
+     */
+    function getTokens() {
+        if ($this->tokens === null)
+            $this->Load();
 
-	/**
-	 * This function uses the wrapper to read the tokens and then
-	 * returns them.
-	 *
-	 * @access  public
-	 */
-	function getTokens() {
-		if ($this->tokens === null)
-			$this->Load();
+        return $this->tokens;
+    }
 
-		return $this->tokens;
-	}
+    /**
+     * Configures a TokenReader with the parameters passed to the
+     * TokenSource.
+     * @param TokenReader $reader
+     */
+    private function configureTokenReader(TokenReader $reader) {
+        $count = count($this->parameters);
+        for ($i = 0; $i < $count; $i++) {
+            $method_name = "Set" . $this->parameters[$i]->getName();
+            $value = $this->parameters[$i]->getValue();
+            $reader->$method_name($value);
+        }
+    }
+    
+    /**
+     * Set the classname (dot-path) to use for handling token replacement.
+     * @param string $c
+     */
+    function setClassname($c) {
+        $this->classname = $c;
+    }
+    
+    /**
+     * Returns the qualified classname (dot-path) to use for handling token replacement.
+     * @return string
+     */
+    function getClassname() {
+        return $this->classname;
+    }
 
-	/**
-	 * Configures a TokenReader with the parameters passed to the
-	 * TokenSource.
-	 * @param TokenReader $reader
-	 */
-	private function configureTokenReader(TokenReader $reader) {
-		$count = count($this->parameters);
-		for ($i = 0; $i < $count; $i++) {
-			$method_name = "Set" . $this->parameters[$i]->getName();
-			$value = $this->parameters[$i]->getValue();
-			$reader->$method_name($value);
-		}
-	}
-
-	/**
-	 * Set the classname (dot-path) to use for handling token replacement.
-	 * @param string $c
-	 */
-	function setClassname($c) {
-		$this->classname = $c;
-	}
-
-	/**
-	 * Returns the qualified classname (dot-path) to use for handling token replacement.
-	 * @return string
-	 */
-	function getClassname() {
-		return $this->classname;
-	}
-
-	/**
-	 * Create nested <param> tag.
-	 * Uses standard name/value Parameter class.
-	 * @return Parameter
-	 */
-	function createParam() {
-		$num = array_push($this->parameters, new Parameter());
-		return $this->parameters[$num - 1];
-	}
+    /**
+     * Create nested <param> tag.
+     * Uses standard name/value Parameter class.
+     * @return Parameter
+     */
+    function createParam() {
+        $num = array_push($this->parameters, new Parameter());
+        return $this->parameters[$num-1];
+    }
 }
+
+
 

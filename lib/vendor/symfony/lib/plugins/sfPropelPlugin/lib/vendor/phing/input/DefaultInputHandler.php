@@ -19,7 +19,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>.
  */
-
+ 
 require_once 'phing/input/InputHandler.php';
 include_once 'phing/system/io/ConsoleReader.php';
 
@@ -32,51 +32,50 @@ include_once 'phing/system/io/ConsoleReader.php';
  * @package phing.input
  */
 class DefaultInputHandler implements InputHandler {
+    
+    /**
+     * Prompts and requests input.  May loop until a valid input has
+     * been entered.
+     * @throws BuildException 
+     */
+    public function handleInput(InputRequest $request) {
+        $prompt = $this->getPrompt($request);
+        $in = new ConsoleReader();           
+        do {
+            print $prompt;
+            try {
+                $input = $in->readLine();
+                if ($input === "" && ($request->getDefaultValue() !== null) ) {
+                    $input = $request->getDefaultValue();
+                }
+                $request->setInput($input);
+            } catch (Exception $e) {
+                throw new BuildException("Failed to read input from Console.", $e);
+            }
+        } while (!$request->isInputValid());
+    }
 
-	/**
-	 * Prompts and requests input.  May loop until a valid input has
-	 * been entered.
-	 * @throws BuildException 
-	 */
-	public function handleInput(InputRequest $request) {
-		$prompt = $this->getPrompt($request);
-		$in = new ConsoleReader();
-		do {
-			print $prompt;
-			try {
-				$input = $in->readLine();
-				if ($input === "" && ($request->getDefaultValue() !== null)) {
-					$input = $request->getDefaultValue();
-				}
-				$request->setInput($input);
-			} catch (Exception $e) {
-				throw new BuildException("Failed to read input from Console.",
-						$e);
-			}
-		} while (!$request->isInputValid());
-	}
-
-	/**
-	 * Constructs user prompt from a request.
-	 *
-	 * <p>This implementation adds (choice1,choice2,choice3,...) to the
-	 * prompt for <code>MultipleChoiceInputRequest</code>s.</p>
-	 *
-	 * @param $request the request to construct the prompt for.
-	 *                Must not be <code>null</code>.
-	 */
-	protected function getPrompt(InputRequest $request) {
-		$prompt = $request->getPrompt();
-
-		if ($request instanceof YesNoInputRequest) {
-			$prompt .= '(' . implode('/', $request->getChoices()) . ')';
-		} elseif ($request instanceof MultipleChoiceInputRequest) { // (a,b,c,d)
-			$prompt .= '(' . implode(',', $request->getChoices()) . ')';
-		}
-		if ($request->getDefaultValue() !== null) {
-			$prompt .= ' [' . $request->getDefaultValue() . ']';
-		}
-		$pchar = $request->getPromptChar();
-		return $prompt . ($pchar ? $pchar . ' ' : ' ');
-	}
+    /**
+     * Constructs user prompt from a request.
+     *
+     * <p>This implementation adds (choice1,choice2,choice3,...) to the
+     * prompt for <code>MultipleChoiceInputRequest</code>s.</p>
+     *
+     * @param $request the request to construct the prompt for.
+     *                Must not be <code>null</code>.
+     */
+    protected function getPrompt(InputRequest $request) {
+        $prompt = $request->getPrompt();
+        
+        if ($request instanceof YesNoInputRequest) {
+            $prompt .= '(' . implode('/', $request->getChoices()) .')';
+        } elseif ($request instanceof MultipleChoiceInputRequest) { // (a,b,c,d)
+            $prompt .= '(' . implode(',', $request->getChoices()) . ')';            
+        }
+        if ($request->getDefaultValue() !== null) {
+            $prompt .= ' ['.$request->getDefaultValue().']';
+        }
+        $pchar = $request->getPromptChar();        
+        return $prompt . ($pchar ? $pchar . ' ' : ' ');
+    } 
 }

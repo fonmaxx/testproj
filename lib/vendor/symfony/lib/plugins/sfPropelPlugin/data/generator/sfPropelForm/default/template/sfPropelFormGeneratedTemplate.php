@@ -14,63 +14,38 @@ abstract class Base<?php echo $this->table->getClassname() ?>Form extends BaseFo
   public function setup()
   {
     $this->setWidgets(array(
-<?php foreach ($this->table->getColumns() as $column) : ?>
-      '<?php echo $this->translateColumnName($column) ?>'<?php echo str_repeat(
-			' ', $this->getColumnNameMaxLength() - strlen($column->getName())) ?> => new <?php echo $this
-			->getWidgetClassForColumn($column) ?>(<?php echo $this
-			->getWidgetOptionsForColumn($column) ?>),
+<?php foreach ($this->table->getColumns() as $column): ?>
+      '<?php echo $this->translateColumnName($column) ?>'<?php echo str_repeat(' ', $this->getColumnNameMaxLength() - strlen($column->getName())) ?> => new <?php echo $this->getWidgetClassForColumn($column) ?>(<?php echo $this->getWidgetOptionsForColumn($column) ?>),
 <?php endforeach; ?>
-<?php foreach ($this->getManyToManyTables() as $tables) : ?>
-      '<?php echo $this->underscore($tables['middleTable']->getClassname()) ?>_list'<?php echo str_repeat(
-			' ',
-			$this->getColumnNameMaxLength()
-					- strlen(
-							$this
-									->underscore(
-											$tables['middleTable']
-													->getClassname()) . '_list')) ?> => new sfWidgetFormPropelChoice(array('multiple' => true, 'model' => '<?php echo $tables['relatedTable']
-			->getClassname() ?>')),
+<?php foreach ($this->getManyToManyTables() as $tables): ?>
+      '<?php echo $this->underscore($tables['middleTable']->getClassname()) ?>_list'<?php echo str_repeat(' ', $this->getColumnNameMaxLength() - strlen($this->underscore($tables['middleTable']->getClassname()).'_list')) ?> => new sfWidgetFormPropelChoice(array('multiple' => true, 'model' => '<?php echo $tables['relatedTable']->getClassname() ?>')),
 <?php endforeach; ?>
     ));
 
     $this->setValidators(array(
-<?php foreach ($this->table->getColumns() as $column) : ?>
-      '<?php echo $this->translateColumnName($column) ?>'<?php echo str_repeat(
-			' ', $this->getColumnNameMaxLength() - strlen($column->getName())) ?> => new <?php echo $this
-			->getValidatorClassForColumn($column) ?>(<?php echo $this
-			->getValidatorOptionsForColumn($column) ?>),
+<?php foreach ($this->table->getColumns() as $column): ?>
+      '<?php echo $this->translateColumnName($column) ?>'<?php echo str_repeat(' ', $this->getColumnNameMaxLength() - strlen($column->getName())) ?> => new <?php echo $this->getValidatorClassForColumn($column) ?>(<?php echo $this->getValidatorOptionsForColumn($column) ?>),
 <?php endforeach; ?>
-<?php foreach ($this->getManyToManyTables() as $tables) : ?>
-      '<?php echo $this->underscore($tables['middleTable']->getClassname()) ?>_list'<?php echo str_repeat(
-			' ',
-			$this->getColumnNameMaxLength()
-					- strlen(
-							$this
-									->underscore(
-											$tables['middleTable']
-													->getClassname()) . '_list')) ?> => new sfValidatorPropelChoice(array('multiple' => true, 'model' => '<?php echo $tables['relatedTable']
-			->getClassname() ?>', 'required' => false)),
+<?php foreach ($this->getManyToManyTables() as $tables): ?>
+      '<?php echo $this->underscore($tables['middleTable']->getClassname()) ?>_list'<?php echo str_repeat(' ', $this->getColumnNameMaxLength() - strlen($this->underscore($tables['middleTable']->getClassname()).'_list')) ?> => new sfValidatorPropelChoice(array('multiple' => true, 'model' => '<?php echo $tables['relatedTable']->getClassname() ?>', 'required' => false)),
 <?php endforeach; ?>
     ));
-<?php if ($uniqueColumns = $this->getUniqueColumnNames()) : ?>
+
+<?php if ($uniqueColumns = $this->getUniqueColumnNames()): ?>
     $this->validatorSchema->setPostValidator(
-<?php if (count($uniqueColumns) > 1) : ?>
+<?php if (count($uniqueColumns) > 1): ?>
       new sfValidatorAnd(array(
-<?php foreach ($uniqueColumns as $uniqueColumn) : ?>
-        new sfValidatorPropelUnique(array('model' => '<?php echo $this->table
-					->getClassname() ?>', 'column' => array('<?php echo implode(
-					"', '", $uniqueColumn) ?>'))),
+<?php foreach ($uniqueColumns as $uniqueColumn): ?>
+        new sfValidatorPropelUnique(array('model' => '<?php echo $this->table->getClassname() ?>', 'column' => array('<?php echo implode("', '", $uniqueColumn) ?>'))),
 <?php endforeach; ?>
       ))
-<?php else : ?>
-      new sfValidatorPropelUnique(array('model' => '<?php echo $this->table
-				->getClassname() ?>', 'column' => array('<?php echo implode(
-				"', '", $uniqueColumns[0]) ?>')))
+<?php else: ?>
+      new sfValidatorPropelUnique(array('model' => '<?php echo $this->table->getClassname() ?>', 'column' => array('<?php echo implode("', '", $uniqueColumns[0]) ?>')))
 <?php endif; ?>
     );
+
 <?php endif; ?>
-    $this->widgetSchema->setNameFormat('<?php echo $this
-		->underscore($this->table->getClassname()) ?>[%s]');
+    $this->widgetSchema->setNameFormat('<?php echo $this->underscore($this->table->getClassname()) ?>[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
 
@@ -81,7 +56,8 @@ abstract class Base<?php echo $this->table->getClassname() ?>Form extends BaseFo
   {
     return '<?php echo $this->table->getClassname() ?>';
   }
-<?php if ($this->isI18n()) : ?>
+
+<?php if ($this->isI18n()): ?>
   public function getI18nModelName()
   {
     return '<?php echo $this->getI18nModel() ?>';
@@ -93,35 +69,36 @@ abstract class Base<?php echo $this->table->getClassname() ?>Form extends BaseFo
   }
 <?php endif; ?>
 
-<?php if ($this->getManyToManyTables()) : ?>
+<?php if ($this->getManyToManyTables()): ?>
   public function updateDefaultsFromObject()
   {
     parent::updateDefaultsFromObject();
-<?php foreach ($this->getManyToManyTables() as $tables) : ?>
-    if (isset($this->widgetSchema['<?php echo $this
-				->underscore($tables['middleTable']->getClassname()) ?>_list']))
+
+<?php foreach ($this->getManyToManyTables() as $tables): ?>
+    if (isset($this->widgetSchema['<?php echo $this->underscore($tables['middleTable']->getClassname()) ?>_list']))
     {
       $values = array();
-      foreach ($this->object->get<?php echo $tables['middleTable']
-				->getPhpName() ?>s() as $obj)
+      foreach ($this->object->get<?php echo $tables['middleTable']->getPhpName() ?>s() as $obj)
       {
         $values[] = $obj->get<?php echo $tables['relatedColumn']->getPhpName() ?>();
       }
 
-      $this->setDefault('<?php echo $this
-				->underscore($tables['middleTable']->getClassname()) ?>_list', $values);
+      $this->setDefault('<?php echo $this->underscore($tables['middleTable']->getClassname()) ?>_list', $values);
     }
+
 <?php endforeach; ?>
   }
 
   protected function doSave($con = null)
   {
     parent::doSave($con);
-<?php foreach ($this->getManyToManyTables() as $tables) : ?>
+
+<?php foreach ($this->getManyToManyTables() as $tables): ?>
     $this->save<?php echo $tables['middleTable']->getPhpName() ?>List($con);
 <?php endforeach; ?>
   }
-<?php foreach ($this->getManyToManyTables() as $tables) : ?>
+
+<?php foreach ($this->getManyToManyTables() as $tables): ?>
   public function save<?php echo $tables['middleTable']->getPhpName() ?>List($con = null)
   {
     if (!$this->isValid())
@@ -129,8 +106,7 @@ abstract class Base<?php echo $this->table->getClassname() ?>Form extends BaseFo
       throw $this->getErrorSchema();
     }
 
-    if (!isset($this->widgetSchema['<?php echo $this
-				->underscore($tables['middleTable']->getClassname()) ?>_list']))
+    if (!isset($this->widgetSchema['<?php echo $this->underscore($tables['middleTable']->getClassname()) ?>_list']))
     {
       // somebody has unset this widget
       return;
@@ -142,13 +118,10 @@ abstract class Base<?php echo $this->table->getClassname() ?>Form extends BaseFo
     }
 
     $c = new Criteria();
-    $c->add(<?php echo constant($tables['middleTable']->getClassname()
-				. '::PEER') ?>::<?php echo strtoupper(
-				$tables['column']->getName()) ?>, $this->object->getPrimaryKey());
-    <?php echo constant($tables['middleTable']->getClassname() . '::PEER') ?>::doDelete($c, $con);
+    $c->add(<?php echo constant($tables['middleTable']->getClassname().'::PEER') ?>::<?php echo strtoupper($tables['column']->getName()) ?>, $this->object->getPrimaryKey());
+    <?php echo constant($tables['middleTable']->getClassname().'::PEER') ?>::doDelete($c, $con);
 
-    $values = $this->getValue('<?php echo $this
-				->underscore($tables['middleTable']->getClassname()) ?>_list');
+    $values = $this->getValue('<?php echo $this->underscore($tables['middleTable']->getClassname()) ?>_list');
     if (is_array($values))
     {
       foreach ($values as $value)
@@ -160,6 +133,7 @@ abstract class Base<?php echo $this->table->getClassname() ?>Form extends BaseFo
       }
     }
   }
+
 <?php endforeach; ?>
 <?php endif; ?>
 }

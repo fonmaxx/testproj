@@ -30,60 +30,63 @@
  * @since       1.0
  * @version     $Revision: 7490 $
  */
-class Doctrine_Transaction_Mssql extends Doctrine_Transaction {
-	/**
-	 * Set the transacton isolation level.
-	 *
-	 * @param   string  standard isolation level (SQL-92)
-	 *      portable modes:
-	 *                  READ UNCOMMITTED (allows dirty reads)
-	 *                  READ COMMITTED (prevents dirty reads)
-	 *                  REPEATABLE READ (prevents nonrepeatable reads)
-	 *                  SERIALIZABLE (prevents phantom reads)
-	 *      mssql specific modes:
-	 *                  SNAPSHOT
-	 *
-	 * @link http://msdn2.microsoft.com/en-us/library/ms173763.aspx
-	 * @throws PDOException                         if something fails at the PDO level
-	 * @throws Doctrine_Transaction_Exception       if using unknown isolation level or unknown wait option
-	 * @return void
-	 */
-	public function setIsolation($isolation, $options = array()) {
-		switch ($isolation) {
-		case 'READ UNCOMMITTED':
-		case 'READ COMMITTED':
-		case 'REPEATABLE READ':
-		case 'SERIALIZABLE':
-		case 'SNAPSHOT':
-			break;
-		default:
-			throw new Doctrine_Transaction_Exception(
-					'isolation level is not supported: ' . $isolation);
-		}
+class Doctrine_Transaction_Mssql extends Doctrine_Transaction
+{
+    /**
+     * Set the transacton isolation level.
+     *
+     * @param   string  standard isolation level (SQL-92)
+     *      portable modes:
+     *                  READ UNCOMMITTED (allows dirty reads)
+     *                  READ COMMITTED (prevents dirty reads)
+     *                  REPEATABLE READ (prevents nonrepeatable reads)
+     *                  SERIALIZABLE (prevents phantom reads)
+     *      mssql specific modes:
+     *                  SNAPSHOT
+     *
+     * @link http://msdn2.microsoft.com/en-us/library/ms173763.aspx
+     * @throws PDOException                         if something fails at the PDO level
+     * @throws Doctrine_Transaction_Exception       if using unknown isolation level or unknown wait option
+     * @return void
+     */
+    public function setIsolation($isolation, $options = array()) {
+        switch ($isolation) {
+            case 'READ UNCOMMITTED':
+            case 'READ COMMITTED':
+            case 'REPEATABLE READ':
+            case 'SERIALIZABLE':
+            case 'SNAPSHOT':
+                break;
+            default:
+                throw new Doctrine_Transaction_Exception('isolation level is not supported: ' . $isolation);
+        }
 
-		$query = 'SET TRANSACTION ISOLATION LEVEL ' . $isolation;
+        $query = 'SET TRANSACTION ISOLATION LEVEL ' . $isolation;
 
-		$this->conn->execute($query);
-	}
-
-	/**
-	 * Performs the rollback.
-	 */
-	protected function _doRollback() {
-		$this->conn->getDbh()->exec('ROLLBACK TRANSACTION');
-	}
-
-	/**
-	 * Performs the commit.
-	 */
-	protected function _doCommit() {
-		$this->conn->getDbh()->exec('COMMIT TRANSACTION');
-	}
-
-	/**
-	 * Begins a database transaction.
-	 */
-	protected function _doBeginTransaction() {
-		$this->conn->getDbh()->exec('BEGIN TRANSACTION');
-	}
+        $this->conn->execute($query);
+    }
+    
+    /**
+     * Performs the rollback.
+     */
+    protected function _doRollback()
+    {
+        $this->conn->getDbh()->exec('ROLLBACK TRANSACTION');
+    }
+    
+    /**
+     * Performs the commit.
+     */
+    protected function _doCommit()
+    {
+        $this->conn->getDbh()->exec('COMMIT TRANSACTION');
+    }
+    
+    /**
+     * Begins a database transaction.
+     */
+    protected function _doBeginTransaction()
+    {
+        $this->conn->getDbh()->exec('BEGIN TRANSACTION');
+    }
 }

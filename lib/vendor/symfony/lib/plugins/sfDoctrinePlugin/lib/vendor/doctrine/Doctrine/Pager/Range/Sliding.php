@@ -30,95 +30,100 @@
  * @link        www.doctrine-project.org
  * @since       0.9
  */
-class Doctrine_Pager_Range_Sliding extends Doctrine_Pager_Range {
-	/**
-	 * @var int $_chunkLength     Chunk length to be returned
-	 */
-	private $_chunkLength;
+class Doctrine_Pager_Range_Sliding extends Doctrine_Pager_Range
+{
+    /**
+     * @var int $_chunkLength     Chunk length to be returned
+     */
+    private $_chunkLength;
 
-	/**
-	 * _initialize
-	 *
-	 * Initialize Doctrine_Pager_Range_Sliding and does custom assignments
-	 *
-	 * @return void
-	 */
-	protected function _initialize() {
-		if (isset($this->_options['chunk'])) {
-			$this->_setChunkLength($this->_options['chunk']);
-		} else {
-			throw new Doctrine_Pager_Exception(
-					'Missing parameter \'chunk\' that must be defined in options.');
-		}
-	}
+    /**
+     * _initialize
+     *
+     * Initialize Doctrine_Pager_Range_Sliding and does custom assignments
+     *
+     * @return void
+     */
+    protected function _initialize()
+    {
+        if (isset($this->_options['chunk'])) {
+            $this->_setChunkLength($this->_options['chunk']);
+        } else {
+            throw new Doctrine_Pager_Exception('Missing parameter \'chunk\' that must be defined in options.');
+        }
+    }
 
-	/**
-	 * getChunkLength
-	 *
-	 * Returns the size of the chunk defined
-	 *
-	 * @return int        Chunk length
-	 */
-	public function getChunkLength() {
-		return $this->_chunkLength;
-	}
+    /**
+     * getChunkLength
+     *
+     * Returns the size of the chunk defined
+     *
+     * @return int        Chunk length
+     */
+    public function getChunkLength()
+    {
+        return $this->_chunkLength;
+    }
 
-	/**
-	 * _setChunkLength
-	 *
-	 * Defines the size of the chunk
-	 *
-	 * @param $chunkLength       Chunk length
-	 * @return void
-	 */
-	protected function _setChunkLength($chunkLength) {
-		$chunkLength = (int) $chunkLength;
-		if (!$chunkLength) {
-			$chunkLength = 1;
-		} else {
-			$this->_chunkLength = $chunkLength;
-		}
-	}
+    /**
+     * _setChunkLength
+     *
+     * Defines the size of the chunk
+     *
+     * @param $chunkLength       Chunk length
+     * @return void
+     */
+    protected function _setChunkLength($chunkLength)
+    {
+        $chunkLength = (int) $chunkLength;
+        if ( !$chunkLength) {
+            $chunkLength = 1;
+        } else {
+            $this->_chunkLength = $chunkLength;
+        }
+    }
 
-	/**
-	 * rangeAroundPage
-	 *
-	 * Calculate and returns an array representing the range around the current page
-	 *
-	 * @return array
-	 */
-	public function rangeAroundPage() {
-		$pager = $this->getPager();
+    /**
+     * rangeAroundPage
+     *
+     * Calculate and returns an array representing the range around the current page
+     *
+     * @return array
+     */
+    public function rangeAroundPage()
+    {
+        $pager = $this->getPager();
 
-		if ($pager->getExecuted()) {
-			$page = $pager->getPage();
-			$pages = $pager->getLastPage();
+        if ($pager->getExecuted()) {
+            $page  = $pager->getPage();
+            $pages = $pager->getLastPage();
 
-			$chunk = $this->getChunkLength();
+            $chunk = $this->getChunkLength();
 
-			if ($chunk > $pages) {
-				$chunk = $pages;
-			}
+            if ($chunk > $pages) {
+                $chunk = $pages;
+            }
 
-			$chunkStart = $page - (floor($chunk / 2));
-			$chunkEnd = $page + (ceil($chunk / 2) - 1);
+            $chunkStart = $page - (floor($chunk / 2));
+            $chunkEnd   = $page + (ceil($chunk / 2)-1);
 
-			if ($chunkStart < 1) {
-				$adjust = 1 - $chunkStart;
-				$chunkStart = 1;
-				$chunkEnd = $chunkEnd + $adjust;
-			}
+            if ($chunkStart < 1) {
+                $adjust = 1 - $chunkStart;
+                $chunkStart = 1;
+                $chunkEnd = $chunkEnd + $adjust;
+            }
 
-			if ($chunkEnd > $pages) {
-				$adjust = $chunkEnd - $pages;
-				$chunkStart = $chunkStart - $adjust;
-				$chunkEnd = $pages;
-			}
+            if ($chunkEnd > $pages) {
+                $adjust = $chunkEnd - $pages;
+                $chunkStart = $chunkStart - $adjust;
+                $chunkEnd = $pages;
+            }
 
-			return range($chunkStart, $chunkEnd);
-		}
+            return range($chunkStart, $chunkEnd);
+        }
 
-		throw new Doctrine_Pager_Exception(
-				'Cannot retrieve the range around the page of a not yet executed Pager query');
-	}
+        throw new Doctrine_Pager_Exception(
+            'Cannot retrieve the range around the page of a not yet executed Pager query'
+        );
+    }
 }

@@ -31,6 +31,7 @@ require_once 'propel/engine/builder/sql/DDLBuilder.php';
  */
 class PgsqlDDLBuilder extends DDLBuilder {
 
+
 	/**
 	 * Array that keeps track of already
 	 * added schema names
@@ -52,7 +53,8 @@ class PgsqlDDLBuilder extends DDLBuilder {
 	/**
 	 * Reset static vars between db iterations.
 	 */
-	public static function reset() {
+	public static function reset()
+	{
 		self::$addedSchemas = array();
 		self::$queuedConstraints = array();
 	}
@@ -61,7 +63,8 @@ class PgsqlDDLBuilder extends DDLBuilder {
 	 * Returns all the ALTER TABLE ADD CONSTRAINT lines for inclusion at end of file.
 	 * @return     string DDL
 	 */
-	public static function getDatabaseEndDDL() {
+	public static function getDatabaseEndDDL()
+	{
 		$ddl = implode("", self::$queuedConstraints);
 		return $ddl;
 	}
@@ -74,10 +77,10 @@ class PgsqlDDLBuilder extends DDLBuilder {
 	 * @return     schema name if table has one, else
 	 *         null
 	 **/
-	protected function getSchema() {
+	protected function getSchema()
+	{
 		$table = $this->getTable();
-		$vi = $table
-				->getVendorInfoForType($this->getPlatform()->getDatabaseType());
+		$vi = $table->getVendorInfoForType($this->getPlatform()->getDatabaseType());
 		if ($vi->hasParameter('schema')) {
 			return $vi->getParameter('schema');
 		}
@@ -92,17 +95,17 @@ class PgsqlDDLBuilder extends DDLBuilder {
 	 * @return     string with CREATE SCHEMA statement if
 	 *         applicable, else empty string
 	 **/
-	protected function addSchema() {
+	protected function addSchema()
+	{
 
 		$schemaName = $this->getSchema();
 
 		if ($schemaName !== null) {
 
 			if (!in_array($schemaName, self::$addedSchemas)) {
-				$platform = $this->getPlatform();
+		$platform = $this->getPlatform();
 				self::$addedSchemas[] = $schemaName;
-				return "\nCREATE SCHEMA " . $this->quoteIdentifier($schemaName)
-						. ";\n";
+		return "\nCREATE SCHEMA " . $this->quoteIdentifier($schemaName) . ";\n";
 			}
 		}
 
@@ -114,30 +117,18 @@ class PgsqlDDLBuilder extends DDLBuilder {
 	 *
 	 * @see        parent::addDropStatement()
 	 */
-	protected function addDropStatements(&$script) {
+	protected function addDropStatements(&$script)
+	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 
 		$script .= "
-DROP TABLE "
-				. $this
-						->quoteIdentifier(
-								$this->prefixTablename($table->getName()))
-				. " CASCADE;
+DROP TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))." CASCADE;
 ";
 
-		if ($table->getIdMethod() == IDMethod::NATIVE
-				&& $table->getIdMethodParameters()) {
+		if ($table->getIdMethod() == IDMethod::NATIVE && $table->getIdMethodParameters()) {
 			$script .= "
-DROP SEQUENCE "
-					. $this
-							->quoteIdentifier(
-									$this
-											->prefixTablename(
-													strtolower(
-															$this
-																	->getSequenceName())))
-					. ";
+DROP SEQUENCE ".$this->quoteIdentifier($this->prefixTablename(strtolower($this->getSequenceName()))).";
 ";
 		}
 	}
@@ -146,14 +137,14 @@ DROP SEQUENCE "
 	 *
 	 * @see        parent::addColumns()
 	 */
-	protected function addTable(&$script) {
+	protected function addTable(&$script)
+	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 
 		$script .= "
 -----------------------------------------------------------------------------
--- " . $table->getName()
-				. "
+-- ".$table->getName()."
 -----------------------------------------------------------------------------
 ";
 
@@ -161,8 +152,7 @@ DROP SEQUENCE "
 
 		$schemaName = $this->getSchema();
 		if ($schemaName !== null) {
-			$script .= "\nSET search_path TO "
-					. $this->quoteIdentifier($schemaName) . ";\n";
+			$script .= "\nSET search_path TO " . $this->quoteIdentifier($schemaName) . ";\n";
 		}
 
 		$this->addDropStatements($script);
@@ -170,11 +160,7 @@ DROP SEQUENCE "
 
 		$script .= "
 
-CREATE TABLE "
-				. $this
-						->quoteIdentifier(
-								$this->prefixTablename($table->getName()))
-				. "
+CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))."
 (
 	";
 
@@ -183,28 +169,22 @@ CREATE TABLE "
 		foreach ($table->getColumns() as $col) {
 			/* @var $col Column */
 			$colDDL = $this->getColumnDDL($col);
-			if ($col->isAutoIncrement()
-					&& $table->getIdMethodParameters() == null) {
+			if ($col->isAutoIncrement() && $table->getIdMethodParameters() == null) {
 				if ($col->getType() === PropelTypes::BIGINT) {
-					$colDDL = str_replace($col->getDomain()->getSqlType(),
-							'bigserial', $colDDL);
+					$colDDL = str_replace($col->getDomain()->getSqlType(), 'bigserial', $colDDL);
 				} else {
-					$colDDL = str_replace($col->getDomain()->getSqlType(),
-							'serial', $colDDL);
+					$colDDL = str_replace($col->getDomain()->getSqlType(), 'serial', $colDDL);
 				}
 			}
 			$lines[] = $colDDL;
 		}
 
 		if ($table->hasPrimaryKey()) {
-			$lines[] = "PRIMARY KEY ("
-					. $this->getColumnList($table->getPrimaryKey()) . ")";
+			$lines[] = "PRIMARY KEY (".$this->getColumnList($table->getPrimaryKey()).")";
 		}
 
-		foreach ($table->getUnices() as $unique) {
-			$lines[] = "CONSTRAINT "
-					. $this->quoteIdentifier($unique->getName()) . " UNIQUE ("
-					. $this->getColumnList($unique->getColumns()) . ")";
+		foreach ($table->getUnices() as $unique ) {
+			$lines[] = "CONSTRAINT ".$this->quoteIdentifier($unique->getName())." UNIQUE (".$this->getColumnList($unique->getColumns()).")";
 		}
 
 		$sep = ",
@@ -213,11 +193,7 @@ CREATE TABLE "
 		$script .= "
 );
 
-COMMENT ON TABLE "
-				. $this
-						->quoteIdentifier(
-								$this->prefixTablename($table->getName()))
-				. " IS " . $platform->quote($table->getDescription()) . ";
+COMMENT ON TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))." IS " . $platform->quote($table->getDescription()).";
 
 ";
 
@@ -231,22 +207,15 @@ COMMENT ON TABLE "
 	 * Adds comments for the columns.
 	 *
 	 */
-	protected function addColumnComments(&$script) {
+	protected function addColumnComments(&$script)
+	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 
 		foreach ($this->getTable()->getColumns() as $col) {
-			if ($col->getDescription() != '') {
+			if ( $col->getDescription() != '' ) {
 				$script .= "
-COMMENT ON COLUMN "
-						. $this
-								->quoteIdentifier(
-										$this
-												->prefixTablename(
-														$table->getName()))
-						. "." . $this->quoteIdentifier($col->getName())
-						. " IS " . $platform->quote($col->getDescription())
-						. ";
+COMMENT ON COLUMN ".$this->quoteIdentifier($this->prefixTablename($table->getName())).".".$this->quoteIdentifier($col->getName())." IS ".$platform->quote($col->getDescription()) .";
 ";
 			}
 		}
@@ -259,7 +228,8 @@ COMMENT ON COLUMN "
 	 * @see        DataModelBuilder::getSequenceName()
 	 * @return     string
 	 */
-	public function getSequenceName() {
+	public function getSequenceName()
+	{
 		$table = $this->getTable();
 		static $longNamesMap = array();
 		$result = null;
@@ -271,8 +241,7 @@ COMMENT ON COLUMN "
 				// because I'm not sure how Postgres would handle this w/ SERIAL anyway)
 				foreach ($table->getColumns() as $col) {
 					if ($col->isAutoIncrement()) {
-						$result = $table->getName() . '_' . $col->getName()
-								. '_seq';
+						$result = $table->getName() . '_' . $col->getName() . '_seq';
 						break; // there's only one auto-increment column allowed
 					}
 				}
@@ -287,31 +256,25 @@ COMMENT ON COLUMN "
 	 * Adds CREATE SEQUENCE statements for this table.
 	 *
 	 */
-	protected function addSequences(&$script) {
+	protected function addSequences(&$script)
+	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 
-		if ($table->getIdMethod() == IDMethod::NATIVE
-				&& $table->getIdMethodParameters() != null) {
+		if ($table->getIdMethod() == IDMethod::NATIVE && $table->getIdMethodParameters() != null) {
 			$script .= "
-CREATE SEQUENCE "
-					. $this
-							->quoteIdentifier(
-									$this
-											->prefixTablename(
-													strtolower(
-															$this
-																	->getSequenceName())))
-					. ";
+CREATE SEQUENCE ".$this->quoteIdentifier($this->prefixTablename(strtolower($this->getSequenceName()))).";
 ";
 		}
 	}
+
 
 	/**
 	 * Adds CREATE INDEX statements for this table.
 	 * @see        parent::addIndices()
 	 */
-	protected function addIndices(&$script) {
+	protected function addIndices(&$script)
+	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 
@@ -321,13 +284,7 @@ CREATE ";
 			if ($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}
-			$script .= "INDEX " . $this->quoteIdentifier($index->getName())
-					. " ON "
-					. $this
-							->quoteIdentifier(
-									$this->prefixTablename($table->getName()))
-					. " (" . $this->getColumnList($index->getColumns())
-					. ");
+			$script .= "INDEX ".$this->quoteIdentifier($index->getName())." ON ".$this->quoteIdentifier($this->prefixTablename($table->getName()))." (".$this->getColumnList($index->getColumns()).");
 ";
 		}
 	}
@@ -336,32 +293,19 @@ CREATE ";
 	 *
 	 * @see        parent::addForeignKeys()
 	 */
-	protected function addForeignKeys(&$script) {
+	protected function addForeignKeys(&$script)
+	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 
 		foreach ($table->getForeignKeys() as $fk) {
 			$privscript = "
-ALTER TABLE "
-					. $this
-							->quoteIdentifier(
-									$this->prefixTablename($table->getName()))
-					. " ADD CONSTRAINT "
-					. $this->quoteIdentifier($fk->getName()) . " FOREIGN KEY ("
-					. $this->getColumnList($fk->getLocalColumns())
-					. ") REFERENCES "
-					. $this
-							->quoteIdentifier(
-									$this
-											->prefixTablename(
-													$fk->getForeignTableName()))
-					. " (" . $this->getColumnList($fk->getForeignColumns())
-					. ")";
+ALTER TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))." ADD CONSTRAINT ".$this->quoteIdentifier($fk->getName())." FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()) .") REFERENCES ".$this->quoteIdentifier($this->prefixTablename($fk->getForeignTableName()))." (".$this->getColumnList($fk->getForeignColumns()).")";
 			if ($fk->hasOnUpdate()) {
-				$privscript .= " ON UPDATE " . $fk->getOnUpdate();
+				$privscript .= " ON UPDATE ".$fk->getOnUpdate();
 			}
 			if ($fk->hasOnDelete()) {
-				$privscript .= " ON DELETE " . $fk->getOnDelete();
+				$privscript .= " ON DELETE ".$fk->getOnDelete();
 			}
 			$privscript .= ";
 ";

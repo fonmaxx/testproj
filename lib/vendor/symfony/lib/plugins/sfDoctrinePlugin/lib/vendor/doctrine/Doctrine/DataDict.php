@@ -31,22 +31,24 @@
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  * @author      Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
  */
-class Doctrine_DataDict extends Doctrine_Connection_Module {
-	/**
-	 * parseBoolean
-	 * parses a literal boolean value and returns 
-	 * proper sql equivalent
-	 *
-	 * @param string $value     boolean value to be parsed
-	 * @return string           parsed boolean value
-	 */
-	public function parseBoolean($value) {
-		// parse booleans
-		if ($value == 'true') {
-			$value = 1;
-		} elseif ($value == 'false') {
-			$value = 0;
-		}
-		return $value;
-	}
+class Doctrine_DataDict extends Doctrine_Connection_Module
+{
+    /**
+     * parseBoolean
+     * parses a literal boolean value and returns 
+     * proper sql equivalent
+     *
+     * @param string $value     boolean value to be parsed
+     * @return string           parsed boolean value
+     */
+    public function parseBoolean($value)
+    {
+        // parse booleans
+        if ($value == 'true') {
+            $value = 1;
+        } elseif ($value == 'false') {
+            $value = 0;
+        }
+        return $value;
+    }
 }

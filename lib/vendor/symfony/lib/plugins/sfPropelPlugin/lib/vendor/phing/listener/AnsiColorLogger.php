@@ -99,143 +99,136 @@ include_once 'phing/system/util/Properties.php';
  */
 class AnsiColorLogger extends DefaultLogger {
 
-	const ATTR_NORMAL = 0;
-	const ATTR_BRIGHT = 1;
-	const ATTR_DIM = 2;
-	const ATTR_UNDERLINE = 3;
-	const ATTR_BLINK = 5;
-	const ATTR_REVERSE = 7;
-	const ATTR_HIDDEN = 8;
+    const ATTR_NORMAL = 0;
+    const ATTR_BRIGHT = 1;
+    const ATTR_DIM = 2;
+    const ATTR_UNDERLINE = 3;
+    const ATTR_BLINK = 5;
+    const ATTR_REVERSE = 7;
+    const ATTR_HIDDEN = 8;
 
-	const FG_BLACK = 30;
-	const FG_RED = 31;
-	const FG_GREEN = 32;
-	const FG_YELLOW = 33;
-	const FG_BLUE = 34;
-	const FG_MAGENTA = 35;
-	const FG_CYAN = 36;
-	const FG_WHITE = 37;
+    const FG_BLACK = 30;
+    const FG_RED = 31;
+    const FG_GREEN = 32;
+    const FG_YELLOW = 33;
+    const FG_BLUE = 34;
+    const FG_MAGENTA = 35;
+    const FG_CYAN = 36;
+    const FG_WHITE = 37;
 
-	const BG_BLACK = 40;
-	const BG_RED = 41;
-	const BG_GREEN = 42;
-	const BG_YELLOW = 44;
-	const BG_BLUE = 44;
-	const BG_MAGENTA = 45;
-	const BG_CYAN = 46;
-	const BG_WHITE = 47;
+    const BG_BLACK = 40;
+    const BG_RED = 41;
+    const BG_GREEN = 42;
+    const BG_YELLOW = 44;
+    const BG_BLUE = 44;
+    const BG_MAGENTA = 45;
+    const BG_CYAN = 46;
+    const BG_WHITE = 47;
 
-	const PREFIX = "\x1b[";
-	const SUFFIX = "m";
-	const SEPARATOR = ';';
-	const END_COLOR = "\x1b[m"; // self::PREFIX . self::SUFFIX;
+    const PREFIX = "\x1b[";
+    const SUFFIX = "m";
+    const SEPARATOR = ';';
+    const END_COLOR = "\x1b[m"; // self::PREFIX . self::SUFFIX;
 
-	private $errColor;
-	private $warnColor;
-	private $infoColor;
-	private $verboseColor;
-	private $debugColor;
+    private $errColor;
+    private $warnColor;
+    private $infoColor;
+    private $verboseColor;
+    private $debugColor;
 
-	private $colorsSet = false;
+    private $colorsSet = false;
+    
+    /**
+     * Construct new AnsiColorLogger
+     * Perform initializations that cannot be done in var declarations.
+     */
+    public function __construct() {
+        parent::__construct();
+        $this->errColor = self::PREFIX . self::ATTR_DIM . self::SEPARATOR . self::FG_RED . self::SUFFIX;
+        $this->warnColor = self::PREFIX . self::ATTR_DIM . self::SEPARATOR . self::FG_MAGENTA . self::SUFFIX;
+        $this->infoColor = self::PREFIX . self::ATTR_DIM . self::SEPARATOR . self::FG_CYAN . self::SUFFIX;
+        $this->verboseColor = self::PREFIX . self::ATTR_DIM . self::SEPARATOR . self::FG_GREEN . self::SUFFIX;
+        $this->debugColor = self::PREFIX . self::ATTR_DIM . self::SEPARATOR . self::FG_BLUE . self::SUFFIX;
+    }
+    
+    /**
+     * Set the colors to use from a property file specified by the
+     * special ant property ant.logger.defaults
+     */
+    private final function setColors() {
+    
+        $userColorFile = Phing::getProperty("phing.logger.defaults");
+        $systemColorFile = new PhingFile(Phing::getResourcePath("phing/listener/defaults.properties"));
 
-	/**
-	 * Construct new AnsiColorLogger
-	 * Perform initializations that cannot be done in var declarations.
-	 */
-	public function __construct() {
-		parent::__construct();
-		$this->errColor = self::PREFIX . self::ATTR_DIM . self::SEPARATOR
-				. self::FG_RED . self::SUFFIX;
-		$this->warnColor = self::PREFIX . self::ATTR_DIM . self::SEPARATOR
-				. self::FG_MAGENTA . self::SUFFIX;
-		$this->infoColor = self::PREFIX . self::ATTR_DIM . self::SEPARATOR
-				. self::FG_CYAN . self::SUFFIX;
-		$this->verboseColor = self::PREFIX . self::ATTR_DIM . self::SEPARATOR
-				. self::FG_GREEN . self::SUFFIX;
-		$this->debugColor = self::PREFIX . self::ATTR_DIM . self::SEPARATOR
-				. self::FG_BLUE . self::SUFFIX;
-	}
+        $in = null;
 
-	/**
-	 * Set the colors to use from a property file specified by the
-	 * special ant property ant.logger.defaults
-	 */
-	private final function setColors() {
+        try {
+            $prop = new Properties();
 
-		$userColorFile = Phing::getProperty("phing.logger.defaults");
-		$systemColorFile = new PhingFile(
-				Phing::getResourcePath("phing/listener/defaults.properties"));
+            if ($userColorFile !== null) {
+                $prop->load($userColorFile);
+            } else {
+                $prop->load($systemColorFile);
+            }                        
+            
+            $err = $prop->getProperty("AnsiColorLogger.ERROR_COLOR");
+            $warn = $prop->getProperty("AnsiColorLogger.WARNING_COLOR");
+            $info = $prop->getProperty("AnsiColorLogger.INFO_COLOR");
+            $verbose = $prop->getProperty("AnsiColorLogger.VERBOSE_COLOR");
+            $debug = $prop->getProperty("AnsiColorLogger.DEBUG_COLOR");
+            if ($err !== null) {
+                $this->errColor = self::PREFIX . $err . self::SUFFIX;
+            }
+            if ($warn !== null) {
+                $this->warnColor = self::PREFIX . $warn . self::SUFFIX;
+            }
+            if ($info !== null) {
+                $this->infoColor = self::PREFIX . $info . self::SUFFIX;
+            }
+            if ($verbose !== null) {
+                $this->verboseColor = self::PREFIX . $verbose . self::SUFFIX;
+            }
+            if ($debug !== null) {
+                $this->debugColor = self::PREFIX . $debug . self::SUFFIX;
+            }
+        } catch (IOException $ioe) {
+            //Ignore exception - we will use the defaults.
+        }
+    }
 
-		$in = null;
-
-		try {
-			$prop = new Properties();
-
-			if ($userColorFile !== null) {
-				$prop->load($userColorFile);
-			} else {
-				$prop->load($systemColorFile);
-			}
-
-			$err = $prop->getProperty("AnsiColorLogger.ERROR_COLOR");
-			$warn = $prop->getProperty("AnsiColorLogger.WARNING_COLOR");
-			$info = $prop->getProperty("AnsiColorLogger.INFO_COLOR");
-			$verbose = $prop->getProperty("AnsiColorLogger.VERBOSE_COLOR");
-			$debug = $prop->getProperty("AnsiColorLogger.DEBUG_COLOR");
-			if ($err !== null) {
-				$this->errColor = self::PREFIX . $err . self::SUFFIX;
-			}
-			if ($warn !== null) {
-				$this->warnColor = self::PREFIX . $warn . self::SUFFIX;
-			}
-			if ($info !== null) {
-				$this->infoColor = self::PREFIX . $info . self::SUFFIX;
-			}
-			if ($verbose !== null) {
-				$this->verboseColor = self::PREFIX . $verbose . self::SUFFIX;
-			}
-			if ($debug !== null) {
-				$this->debugColor = self::PREFIX . $debug . self::SUFFIX;
-			}
-		} catch (IOException $ioe) {
-			//Ignore exception - we will use the defaults.
-		}
-	}
-
-	/**
-	 * @see DefaultLogger#printMessage
-	 * @param string $message
-	 * @param OutputStream $stream
-	 * @param int $priority
-	 */
-	protected final function printMessage($message, OutputStream $stream,
-			$priority) {
-		if ($message !== null) {
-
-			if (!$this->colorsSet) {
-				$this->setColors();
-				$this->colorsSet = true;
-			}
-
-			switch ($priority) {
-			case Project::MSG_ERR:
-				$message = $this->errColor . $message . self::END_COLOR;
-				break;
-			case Project::MSG_WARN:
-				$message = $this->warnColor . $message . self::END_COLOR;
-				break;
-			case Project::MSG_INFO:
-				$message = $this->infoColor . $message . self::END_COLOR;
-				break;
-			case Project::MSG_VERBOSE:
-				$message = $this->verboseColor . $message . self::END_COLOR;
-				break;
-			case Project::MSG_DEBUG:
-				$message = $this->debugColor . $message . self::END_COLOR;
-				break;
-			}
-
-			$stream->write($message . PHP_EOL);
-		}
-	}
+    /**
+     * @see DefaultLogger#printMessage
+     * @param string $message
+     * @param OutputStream $stream
+     * @param int $priority
+     */
+    protected final function printMessage($message, OutputStream $stream, $priority) {
+        if ($message !== null) {
+        
+            if (!$this->colorsSet) {
+                $this->setColors();
+                $this->colorsSet = true;
+            }
+            
+            switch ($priority) {
+                case Project::MSG_ERR:
+                    $message = $this->errColor . $message . self::END_COLOR;
+                    break;
+                case Project::MSG_WARN:
+                    $message = $this->warnColor . $message . self::END_COLOR;                    
+                    break;
+                case Project::MSG_INFO:
+                    $message = $this->infoColor . $message . self::END_COLOR;
+                    break;
+                case Project::MSG_VERBOSE:
+                    $message = $this->verboseColor . $message . self::END_COLOR;
+                    break;
+                case Project::MSG_DEBUG:
+                    $message = $this->debugColor . $message . self::END_COLOR;
+                    break;
+            }
+            
+            $stream->write($message . PHP_EOL);
+        }
+    }
 }
