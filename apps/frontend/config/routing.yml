@@ -1,6 +1,11 @@
 job:
   class:   sfDoctrineRouteCollection
-  options: { model: JobeetJob }
+  options:
+    model:          JobeetJob
+    column:         token
+    object_actions: { publish: PUT, extend: PUT }
+  requirements:
+    token: \w+
 
 job_show_user:
   url:     /job/:company_slug/:location_slug/:id/:position_slug

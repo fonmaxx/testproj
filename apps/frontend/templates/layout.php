@@ -1,12 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<!-- apps/frontend/templates/layout.php -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
- "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <title>
-  <?php include_slot('title', 'Jobeet - Your best job board') ?>
-</title>
+  		<?php include_slot('title', 'Jobeet - Your best job board') ?>
+	</title>
     <link rel="shortcut icon" href="/favicon.ico" />
     <?php include_javascripts() ?>
     <?php include_stylesheets() ?>
@@ -15,20 +13,18 @@
     <div id="container">
       <div id="header">
         <div class="content">
-          <h1>
-  <a href="<?php echo url_for('homepage') ?>">
-    <img src="/images/logo.jpg" alt="Jobeet Job Board" />
-  </a>
-</h1>
-
+          	<h1>
+  				<a href="<?php echo url_for('homepage') ?>">
+    				<img src="/images/logo.jpg" alt="Jobeet Job Board" />
+  				</a>
+			</h1>
           <div id="sub_header">
             <div class="post">
               <h2>Ask for people</h2>
               <div>
-                <a href="<?php echo url_for('job/index') ?>">Post a Job</a>
+                <a href="<?php echo url_for('job_new') ?>">Post a Job</a>
               </div>
             </div>
-
             <div class="search">
               <h2>Ask for a job</h2>
               <form action="" method="get">
@@ -56,6 +52,18 @@
             <?php echo $sf_user->getFlash('error') ?>
           </div>
         <?php endif ?>
+
+        <div id="job_history">
+  			Recent viewed jobs:
+  			<ul>
+    			<?php foreach ($sf_user->getJobHistory() as $job): ?>
+      			<li>
+        			<?php echo link_to($job->getPosition().' - '.$job->getCompany(), 'job_show_user', $job) ?>
+      			</li>
+    			<?php endforeach ?>
+  			</ul>
+		</div>
+
 
         <div class="content">
           <?php echo $sf_content ?>
