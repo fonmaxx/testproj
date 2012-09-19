@@ -30,42 +30,38 @@
  * @link        www.doctrine-project.org
  * @since       1.0
  */
-class Doctrine_Search_Indexer
-{
-    public function indexDirectory($dir)
-    {
-        if ( ! file_exists($dir)) {
-           throw new Doctrine_Search_Indexer_Exception('Unknown directory ' . $dir);
-        }
+class Doctrine_Search_Indexer {
+	public function indexDirectory($dir) {
+		if (!file_exists($dir)) {
+			throw new Doctrine_Search_Indexer_Exception(
+					'Unknown directory ' . $dir);
+		}
 
-        $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir), RecursiveIteratorIterator::LEAVES_ONLY);
+		$it = new RecursiveIteratorIterator(
+				new RecursiveDirectoryIterator($dir),
+				RecursiveIteratorIterator::LEAVES_ONLY);
 
-        $files = array();
-        foreach ($it as $file) {
-            $name = $file->getPathName();
-            if (strpos($name, '.svn') === false) {
-                $files[] = $name;
-            }
-        }
+		$files = array();
+		foreach ($it as $file) {
+			$name = $file->getPathName();
+			if (strpos($name, '.svn') === false) {
+				$files[] = $name;
+			}
+		}
 
-        $q = Doctrine_Core::getTable('Doctrine_File')
-            ->createQuery('f')
-            ->delete()
-            ->where('f.url LIKE ?', array($dir . '%'))
-            ->execute();
+		$q = Doctrine_Core::getTable('Doctrine_File')->createQuery('f')
+				->delete()->where('f.url LIKE ?', array($dir . '%'))->execute();
 
-        // clear the index
-        $q = Doctrine_Core::getTable('Doctrine_File_Index')
-            ->createQuery('i')
-            ->where('i.file_id = ?')
-            ->execute();
+		// clear the index
+		$q = Doctrine_Core::getTable('Doctrine_File_Index')->createQuery('i')
+				->where('i.file_id = ?')->execute();
 
-        $coll = Doctrine_Collection::create('Doctrine_File');
+		$coll = Doctrine_Collection::create('Doctrine_File');
 
-        foreach ($files as $file) {
-            $coll[]->url = $file;
-        }
-        
-        $coll->save();
-    }
+		foreach ($files as $file) {
+			$coll[]->url = $file;
+		}
+
+		$coll->save();
+	}
 }

@@ -1,11 +1,8 @@
 <?php
 
+class SettingTable extends PluginSettingTable {
 
-class SettingTable extends PluginSettingTable
-{
-    
-    public static function getInstance()
-    {
-        return Doctrine_Core::getTable('Setting');
-    }
+	public static function getInstance() {
+		return Doctrine_Core::getTable('Setting');
+	}
 }

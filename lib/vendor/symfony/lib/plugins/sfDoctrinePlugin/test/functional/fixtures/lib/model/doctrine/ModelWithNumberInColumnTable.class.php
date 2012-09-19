@@ -1,5 +1,4 @@
 <?php
 
-class ModelWithNumberInColumnTable extends Doctrine_Table
-{
+class ModelWithNumberInColumnTable extends Doctrine_Table {
 }

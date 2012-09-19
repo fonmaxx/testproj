@@ -30,17 +30,14 @@
  * @link        www.doctrine-project.org
  * @since       1.0
  */
-class Doctrine_Search_Analyzer implements Doctrine_Search_Analyzer_Interface
-{
-    protected $_options = array();
+class Doctrine_Search_Analyzer implements Doctrine_Search_Analyzer_Interface {
+	protected $_options = array();
 
-    public function __construct($options = array())
-    {
-        $this->_options = $options;
-    }
+	public function __construct($options = array()) {
+		$this->_options = $options;
+	}
 
-    public function analyze($text, $encoding = null)
-    {
-        return $text;
-    }
+	public function analyze($text, $encoding = null) {
+		return $text;
+	}
 }

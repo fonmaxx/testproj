@@ -30,39 +30,32 @@
  * @version     $Revision: 7490 $
  * @author      Joe Simms <joe.simms@websites4.com>
  */
-class Doctrine_Node_MaterializedPath_LevelOrderIterator implements Iterator
-{
-    private $topNode = null;
+class Doctrine_Node_MaterializedPath_LevelOrderIterator implements Iterator {
+	private $topNode = null;
 
-    private $curNode = null;
+	private $curNode = null;
 
-    public function __construct($node, $opts)
-    {
-        throw new Doctrine_Exception('Not yet implemented');
-    }
+	public function __construct($node, $opts) {
+		throw new Doctrine_Exception('Not yet implemented');
+	}
 
-    public function rewind()
-    {
-        throw new Doctrine_Exception('Not yet implemented');
-    }
+	public function rewind() {
+		throw new Doctrine_Exception('Not yet implemented');
+	}
 
-    public function valid()
-    {
-        throw new Doctrine_Exception('Not yet implemented');
-    }
+	public function valid() {
+		throw new Doctrine_Exception('Not yet implemented');
+	}
 
-    public function current()
-    {
-        throw new Doctrine_Exception('Not yet implemented');
-    }
+	public function current() {
+		throw new Doctrine_Exception('Not yet implemented');
+	}
 
-    public function key()
-    {
-        throw new Doctrine_Exception('Not yet implemented');
-    }
+	public function key() {
+		throw new Doctrine_Exception('Not yet implemented');
+	}
 
-    public function next()
-    {
-        throw new Doctrine_Exception('Not yet implemented');
-    }
+	public function next() {
+		throw new Doctrine_Exception('Not yet implemented');
+	}
 }

@@ -21,7 +21,7 @@
   protected function buildQuery()
   {
     $tableMethod = $this->configuration->getTableMethod();
-<?php if ($this->configuration->hasFilterForm()): ?>
+<?php if ($this->configuration->hasFilterForm()) : ?>
     if (null === $this->filters)
     {
       $this->filters = $this->configuration->getFilterForm($this->getFilters());
@@ -30,7 +30,7 @@
     $this->filters->setTableMethod($tableMethod);
 
     $query = $this->filters->buildQuery($this->getFilters());
-<?php else: ?>
+<?php else : ?>
     $query = Doctrine_Core::getTable('<?php echo $this->getModelClass() ?>')
       ->createQuery('a');
 

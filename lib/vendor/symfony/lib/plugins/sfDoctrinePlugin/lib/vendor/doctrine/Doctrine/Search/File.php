@@ -30,55 +30,54 @@
  * @link        www.doctrine-project.org
  * @since       1.0
  */
-class Doctrine_Search_File extends Doctrine_Search
-{
-    /**
-     * constructor
-     *
-     * @param array $options    an array of plugin options
-     */
-    public function __construct(array $options = array())
-    {
-        parent::__construct($options);
+class Doctrine_Search_File extends Doctrine_Search {
+	/**
+	 * constructor
+	 *
+	 * @param array $options    an array of plugin options
+	 */
+	public function __construct(array $options = array()) {
+		parent::__construct($options);
 
-        if ( ! isset($this->_options['resource'])) {
-            $conn = Doctrine_Manager::connection();
-            $tableClass = $conn->getAttribute(Doctrine_Core::ATTR_TABLE_CLASS);
-            $table = new $tableClass('File', $conn);
+		if (!isset($this->_options['resource'])) {
+			$conn = Doctrine_Manager::connection();
+			$tableClass = $conn->getAttribute(Doctrine_Core::ATTR_TABLE_CLASS);
+			$table = new $tableClass('File', $conn);
 
-            $table->setColumn('url', 'string', 255, array('primary' => true));
-        }
+			$table->setColumn('url', 'string', 255, array('primary' => true));
+		}
 
-        if (empty($this->_options['fields'])) {
-            $this->_options['fields'] = array('url', 'content');
-        }
+		if (empty($this->_options['fields'])) {
+			$this->_options['fields'] = array('url', 'content');
+		}
 
-        $this->initialize($table);
-    }
+		$this->initialize($table);
+	}
 
-    public function buildRelation()
-    {
-    	
-    }
+	public function buildRelation() {
 
-    /**
-     * indexes given directory
-     *
-     * @param string $dir   the name of the directory to index
-     * @return void
-     */
-    public function indexDirectory($dir)
-    {
-        $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir),
-                                                RecursiveIteratorIterator::LEAVES_ONLY);
-                                                
-        foreach ($it as $file) {
-            if (strpos($file, DIRECTORY_SEPARATOR . '.svn') !== false) {
-                continue;
-            }
+	}
 
-            $this->updateIndex(array('url' => $file->getPathName(),
-                                     'content' => file_get_contents($file)));
-        }
-    }
+	/**
+	 * indexes given directory
+	 *
+	 * @param string $dir   the name of the directory to index
+	 * @return void
+	 */
+	public function indexDirectory($dir) {
+		$it = new RecursiveIteratorIterator(
+				new RecursiveDirectoryIterator($dir),
+				RecursiveIteratorIterator::LEAVES_ONLY);
+
+		foreach ($it as $file) {
+			if (strpos($file, DIRECTORY_SEPARATOR . '.svn') !== false) {
+				continue;
+			}
+
+			$this
+					->updateIndex(
+							array('url' => $file->getPathName(),
+									'content' => file_get_contents($file)));
+		}
+	}
 }

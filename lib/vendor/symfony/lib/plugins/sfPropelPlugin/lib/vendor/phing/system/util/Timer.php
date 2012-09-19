@@ -19,7 +19,6 @@
  * <http://phing.info>.
  */
 
-
 /**
  * This class can be used to obtain the execution time of all of the scripts
  * that are executed in the process of building a page.
@@ -42,55 +41,55 @@
  */
 class Timer {
 
-    /** start time */
-    protected $stime;
-    
-    /** end time */
-    protected $etime;  
+	/** start time */
+	protected $stime;
 
-    /**
-     * This function sets the class variable $stime to the current time in
-     * microseconds.
-     * @return void
-     */
-    public function start() {
-        $this->stime = $this->getMicrotime();
-    }
+	/** end time */
+	protected $etime;
 
-    /**
-     * This function sets the class variable $etime to the current time in
-     * microseconds.
-     * @return void
-     */
-    function stop() {
-        $this->etime = $this->getMicrotime();
-    }
-    
-    /**
-     * This function returns the elapsed time in seconds.
-     *
-     * Call start_time() at the beginning of script execution and end_time() at
-     * the end of script execution.  Then, call elapsed_time() to obtain the
-     * difference between start_time() and end_time().
-     *
-     * @param    $places  decimal place precision of elapsed time (default is 5)
-     * @return string Properly formatted time.
-     */
-    function getElapsedTime($places=5) {
-        $etime = $this->etime - $this->stime;
-        $format = "%0.".$places."f";
-        return (sprintf ($format, $etime));
-    }
+	/**
+	 * This function sets the class variable $stime to the current time in
+	 * microseconds.
+	 * @return void
+	 */
+	public function start() {
+		$this->stime = $this->getMicrotime();
+	}
 
-    /**
-     * This function returns the current time in microseconds.
-     *
-     * @author    Everett Michaud, Zend.com
-     * @return    current time in microseconds
-     * @access    private
-     */
-    function getMicrotime() {
-        list($usec, $sec) = explode(" ", microtime());
-        return ((float)$usec + (float)$sec);
-    }
+	/**
+	 * This function sets the class variable $etime to the current time in
+	 * microseconds.
+	 * @return void
+	 */
+	function stop() {
+		$this->etime = $this->getMicrotime();
+	}
+
+	/**
+	 * This function returns the elapsed time in seconds.
+	 *
+	 * Call start_time() at the beginning of script execution and end_time() at
+	 * the end of script execution.  Then, call elapsed_time() to obtain the
+	 * difference between start_time() and end_time().
+	 *
+	 * @param    $places  decimal place precision of elapsed time (default is 5)
+	 * @return string Properly formatted time.
+	 */
+	function getElapsedTime($places = 5) {
+		$etime = $this->etime - $this->stime;
+		$format = "%0." . $places . "f";
+		return (sprintf($format, $etime));
+	}
+
+	/**
+	 * This function returns the current time in microseconds.
+	 *
+	 * @author    Everett Michaud, Zend.com
+	 * @return    current time in microseconds
+	 * @access    private
+	 */
+	function getMicrotime() {
+		list($usec, $sec) = explode(" ", microtime());
+		return ((float) $usec + (float) $sec);
+	}
 }

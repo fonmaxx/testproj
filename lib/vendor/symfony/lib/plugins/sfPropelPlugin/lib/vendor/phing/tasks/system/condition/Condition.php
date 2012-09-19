@@ -30,9 +30,9 @@
  * @package phing.tasks.system.condition
  */
 interface Condition {
-    /**
-     * @return boolean
-     * @throws BuildException
-     */
-    public function evaluate();
+	/**
+	 * @return boolean
+	 * @throws BuildException
+	 */
+	public function evaluate();
 }

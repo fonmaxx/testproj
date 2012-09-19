@@ -30,54 +30,50 @@
  * @version     $Revision: 7490 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Connection_Module
-{
-    /**
-     * @var Doctrine_Connection $conn       Doctrine_Connection object, every connection
-     *                                      module holds an instance of Doctrine_Connection
-     */
-    protected $conn;
+class Doctrine_Connection_Module {
+	/**
+	 * @var Doctrine_Connection $conn       Doctrine_Connection object, every connection
+	 *                                      module holds an instance of Doctrine_Connection
+	 */
+	protected $conn;
 
-    /**
-     * @var string $moduleName              the name of this module
-     */
-    protected $moduleName;
+	/**
+	 * @var string $moduleName              the name of this module
+	 */
+	protected $moduleName;
 
-    /**
-     * @param Doctrine_Connection $conn     Doctrine_Connection object, every connection
-     *                                      module holds an instance of Doctrine_Connection
-     */
-    public function __construct($conn = null)
-    {
-        if ( ! ($conn instanceof Doctrine_Connection)) {
-            $conn = Doctrine_Manager::getInstance()->getCurrentConnection();
-        }
-        $this->conn = $conn;
+	/**
+	 * @param Doctrine_Connection $conn     Doctrine_Connection object, every connection
+	 *                                      module holds an instance of Doctrine_Connection
+	 */
+	public function __construct($conn = null) {
+		if (!($conn instanceof Doctrine_Connection)) {
+			$conn = Doctrine_Manager::getInstance()->getCurrentConnection();
+		}
+		$this->conn = $conn;
 
-        $e = explode('_', get_class($this));
+		$e = explode('_', get_class($this));
 
-        $this->moduleName = $e[1];
-    }
+		$this->moduleName = $e[1];
+	}
 
-    /**
-     * getConnection
-     * returns the connection object this module uses
-     *
-     * @return Doctrine_Connection
-     */
-    public function getConnection()
-    {
-        return $this->conn;
-    }
+	/**
+	 * getConnection
+	 * returns the connection object this module uses
+	 *
+	 * @return Doctrine_Connection
+	 */
+	public function getConnection() {
+		return $this->conn;
+	}
 
-    /**
-     * getModuleName
-     * returns the name of this module
-     *
-     * @return string       the name of this module
-     */
-    public function getModuleName()
-    {
-        return $this->moduleName;
-    }
+	/**
+	 * getModuleName
+	 * returns the name of this module
+	 *
+	 * @return string       the name of this module
+	 */
+	public function getModuleName() {
+		return $this->moduleName;
+	}
 }

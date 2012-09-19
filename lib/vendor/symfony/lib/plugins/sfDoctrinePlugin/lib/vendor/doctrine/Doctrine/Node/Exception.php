@@ -30,5 +30,5 @@
  * @version     $Revision: 7490 $
  * @author      Joe Simms <joe.simms@websites4.com>
  */
-class Doctrine_Node_Exception extends Doctrine_Exception
-{ }
+class Doctrine_Node_Exception extends Doctrine_Exception {
+}

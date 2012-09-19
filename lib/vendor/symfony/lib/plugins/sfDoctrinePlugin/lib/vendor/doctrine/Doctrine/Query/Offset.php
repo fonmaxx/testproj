@@ -30,10 +30,8 @@
  * @version     $Revision: 1352 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Query_Offset extends Doctrine_Query_Part
-{
-    public function parse($offset)
-    {
-        return (int) $offset;
-    }
+class Doctrine_Query_Offset extends Doctrine_Query_Part {
+	public function parse($offset) {
+		return (int) $offset;
+	}
 }

@@ -30,5 +30,4 @@ require_once 'propel/engine/builder/sql/DataSQLBuilder.php';
  */
 class OracleDataSQLBuilder extends DataSQLBuilder {
 
-
 }

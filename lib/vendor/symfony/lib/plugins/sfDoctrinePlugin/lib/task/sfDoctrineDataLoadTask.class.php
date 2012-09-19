@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-require_once(dirname(__FILE__).'/sfDoctrineBaseTask.class.php');
+require_once(dirname(__FILE__) . '/sfDoctrineBaseTask.class.php');
 
 /**
  * Loads YAML fixture data.
@@ -20,28 +20,37 @@ require_once(dirname(__FILE__).'/sfDoctrineBaseTask.class.php');
  * @author     Jonathan H. Wage <jonwage@gmail.com>
  * @version    SVN: $Id: sfDoctrineDataLoadTask.class.php 23922 2009-11-14 14:58:38Z fabien $
  */
-class sfDoctrineDataLoadTask extends sfDoctrineBaseTask
-{
-  /**
-   * @see sfTask
-   */
-  protected function configure()
-  {
-    $this->addArguments(array(
-      new sfCommandArgument('dir_or_file', sfCommandArgument::OPTIONAL | sfCommandArgument::IS_ARRAY, 'Directory or file to load'),
-    ));
+class sfDoctrineDataLoadTask extends sfDoctrineBaseTask {
+	/**
+	 * @see sfTask
+	 */
+	protected function configure() {
+		$this
+				->addArguments(
+						array(
+								new sfCommandArgument('dir_or_file',
+										sfCommandArgument::OPTIONAL
+												| sfCommandArgument::IS_ARRAY,
+										'Directory or file to load'),));
 
-    $this->addOptions(array(
-      new sfCommandOption('application', null, sfCommandOption::PARAMETER_OPTIONAL, 'The application name', true),
-      new sfCommandOption('env', null, sfCommandOption::PARAMETER_REQUIRED, 'The environment', 'dev'),
-      new sfCommandOption('append', null, sfCommandOption::PARAMETER_NONE, 'Don\'t delete current data in the database'),
-    ));
+		$this
+				->addOptions(
+						array(
+								new sfCommandOption('application', null,
+										sfCommandOption::PARAMETER_OPTIONAL,
+										'The application name', true),
+								new sfCommandOption('env', null,
+										sfCommandOption::PARAMETER_REQUIRED,
+										'The environment', 'dev'),
+								new sfCommandOption('append', null,
+										sfCommandOption::PARAMETER_NONE,
+										'Don\'t delete current data in the database'),));
 
-    $this->namespace = 'doctrine';
-    $this->name = 'data-load';
-    $this->briefDescription = 'Loads YAML fixture data';
+		$this->namespace = 'doctrine';
+		$this->name = 'data-load';
+		$this->briefDescription = 'Loads YAML fixture data';
 
-    $this->detailedDescription = <<<EOF
+		$this->detailedDescription = <<<EOF
 The [doctrine:data-load|INFO] task loads data fixtures into the database:
 
   [./symfony doctrine:data-load|INFO]
@@ -58,32 +67,30 @@ use the [--append|COMMENT] option:
 
   [./symfony doctrine:data-load --append|INFO]
 EOF;
-  }
+	}
 
-  /**
-   * @see sfTask
-   */
-  protected function execute($arguments = array(), $options = array())
-  {
-    $databaseManager = new sfDatabaseManager($this->configuration);
+	/**
+	 * @see sfTask
+	 */
+	protected function execute($arguments = array(), $options = array()) {
+		$databaseManager = new sfDatabaseManager($this->configuration);
 
-    if (!count($arguments['dir_or_file']))
-    {
-      // pull default from CLI config array
-      $config = $this->getCliConfig();
-      $arguments['dir_or_file'] = $config['data_fixtures_path'];
-    }
+		if (!count($arguments['dir_or_file'])) {
+			// pull default from CLI config array
+			$config = $this->getCliConfig();
+			$arguments['dir_or_file'] = $config['data_fixtures_path'];
+		}
 
-    $doctrineArguments = array(
-      'data_fixtures_path' => $arguments['dir_or_file'],
-      'append'             => $options['append'],
-    );
+		$doctrineArguments = array(
+				'data_fixtures_path' => $arguments['dir_or_file'],
+				'append' => $options['append'],);
 
-    foreach ($arguments['dir_or_file'] as $target)
-    {
-      $this->logSection('doctrine', sprintf('Loading data fixtures from "%s"', $target));
-    }
+		foreach ($arguments['dir_or_file'] as $target) {
+			$this
+					->logSection('doctrine',
+							sprintf('Loading data fixtures from "%s"', $target));
+		}
 
-    $this->callDoctrineCli('load-data', $doctrineArguments);
-  }
+		$this->callDoctrineCli('load-data', $doctrineArguments);
+	}
 }

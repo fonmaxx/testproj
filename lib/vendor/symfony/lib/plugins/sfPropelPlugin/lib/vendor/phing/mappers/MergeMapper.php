@@ -30,40 +30,41 @@ include_once 'phing/mappers/FileNameMapper.php';
  * @package   phing.mappers
  */
 class MergeMapper implements FileNameMapper {
-    
-    /** the merge */
-    private $mergedFile;
 
-    /**
-     * The mapper implementation. Basically does nothing in this case.
-     *
-     * @param    mixed     The data the mapper works on
-     * @returns  mixed     The data after the mapper has been applied
-     * @access   public
-     * @author   Andreas Aderhold, andi@binarycloud.com
-     */
-    function main($sourceFileName) {
-        if ($this->mergedFile === null) {            
-            throw new BuildException("MergeMapper error, to attribute not set");            
-        }         
-        return array($this->mergedFile);
-    }
+	/** the merge */
+	private $mergedFile;
 
-    /**
-     * Accessor. Sets the to property
-     *
-     * @param    string     To what this mapper should convert the from string
-     * @returns  boolean    True
-     * @access   public
-     * @author   Andreas Aderhold, andi@binarycloud.com
-     */
-    function setTo($to) {
-        $this->mergedFile = $to;
-    }    
+	/**
+	 * The mapper implementation. Basically does nothing in this case.
+	 *
+	 * @param    mixed     The data the mapper works on
+	 * @returns  mixed     The data after the mapper has been applied
+	 * @access   public
+	 * @author   Andreas Aderhold, andi@binarycloud.com
+	 */
+	function main($sourceFileName) {
+		if ($this->mergedFile === null) {
+			throw new BuildException("MergeMapper error, to attribute not set");
+		}
+		return array($this->mergedFile);
+	}
 
-    /**
-     * Ignored.
-     */
-    function setFrom($from) {}
+	/**
+	 * Accessor. Sets the to property
+	 *
+	 * @param    string     To what this mapper should convert the from string
+	 * @returns  boolean    True
+	 * @access   public
+	 * @author   Andreas Aderhold, andi@binarycloud.com
+	 */
+	function setTo($to) {
+		$this->mergedFile = $to;
+	}
+
+	/**
+	 * Ignored.
+	 */
+	function setFrom($from) {
+	}
 
 }

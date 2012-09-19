@@ -34,58 +34,58 @@
  */
 interface BuildListener {
 
-    /**
-     * Fired before any targets are started.
-     *
-     * @param BuildEvent The BuildEvent
-     */
-    function buildStarted(BuildEvent $event);
+	/**
+	 * Fired before any targets are started.
+	 *
+	 * @param BuildEvent The BuildEvent
+	 */
+	function buildStarted(BuildEvent $event);
 
-    /**
-     * Fired after the last target has finished.
-     *
-     * @param BuildEvent The BuildEvent
-     * @see BuildEvent::getException()
-     */
-    function buildFinished(BuildEvent $event);
+	/**
+	 * Fired after the last target has finished.
+	 *
+	 * @param BuildEvent The BuildEvent
+	 * @see BuildEvent::getException()
+	 */
+	function buildFinished(BuildEvent $event);
 
-    /**
-     * Fired when a target is started.
-     *
-     * @param BuildEvent The BuildEvent
-     * @see BuildEvent::getTarget()
-     */
-    function targetStarted(BuildEvent $event);
+	/**
+	 * Fired when a target is started.
+	 *
+	 * @param BuildEvent The BuildEvent
+	 * @see BuildEvent::getTarget()
+	 */
+	function targetStarted(BuildEvent $event);
 
-    /**
-     * Fired when a target has finished.
-     *
-     * @param BuildEvent The BuildEvent
-     * @see BuildEvent#getException()
-     */
-    function targetFinished(BuildEvent $event);
+	/**
+	 * Fired when a target has finished.
+	 *
+	 * @param BuildEvent The BuildEvent
+	 * @see BuildEvent#getException()
+	 */
+	function targetFinished(BuildEvent $event);
 
-    /**
-     * Fired when a task is started.
-     *
-     * @param BuildEvent The BuildEvent
-     * @see BuildEvent::getTask()
-     */
-    function taskStarted(BuildEvent $event);
+	/**
+	 * Fired when a task is started.
+	 *
+	 * @param BuildEvent The BuildEvent
+	 * @see BuildEvent::getTask()
+	 */
+	function taskStarted(BuildEvent $event);
 
-    /**
-     *  Fired when a task has finished.
-     *
-     *  @param BuildEvent The BuildEvent
-     *  @see BuildEvent::getException()
-     */
-    function taskFinished(BuildEvent $event);
+	/**
+	 *  Fired when a task has finished.
+	 *
+	 *  @param BuildEvent The BuildEvent
+	 *  @see BuildEvent::getException()
+	 */
+	function taskFinished(BuildEvent $event);
 
-    /**
-     *  Fired whenever a message is logged.
-     *
-     *  @param BuildEvent The BuildEvent
-     *  @see BuildEvent::getMessage()
-     */
-    function messageLogged(BuildEvent $event);
+	/**
+	 *  Fired whenever a message is logged.
+	 *
+	 *  @param BuildEvent The BuildEvent
+	 *  @see BuildEvent::getMessage()
+	 */
+	function messageLogged(BuildEvent $event);
 }

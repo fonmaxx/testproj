@@ -16,99 +16,89 @@
  * @author     Fabien Potencier <fabien.potencier@symfony-project.com>
  * @version    SVN: $Id: sfAggregateLogger.class.php 14603 2009-01-11 10:35:17Z dwhittle $
  */
-class sfAggregateLogger extends sfLogger
-{
-  protected
-    $loggers = array();
+class sfAggregateLogger extends sfLogger {
+	protected $loggers = array();
 
-  /**
-   * Initializes this logger.
-   *
-   * Available options:
-   *
-   * - loggers: Logger objects that extends sfLogger.
-   *
-   * @param  sfEventDispatcher $dispatcher  A sfEventDispatcher instance
-   * @param  array             $options     An array of options.
-   *
-   * @return Boolean      true, if initialization completes successfully, otherwise false.
-   */
-  public function initialize(sfEventDispatcher $dispatcher, $options = array())
-  {
-    $this->dispatcher = $dispatcher;
-    
-    if (isset($options['loggers']))
-    {
-      if (!is_array($options['loggers']))
-      {
-        $options['loggers'] = array($options['loggers']);
-      }
+	/**
+	 * Initializes this logger.
+	 *
+	 * Available options:
+	 *
+	 * - loggers: Logger objects that extends sfLogger.
+	 *
+	 * @param  sfEventDispatcher $dispatcher  A sfEventDispatcher instance
+	 * @param  array             $options     An array of options.
+	 *
+	 * @return Boolean      true, if initialization completes successfully, otherwise false.
+	 */
+	public function initialize(sfEventDispatcher $dispatcher,
+			$options = array()) {
+		$this->dispatcher = $dispatcher;
 
-      $this->addLoggers($options['loggers']);
-    }
+		if (isset($options['loggers'])) {
+			if (!is_array($options['loggers'])) {
+				$options['loggers'] = array($options['loggers']);
+			}
 
-    return parent::initialize($dispatcher, $options);
-  }
+			$this->addLoggers($options['loggers']);
+		}
 
-  /**
-   * Retrieves current loggers.
-   *
-   * @return array List of loggers
-   */
-  public function getLoggers()
-  {
-    return $this->loggers;
-  }
+		return parent::initialize($dispatcher, $options);
+	}
 
-  /**
-   * Adds an array of loggers.
-   *
-   * @param object $loggers An array of Logger objects
-   */
-  public function addLoggers($loggers)
-  {
-    foreach ($loggers as $logger)
-    {
-      $this->addLogger($logger);
-    }
-  }
+	/**
+	 * Retrieves current loggers.
+	 *
+	 * @return array List of loggers
+	 */
+	public function getLoggers() {
+		return $this->loggers;
+	}
 
-  /**
-   * Adds a logger.
-   *
-   * @param object $logger The Logger object
-   */
-  public function addLogger(sfLogger $logger)
-  {
-    $this->loggers[] = $logger;
+	/**
+	 * Adds an array of loggers.
+	 *
+	 * @param object $loggers An array of Logger objects
+	 */
+	public function addLoggers($loggers) {
+		foreach ($loggers as $logger) {
+			$this->addLogger($logger);
+		}
+	}
 
-    $this->dispatcher->disconnect('application.log', array($logger, 'listenToLogEvent'));
-  }
+	/**
+	 * Adds a logger.
+	 *
+	 * @param object $logger The Logger object
+	 */
+	public function addLogger(sfLogger $logger) {
+		$this->loggers[] = $logger;
 
-  /**
-   * Logs a message.
-   *
-   * @param string $message   Message
-   * @param string $priority  Message priority
-   */
-  protected function doLog($message, $priority)
-  {
-    foreach ($this->loggers as $logger)
-    {
-      $logger->log($message, $priority);
-    }
-  }
+		$this->dispatcher
+				->disconnect('application.log',
+						array($logger, 'listenToLogEvent'));
+	}
 
-  /**
-   * Executes the shutdown method.
-   */
-  public function shutdown()
-  {
-    foreach ($this->loggers as $logger)
-    {
-      $logger->shutdown();
-    }
+	/**
+	 * Logs a message.
+	 *
+	 * @param string $message   Message
+	 * @param string $priority  Message priority
+	 */
+	protected function doLog($message, $priority) {
+		foreach ($this->loggers as $logger) {
+			$logger->log($message, $priority);
+		}
+	}
 
-    $this->loggers = array();
-  }
+	/**
+	 * Executes the shutdown method.
+	 */
+	public function shutdown() {
+		foreach ($this->loggers as $logger) {
+			$logger->shutdown();
+		}
+
+		$this->loggers = array();
+	}
 }

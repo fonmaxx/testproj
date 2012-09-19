@@ -9,16 +9,15 @@
  */
 
 $app = 'frontend';
-require_once(dirname(__FILE__).'/../bootstrap/functional.php');
+require_once(dirname(__FILE__) . '/../bootstrap/functional.php');
 
 $t = new lime_test(23);
 
 $total = 50;
-for ($i = 0; $i < $total; $i++)
-{
-  $author = new Author();
-  $author->name = 'Author #' . $i;
-  $author->save();
+for ($i = 0; $i < $total; $i++) {
+	$author = new Author();
+	$author->name = 'Author #' . $i;
+	$author->save();
 }
 
 $numPerPage = 25;
@@ -27,13 +26,17 @@ $pager->setTableMethod('testTableMethod');
 $pager->setPage(1);
 $pager->init();
 
-$t->is($pager->getQuery()->getSqlQuery(), 'SELECT a.id AS a__id, a.name AS a__name, a.type AS a__type FROM author a WHERE (a.id > 0) LIMIT 25');
+$t
+		->is($pager->getQuery()->getSqlQuery(),
+				'SELECT a.id AS a__id, a.name AS a__name, a.type AS a__type FROM author a WHERE (a.id > 0) LIMIT 25');
 $t->ok($pager->isFirstPage());
 
 $pager->setPage(2);
 $pager->init();
 
-$t->is($pager->getQuery()->getSqlQuery(), 'SELECT a.id AS a__id, a.name AS a__name, a.type AS a__type FROM author a WHERE (a.id > 0) LIMIT 25 OFFSET 25');
+$t
+		->is($pager->getQuery()->getSqlQuery(),
+				'SELECT a.id AS a__id, a.name AS a__name, a.type AS a__type FROM author a WHERE (a.id > 0) LIMIT 25 OFFSET 25');
 $t->is($pager->getQuery()->count(), $total);
 $t->ok($pager->isLastPage());
 
@@ -56,25 +59,34 @@ $t->is(count($results), $numPerPage);
 
 $pager = new sfDoctrinePager('Author', $numPerPage);
 $pager->setTableMethod('testTableMethod2');
-$pager->setQuery(Doctrine_Query::create()->from('Author a')->where('a.id < 9999999'));
+$pager
+		->setQuery(
+				Doctrine_Query::create()->from('Author a')
+						->where('a.id < 9999999'));
 $pager->setPage(1);
 $pager->init();
 
-$t->is($pager->getQuery()->getSqlQuery(), 'SELECT a.id AS a__id, a.name AS a__name, a.type AS a__type FROM author a WHERE (a.id < 9999999 AND a.id > 0) LIMIT 25');
+$t
+		->is($pager->getQuery()->getSqlQuery(),
+				'SELECT a.id AS a__id, a.name AS a__name, a.type AS a__type FROM author a WHERE (a.id < 9999999 AND a.id > 0) LIMIT 25');
 
 $pager = new sfDoctrinePager('Author', $numPerPage);
-$pager->setQuery(Doctrine_Query::create()->from('Author a')->where('a.id < 9999999'));
+$pager
+		->setQuery(
+				Doctrine_Query::create()->from('Author a')
+						->where('a.id < 9999999'));
 $pager->setPage(1);
 $pager->init();
 
-$t->is($pager->getQuery()->getSqlQuery(), 'SELECT a.id AS a__id, a.name AS a__name, a.type AS a__type FROM author a WHERE (a.id < 9999999) LIMIT 25');
+$t
+		->is($pager->getQuery()->getSqlQuery(),
+				'SELECT a.id AS a__id, a.name AS a__name, a.type AS a__type FROM author a WHERE (a.id < 9999999) LIMIT 25');
 
 // pager interface
 $t->diag('iterator interface');
 
 $pager = new sfDoctrinePager('Author', 10);
 $pager->init();
-foreach ($pager as $author)
-{
-  $t->isa_ok($author, 'Author');
+foreach ($pager as $author) {
+	$t->isa_ok($author, 'Author');
 }

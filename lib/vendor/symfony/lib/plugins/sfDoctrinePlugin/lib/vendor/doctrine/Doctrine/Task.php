@@ -32,268 +32,250 @@
  * @version     $Revision: 2761 $
  * @author      Jonathan H. Wage <jwage@mac.com>
  */
-abstract class Doctrine_Task
-{
-    public $dispatcher           =   null,
-           $taskName             =   null,  /*Treat as protected*/
-           $description          =   null,
-           $arguments            =   array(),
-           $requiredArguments    =   array(),
-           $optionalArguments    =   array();
+abstract class Doctrine_Task {
+	public $dispatcher = null, $taskName = null, /*Treat as protected*/
+	$description = null, $arguments = array(), $requiredArguments = array(), $optionalArguments = array();
 
-    /**
-     * __construct
-     *
-     * Since this is an abstract classes that extend this must follow a patter of Doctrine_Task_{TASK_NAME}
-     * This is what determines the task name for executing it.
-     *
-     * @return void
-     */
-    public function __construct($dispatcher = null)
-    {
-        $this->dispatcher = $dispatcher;
+	/**
+	 * __construct
+	 *
+	 * Since this is an abstract classes that extend this must follow a patter of Doctrine_Task_{TASK_NAME}
+	 * This is what determines the task name for executing it.
+	 *
+	 * @return void
+	 */
+	public function __construct($dispatcher = null) {
+		$this->dispatcher = $dispatcher;
 
-        $taskName = $this->getTaskName();
+		$taskName = $this->getTaskName();
 
-        //Derive the task name only if it wasn't entered at design-time
-        if (! strlen($taskName)) {
-            $taskName = self::deriveTaskName(get_class($this));
-        }
+		//Derive the task name only if it wasn't entered at design-time
+		if (!strlen($taskName)) {
+			$taskName = self::deriveTaskName(get_class($this));
+		}
 
-        /*
-         * All task names must be passed through Doctrine_Task::setTaskName() to make sure they're valid.  We're most
-         * interested in validating manually-entered task names, which are as good as arguments.
-         */
-        $this->setTaskName($taskName);
-    }
+		/*
+		 * All task names must be passed through Doctrine_Task::setTaskName() to make sure they're valid.  We're most
+		 * interested in validating manually-entered task names, which are as good as arguments.
+		 */
+		$this->setTaskName($taskName);
+	}
 
-    /**
-     * Returns the name of the task the specified class _would_ implement
-     * 
-     * N.B. This method does not check if the specified class is actually a Doctrine Task
-     * 
-     * This is public so we can easily test its reactions to fully-qualified class names, without having to add
-     * PHP 5.3-specific test code
-     * 
-     * @param string $className
-     * @return string|bool
-     */
-    public static function deriveTaskName($className)
-    {
-        $nameParts = explode('\\', $className);
+	/**
+	 * Returns the name of the task the specified class _would_ implement
+	 * 
+	 * N.B. This method does not check if the specified class is actually a Doctrine Task
+	 * 
+	 * This is public so we can easily test its reactions to fully-qualified class names, without having to add
+	 * PHP 5.3-specific test code
+	 * 
+	 * @param string $className
+	 * @return string|bool
+	 */
+	public static function deriveTaskName($className) {
+		$nameParts = explode('\\', $className);
 
-        foreach ($nameParts as &$namePart) {
-            $prefix = __CLASS__ . '_';
-            $baseName = strpos($namePart, $prefix) === 0 ? substr($namePart, strlen($prefix)) : $namePart;
-            $namePart = str_replace('_', '-', Doctrine_Inflector::tableize($baseName));
-        }
+		foreach ($nameParts as &$namePart) {
+			$prefix = __CLASS__ . '_';
+			$baseName = strpos($namePart, $prefix) === 0 ? substr($namePart,
+							strlen($prefix)) : $namePart;
+			$namePart = str_replace('_', '-',
+					Doctrine_Inflector::tableize($baseName));
+		}
 
-        return implode('-', $nameParts);
-    }
+		return implode('-', $nameParts);
+	}
 
-    /**
-     * notify
-     *
-     * @param string $notification 
-     * @return void
-     */
-    public function notify($notification = null)
-    {
-        if (is_object($this->dispatcher) && method_exists($this->dispatcher, 'notify')) {
-            $args = func_get_args();
-            
-            return call_user_func_array(array($this->dispatcher, 'notify'), $args);
-        } else if ( $notification !== null ) {
-            return $notification;
-        } else {
-            return false;
-        }
-    }
+	/**
+	 * notify
+	 *
+	 * @param string $notification 
+	 * @return void
+	 */
+	public function notify($notification = null) {
+		if (is_object($this->dispatcher)
+				&& method_exists($this->dispatcher, 'notify')) {
+			$args = func_get_args();
 
-    /**
-     * ask
-     *
-     * @return void
-     */
-    public function ask()
-    {
-        $args = func_get_args();
-        
-        call_user_func_array(array($this, 'notify'), $args);
-        
-        $answer = strtolower(trim(fgets(STDIN)));
-        
-        return $answer;
-    }
+			return call_user_func_array(array($this->dispatcher, 'notify'),
+					$args);
+		} else if ($notification !== null) {
+			return $notification;
+		} else {
+			return false;
+		}
+	}
 
-    /**
-     * execute
-     *
-     * Override with each task class
-     *
-     * @return void
-     * @abstract
-     */
-    abstract function execute();
+	/**
+	 * ask
+	 *
+	 * @return void
+	 */
+	public function ask() {
+		$args = func_get_args();
 
-    /**
-     * validate
-     *
-     * Validates that all required fields are present
-     *
-     * @return bool true
-     */
-    public function validate()
-    {
-        $requiredArguments = $this->getRequiredArguments();
-        
-        foreach ($requiredArguments as $arg) {
-            if ( ! isset($this->arguments[$arg])) {
-                return false;
-            }
-        }
-        
-        return true;
-    }
+		call_user_func_array(array($this, 'notify'), $args);
 
-    /**
-     * addArgument
-     *
-     * @param string $name 
-     * @param string $value 
-     * @return void
-     */
-    public function addArgument($name, $value)
-    {
-        $this->arguments[$name] = $value;
-    }
+		$answer = strtolower(trim(fgets(STDIN)));
 
-    /**
-     * getArgument
-     *
-     * @param string $name 
-     * @param string $default 
-     * @return mixed
-     */
-    public function getArgument($name, $default = null)
-    {
-        if (isset($this->arguments[$name]) && $this->arguments[$name] !== null) {
-            return $this->arguments[$name];
-        } else {
-            return $default;
-        }
-    }
+		return $answer;
+	}
 
-    /**
-     * getArguments
-     *
-     * @return array $arguments
-     */
-    public function getArguments()
-    {
-        return $this->arguments;
-    }
+	/**
+	 * execute
+	 *
+	 * Override with each task class
+	 *
+	 * @return void
+	 * @abstract
+	 */
+	abstract function execute();
 
-    /**
-     * setArguments
-     *
-     * @param array $args 
-     * @return void
-     */
-    public function setArguments(array $args)
-    {
-        $this->arguments = $args;
-    }
+	/**
+	 * validate
+	 *
+	 * Validates that all required fields are present
+	 *
+	 * @return bool true
+	 */
+	public function validate() {
+		$requiredArguments = $this->getRequiredArguments();
 
-    /**
-     * Returns TRUE if the specified task name is valid, or FALSE otherwise
-     * 
-     * @param string $taskName
-     * @return bool
-     */
-    protected static function validateTaskName($taskName)
-    {
-        /*
-         * This follows the _apparent_ naming convention.  The key thing is to prevent the use of characters that would
-         * break a command string - we definitely can't allow spaces, for example.
-         */
-        return (bool) preg_match('/^[a-z0-9][a-z0-9\-]*$/', $taskName);
-    }
+		foreach ($requiredArguments as $arg) {
+			if (!isset($this->arguments[$arg])) {
+				return false;
+			}
+		}
 
-    /**
-     * Sets the name of the task, the name that's used to invoke it through a CLI
-     *
-     * @param string $taskName
-     * @throws InvalidArgumentException If the task name is invalid
-     */
-    protected function setTaskName($taskName)
-    {
-        if (! self::validateTaskName($taskName)) {
-            throw new InvalidArgumentException(
-                sprintf('The task name "%s", in %s, is invalid', $taskName, get_class($this))
-            );
-        }
+		return true;
+	}
 
-        $this->taskName = $taskName;
-    }
+	/**
+	 * addArgument
+	 *
+	 * @param string $name 
+	 * @param string $value 
+	 * @return void
+	 */
+	public function addArgument($name, $value) {
+		$this->arguments[$name] = $value;
+	}
 
-    /**
-     * getTaskName
-     *
-     * @return string $taskName
-     */
-    public function getTaskName()
-    {
-        return $this->taskName;
-    }
+	/**
+	 * getArgument
+	 *
+	 * @param string $name 
+	 * @param string $default 
+	 * @return mixed
+	 */
+	public function getArgument($name, $default = null) {
+		if (isset($this->arguments[$name]) && $this->arguments[$name] !== null) {
+			return $this->arguments[$name];
+		} else {
+			return $default;
+		}
+	}
 
-    /**
-     * getDescription
-     *
-     * @return string $description
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
+	/**
+	 * getArguments
+	 *
+	 * @return array $arguments
+	 */
+	public function getArguments() {
+		return $this->arguments;
+	}
 
-    /**
-     * getRequiredArguments
-     *
-     * @return array $requiredArguments
-     */
-    public function getRequiredArguments()
-    {
-        return array_keys($this->requiredArguments);
-    }
+	/**
+	 * setArguments
+	 *
+	 * @param array $args 
+	 * @return void
+	 */
+	public function setArguments(array $args) {
+		$this->arguments = $args;
+	}
 
-    /**
-     * getOptionalArguments
-     *
-     * @return array $optionalArguments
-     */
-    public function getOptionalArguments()
-    {
-        return array_keys($this->optionalArguments);
-    }
+	/**
+	 * Returns TRUE if the specified task name is valid, or FALSE otherwise
+	 * 
+	 * @param string $taskName
+	 * @return bool
+	 */
+	protected static function validateTaskName($taskName) {
+		/*
+		 * This follows the _apparent_ naming convention.  The key thing is to prevent the use of characters that would
+		 * break a command string - we definitely can't allow spaces, for example.
+		 */
+		return (bool) preg_match('/^[a-z0-9][a-z0-9\-]*$/', $taskName);
+	}
 
-    /**
-     * getRequiredArgumentsDescriptions
-     *
-     * @return array $requiredArgumentsDescriptions
-     */
-    public function getRequiredArgumentsDescriptions()
-    {
-        return $this->requiredArguments;
-    }
+	/**
+	 * Sets the name of the task, the name that's used to invoke it through a CLI
+	 *
+	 * @param string $taskName
+	 * @throws InvalidArgumentException If the task name is invalid
+	 */
+	protected function setTaskName($taskName) {
+		if (!self::validateTaskName($taskName)) {
+			throw new InvalidArgumentException(
+					sprintf('The task name "%s", in %s, is invalid', $taskName,
+							get_class($this)));
+		}
 
-    /**
-     * getOptionalArgumentsDescriptions
-     *
-     * @return array $optionalArgumentsDescriptions
-     */
-    public function getOptionalArgumentsDescriptions()
-    {
-        return $this->optionalArguments;
-    }
+		$this->taskName = $taskName;
+	}
+
+	/**
+	 * getTaskName
+	 *
+	 * @return string $taskName
+	 */
+	public function getTaskName() {
+		return $this->taskName;
+	}
+
+	/**
+	 * getDescription
+	 *
+	 * @return string $description
+	 */
+	public function getDescription() {
+		return $this->description;
+	}
+
+	/**
+	 * getRequiredArguments
+	 *
+	 * @return array $requiredArguments
+	 */
+	public function getRequiredArguments() {
+		return array_keys($this->requiredArguments);
+	}
+
+	/**
+	 * getOptionalArguments
+	 *
+	 * @return array $optionalArguments
+	 */
+	public function getOptionalArguments() {
+		return array_keys($this->optionalArguments);
+	}
+
+	/**
+	 * getRequiredArgumentsDescriptions
+	 *
+	 * @return array $requiredArgumentsDescriptions
+	 */
+	public function getRequiredArgumentsDescriptions() {
+		return $this->requiredArguments;
+	}
+
+	/**
+	 * getOptionalArgumentsDescriptions
+	 *
+	 * @return array $optionalArgumentsDescriptions
+	 */
+	public function getOptionalArgumentsDescriptions() {
+		return $this->optionalArguments;
+	}
 }

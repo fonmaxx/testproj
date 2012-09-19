@@ -28,5 +28,5 @@
  * @package phing.types
  */
 interface Parameterizable {
-    function setParameters($parameters);
+	function setParameters($parameters);
 }

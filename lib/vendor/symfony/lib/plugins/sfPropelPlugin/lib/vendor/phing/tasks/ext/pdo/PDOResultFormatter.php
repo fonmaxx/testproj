@@ -28,8 +28,7 @@ require_once 'phing/system/io/PhingFile.php';
  * @package phing.tasks.ext.pdo
  * @since 2.3.0
  */
-abstract class PDOResultFormatter
-{
+abstract class PDOResultFormatter {
 	/**
 	 * Output writer.
 	 *

@@ -33,25 +33,37 @@ class SqlitePlatform extends DefaultPlatform {
 	/**
 	 * Initializes db specific domain mapping.
 	 */
-	protected function initialize()
-	{
+	protected function initialize() {
 		parent::initialize();
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::NUMERIC, "DECIMAL"));
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, "MEDIUMTEXT"));
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::DATE, "DATETIME"));
+		$this
+				->setSchemaDomainMapping(
+						new Domain(PropelTypes::NUMERIC, "DECIMAL"));
+		$this
+				->setSchemaDomainMapping(
+						new Domain(PropelTypes::LONGVARCHAR, "MEDIUMTEXT"));
+		$this
+				->setSchemaDomainMapping(
+						new Domain(PropelTypes::DATE, "DATETIME"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, "BLOB"));
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "MEDIUMBLOB"));
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "LONGBLOB"));
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, "LONGBLOB"));
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, "LONGTEXT"));
+		$this
+				->setSchemaDomainMapping(
+						new Domain(PropelTypes::VARBINARY, "MEDIUMBLOB"));
+		$this
+				->setSchemaDomainMapping(
+						new Domain(PropelTypes::LONGVARBINARY, "LONGBLOB"));
+		$this
+				->setSchemaDomainMapping(
+						new Domain(PropelTypes::BLOB, "LONGBLOB"));
+		$this
+				->setSchemaDomainMapping(
+						new Domain(PropelTypes::CLOB, "LONGTEXT"));
 	}
 
 	/**
 	 * @see        Platform#getAutoIncrement()
 	 * @link       http://www.sqlite.org/autoinc.html
 	 */
-	public function getAutoIncrement()
-	{
+	public function getAutoIncrement() {
 
 		return "PRIMARY KEY";
 	}
@@ -59,8 +71,7 @@ class SqlitePlatform extends DefaultPlatform {
 	/**
 	 * @see        Platform#getMaxColumnNameLength()
 	 */
-	public function getMaxColumnNameLength()
-	{
+	public function getMaxColumnNameLength() {
 		return 1024;
 	}
 
@@ -78,8 +89,7 @@ class SqlitePlatform extends DefaultPlatform {
 	 * @param      string $text
 	 * @return     string
 	 */
-	public function disconnectedEscapeText($text)
-	{
+	public function disconnectedEscapeText($text) {
 		if (function_exists('sqlite_escape_string')) {
 			return sqlite_escape_string($text);
 		} else {
@@ -90,8 +100,7 @@ class SqlitePlatform extends DefaultPlatform {
 	/**
 	 * @see        Platform::quoteIdentifier()
 	 */
-	public function quoteIdentifier($text)
-	{
+	public function quoteIdentifier($text) {
 		return '[' . $text . ']';
 	}
 }

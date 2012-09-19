@@ -16,8 +16,6 @@
  * @author     Fabien Potencier <fabien.potencier@symfony-project.com>
  * @version    SVN: $Id: sfPropelRouteCollection.class.php 12755 2008-11-08 09:48:03Z fabien $
  */
-class sfPropelRouteCollection extends sfObjectRouteCollection
-{
-  protected
-    $routeClass = 'sfPropelRoute';
+class sfPropelRouteCollection extends sfObjectRouteCollection {
+	protected $routeClass = 'sfPropelRoute';
 }

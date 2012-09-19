@@ -51,17 +51,10 @@ abstract class DBAdapter {
 	 * Creole driver to Propel adapter map.
 	 * @var        array
 	 */
-	private static $adapters = array(
-		'mysql' => 'DBMySQL',
-		'mysqli' => 'DBMySQLi',
-		'mssql' => 'DBMSSQL',
-    'dblib' => 'DBMSSQL',
-		'sybase' => 'DBSybase',
-		'oracle' => 'DBOracle',
-		'pgsql' => 'DBPostgres',
-		'sqlite' => 'DBSQLite',
-		'' => 'DBNone',
-	);
+	private static $adapters = array('mysql' => 'DBMySQL',
+			'mysqli' => 'DBMySQLi', 'mssql' => 'DBMSSQL', 'dblib' => 'DBMSSQL',
+			'sybase' => 'DBSybase', 'oracle' => 'DBOracle',
+			'pgsql' => 'DBPostgres', 'sqlite' => 'DBSQLite', '' => 'DBNone',);
 
 	/**
 	 * Creates a new instance of the database adapter associated
@@ -73,12 +66,15 @@ abstract class DBAdapter {
 	 * @throws     PropelException if the adapter could not be instantiated.
 	 */
 	public static function factory($driver) {
-		$adapterClass = isset(self::$adapters[$driver]) ? self::$adapters[$driver] : null;
+		$adapterClass = isset(self::$adapters[$driver]) ? self::$adapters[$driver]
+				: null;
 		if ($adapterClass !== null) {
 			$a = new $adapterClass();
 			return $a;
 		} else {
-			throw new PropelException("Unsupported Propel driver: " . $driver . ": Check your configuration file");
+			throw new PropelException(
+					"Unsupported Propel driver: " . $driver
+							. ": Check your configuration file");
 		}
 	}
 
@@ -95,14 +91,13 @@ abstract class DBAdapter {
 	 * @param      array An array of settings.
 	 * @see        setCharset()
 	 */
-	public function initConnection(PDO $con, array $settings)
-	{
+	public function initConnection(PDO $con, array $settings) {
 		if (isset($settings['charset']['value'])) {
 			$this->setCharset($con, $settings['charset']['value']);
 		}
 		if (isset($settings['queries']) && is_array($settings['queries'])) {
 			foreach ($settings['queries'] as $queries) {
-				foreach ((array)$queries as $query) {
+				foreach ((array) $queries as $query) {
 					$con->exec($query);
 				}
 			}
@@ -119,8 +114,7 @@ abstract class DBAdapter {
 	 * @param      string The charset encoding.
 	 * @see        initConnection()
 	 */
-	public function setCharset(PDO $con, $charset)
-	{
+	public function setCharset(PDO $con, $charset) {
 		$con->exec("SET NAMES '" . $charset . "'");
 	}
 
@@ -139,8 +133,7 @@ abstract class DBAdapter {
 	 *
 	 * @return     string The text delimeter.
 	 */
-	public function getStringDelimiter()
-	{
+	public function getStringDelimiter() {
 		return '\'';
 	}
 
@@ -161,8 +154,7 @@ abstract class DBAdapter {
 	 * @param      string $in The string whose case to ignore.
 	 * @return     string The string in a case that can be ignored.
 	 */
-	public function ignoreCaseInOrderBy($in)
-	{
+	public function ignoreCaseInOrderBy($in) {
 		return $this->ignoreCase($in);
 	}
 
@@ -193,14 +185,12 @@ abstract class DBAdapter {
 	 */
 	public abstract function strLength($s);
 
-
 	/**
 	 * Quotes database objec identifiers (table names, col names, sequences, etc.).
 	 * @param      string $text The identifier to quote.
 	 * @return     string The quoted identifier.
 	 */
-	public function quoteIdentifier($text)
-	{
+	public function quoteIdentifier($text) {
 		return '"' . $text . '"';
 	}
 
@@ -210,15 +200,15 @@ abstract class DBAdapter {
 	 * @return     string The quoted table name
 	 **/
 	public function quoteIdentifierTable($table) {
-		return implode(" ", array_map(array($this, "quoteIdentifier"), explode(" ", $table) ) );
+		return implode(" ",
+				array_map(array($this, "quoteIdentifier"), explode(" ", $table)));
 	}
 
 	/**
 	 * Returns the native ID method for this RDBMS.
 	 * @return     int one of DBAdapter:ID_METHOD_SEQUENCE, DBAdapter::ID_METHOD_AUTOINCREMENT.
 	 */
-	protected function getIdMethod()
-	{
+	protected function getIdMethod() {
 		return DBAdapter::ID_METHOD_AUTOINCREMENT;
 	}
 
@@ -226,8 +216,7 @@ abstract class DBAdapter {
 	 * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
 	 * @return     boolean
 	 */
-	public function isGetIdBeforeInsert()
-	{
+	public function isGetIdBeforeInsert() {
 		return ($this->getIdMethod() === DBAdapter::ID_METHOD_SEQUENCE);
 	}
 
@@ -235,8 +224,7 @@ abstract class DBAdapter {
 	 * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
 	 * @return     boolean
 	 */
-	public function isGetIdAfterInsert()
-	{
+	public function isGetIdAfterInsert() {
 		return ($this->getIdMethod() === DBAdapter::ID_METHOD_AUTOINCREMENT);
 	}
 
@@ -244,8 +232,7 @@ abstract class DBAdapter {
 	 * Gets the generated ID (either last ID for autoincrement or next sequence ID).
 	 * @return     mixed
 	 */
-	public function getId(PDO $con, $name = null)
-	{
+	public function getId(PDO $con, $name = null) {
 		return $con->lastInsertId($name);
 	}
 
@@ -253,8 +240,7 @@ abstract class DBAdapter {
 	 * Returns timestamp formatter string for use in date() function.
 	 * @return     string
 	 */
-	public function getTimestampFormatter()
-	{
+	public function getTimestampFormatter() {
 		return "Y-m-d H:i:s";
 	}
 
@@ -262,8 +248,7 @@ abstract class DBAdapter {
 	 * Returns date formatter string for use in date() function.
 	 * @return     string
 	 */
-	public function getDateFormatter()
-	{
+	public function getDateFormatter() {
 		return "Y-m-d";
 	}
 
@@ -271,8 +256,7 @@ abstract class DBAdapter {
 	 * Returns time formatter string for use in date() function.
 	 * @return     string
 	 */
-	public function getTimeFormatter()
-	{
+	public function getTimeFormatter() {
 		return "H:i:s";
 	}
 
@@ -286,8 +270,7 @@ abstract class DBAdapter {
 	 * @return     boolean
 	 * @deprecated
 	 */
-	public function useQuoteIdentifier()
-	{
+	public function useQuoteIdentifier() {
 		return false;
 	}
 

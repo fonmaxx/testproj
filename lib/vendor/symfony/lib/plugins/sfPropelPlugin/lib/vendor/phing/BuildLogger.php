@@ -43,28 +43,28 @@ interface BuildLogger extends BuildListener {
 	 * 
 	 * Messages below this level are ignored.
 	 *
-     * Constants for the message levels are in Project.php. The order of
-     * the levels, from least to most verbose, is:
-     *   - Project::MSG_ERR
-     *   - Project::MSG_WARN
-     *   - Project::MSG_INFO
-     *   - Project::MSG_VERBOSE
-     *   - Project::MSG_DEBUG
-     *
+	 * Constants for the message levels are in Project.php. The order of
+	 * the levels, from least to most verbose, is:
+	 *   - Project::MSG_ERR
+	 *   - Project::MSG_WARN
+	 *   - Project::MSG_INFO
+	 *   - Project::MSG_VERBOSE
+	 *   - Project::MSG_DEBUG
+	 *
 	 * @param int $level The log level integer (e.g. Project::MSG_VERBOSE, etc.).
 	 */
-    public function setMessageOutputLevel($level);
+	public function setMessageOutputLevel($level);
 
-    /**
-     * Sets the standard output stream to use.
-     * @param OutputStream $output Configured output stream (e.g. STDOUT) for standard output. 
-     */
-    public function setOutputStream(OutputStream $output);
+	/**
+	 * Sets the standard output stream to use.
+	 * @param OutputStream $output Configured output stream (e.g. STDOUT) for standard output. 
+	 */
+	public function setOutputStream(OutputStream $output);
 
-    /**
-     * Sets the output stream to use for errors.
-     * @param OutputStream $err Configured output stream (e.g. STDERR) for errors.
-     */
-    public function setErrorStream(OutputStream $err);
+	/**
+	 * Sets the output stream to use for errors.
+	 * @param OutputStream $err Configured output stream (e.g. STDERR) for errors.
+	 */
+	public function setErrorStream(OutputStream $err);
 
 }

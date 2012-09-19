@@ -29,8 +29,7 @@ require_once 'phing/tasks/ext/pdo/PDOResultFormatter.php';
  * @package phing.tasks.ext.pdo
  * @since 2.3.0
  */
-class PlainPDOResultFormatter extends PDOResultFormatter
-{
+class PlainPDOResultFormatter extends PDOResultFormatter {
 	/**
 	 * Have column headers been printed?
 	 * @var boolean
@@ -90,8 +89,11 @@ class PlainPDOResultFormatter extends PDOResultFormatter
 
 		if (!$this->colsprinted && $this->showheaders) {
 			$first = true;
-			foreach($row as $fieldName => $ignore) {
-				if ($first) $first = false; else $line .= ",";
+			foreach ($row as $fieldName => $ignore) {
+				if ($first)
+					$first = false;
+				else
+					$line .= ",";
 				$line .= $fieldName;
 			}
 
@@ -103,7 +105,7 @@ class PlainPDOResultFormatter extends PDOResultFormatter
 		} // if show headers
 
 		$first = true;
-		foreach($row as $columnValue) {
+		foreach ($row as $columnValue) {
 
 			if ($columnValue != null) {
 				$columnValue = trim($columnValue);
@@ -116,15 +118,14 @@ class PlainPDOResultFormatter extends PDOResultFormatter
 			}
 			$line .= $columnValue;
 		}
-		
+
 		$this->out->write($line);
 		$this->out->write($this->rowdelimiter);
 
 	}
 
-	public function getPreferredOutfile()
-	{
+	public function getPreferredOutfile() {
 		return new PhingFile('results.txt');
 	}
-	
+
 }

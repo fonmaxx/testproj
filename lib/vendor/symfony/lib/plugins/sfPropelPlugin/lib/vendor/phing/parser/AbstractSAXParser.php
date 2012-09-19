@@ -32,85 +32,86 @@
  * @package   phing.parser
  */
 abstract class AbstractSAXParser {
-    
-    /** The AbstractHandler object. */
-    protected $handler;
 
-    /**
-     * Constructs a SAX parser
-     */
-    function __construct() {}
+	/** The AbstractHandler object. */
+	protected $handler;
 
-    /**
-     * Sets options for PHP interal parser. Must be implemented by the parser
-     * class if it should be used.
-     */
-    abstract function parserSetOption($opt, $val);
+	/**
+	 * Constructs a SAX parser
+	 */
+	function __construct() {
+	}
 
-    /**
-     * Sets the current element handler object for this parser. Usually this
-     * is an object using extending "AbstractHandler".
-     *
-     * @param AbstractHandler $obj The handler object.
-     */
-    function setHandler( $obj) {
-        $this->handler = $obj;
-    }
+	/**
+	 * Sets options for PHP interal parser. Must be implemented by the parser
+	 * class if it should be used.
+	 */
+	abstract function parserSetOption($opt, $val);
 
-    /**
-     * Method that gets invoked when the parser runs over a XML start element.
-     *
-     * This method is called by PHP's internal parser functions and registered
-     * in the actual parser implementation.
-     * It gives control to the current active handler object by calling the
-     * <code>startElement()</code> method.
-     * 
-     * @param  object  the php's internal parser handle
-     * @param  string  the open tag name
-     * @param  array   the tag's attributes if any
-     * @throws Exception - Exceptions may be thrown by the Handler
-     */
-    function startElement($parser, $name, $attribs) {
-        $this->handler->startElement($name, $attribs);
-    }
+	/**
+	 * Sets the current element handler object for this parser. Usually this
+	 * is an object using extending "AbstractHandler".
+	 *
+	 * @param AbstractHandler $obj The handler object.
+	 */
+	function setHandler($obj) {
+		$this->handler = $obj;
+	}
 
-    /**
-     * Method that gets invoked when the parser runs over a XML close element.
-     *
-     * This method is called by PHP's internal parser funcitons and registered
-     * in the actual parser implementation.
-     *
-     * It gives control to the current active handler object by calling the
-     * <code>endElement()</code> method.
-     *
-     * @param   object  the php's internal parser handle
-     * @param   string  the closing tag name
-     * @throws Exception - Exceptions may be thrown by the Handler
-     */
-    function endElement($parser, $name) {
-        $this->handler->endElement($name);
-    }
+	/**
+	 * Method that gets invoked when the parser runs over a XML start element.
+	 *
+	 * This method is called by PHP's internal parser functions and registered
+	 * in the actual parser implementation.
+	 * It gives control to the current active handler object by calling the
+	 * <code>startElement()</code> method.
+	 * 
+	 * @param  object  the php's internal parser handle
+	 * @param  string  the open tag name
+	 * @param  array   the tag's attributes if any
+	 * @throws Exception - Exceptions may be thrown by the Handler
+	 */
+	function startElement($parser, $name, $attribs) {
+		$this->handler->startElement($name, $attribs);
+	}
 
-    /**
-     * Method that gets invoked when the parser runs over CDATA.
-     *
-     * This method is called by PHP's internal parser functions and registered
-     * in the actual parser implementation.
-     *
-     * It gives control to the current active handler object by calling the
-     * <code>characters()</code> method. That processes the given CDATA.
-     *
-     * @param resource $parser php's internal parser handle.
-     * @param string $data the CDATA
-     * @throws Exception - Exceptions may be thrown by the Handler
-     */
-    function characters($parser, $data) {
+	/**
+	 * Method that gets invoked when the parser runs over a XML close element.
+	 *
+	 * This method is called by PHP's internal parser funcitons and registered
+	 * in the actual parser implementation.
+	 *
+	 * It gives control to the current active handler object by calling the
+	 * <code>endElement()</code> method.
+	 *
+	 * @param   object  the php's internal parser handle
+	 * @param   string  the closing tag name
+	 * @throws Exception - Exceptions may be thrown by the Handler
+	 */
+	function endElement($parser, $name) {
+		$this->handler->endElement($name);
+	}
+
+	/**
+	 * Method that gets invoked when the parser runs over CDATA.
+	 *
+	 * This method is called by PHP's internal parser functions and registered
+	 * in the actual parser implementation.
+	 *
+	 * It gives control to the current active handler object by calling the
+	 * <code>characters()</code> method. That processes the given CDATA.
+	 *
+	 * @param resource $parser php's internal parser handle.
+	 * @param string $data the CDATA
+	 * @throws Exception - Exceptions may be thrown by the Handler
+	 */
+	function characters($parser, $data) {
 		$this->handler->characters($data);
-    }
+	}
 
-    /**
-     * Entrypoint for parser. This method needs to be implemented by the
-     * child classt that utilizes the concrete parser
-     */
-    abstract function parse();
+	/**
+	 * Entrypoint for parser. This method needs to be implemented by the
+	 * child classt that utilizes the concrete parser
+	 */
+	abstract function parse();
 }

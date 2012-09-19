@@ -30,156 +30,185 @@
  * @version     $Revision: 7490 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Query_Orderby extends Doctrine_Query_Part
-{
-    /**
-     * DQL ORDER BY PARSER
-     * parses the order by part of the query string
-     *
-     * @param string $clause
-     * @return void
-     */
-    public function parse($clause, $append = false)
-    {
-        $terms = $this->_tokenizer->clauseExplode($clause, array(' ', ',', '+', '-', '*', '/', '<', '>', '=', '>=', '<='));
-        $str = '';
+class Doctrine_Query_Orderby extends Doctrine_Query_Part {
+	/**
+	 * DQL ORDER BY PARSER
+	 * parses the order by part of the query string
+	 *
+	 * @param string $clause
+	 * @return void
+	 */
+	public function parse($clause, $append = false) {
+		$terms = $this->_tokenizer
+				->clauseExplode($clause,
+						array(' ', ',', '+', '-', '*', '/', '<', '>', '=',
+								'>=', '<='));
+		$str = '';
 
-        foreach ($terms as $term) {
-            $pos = strpos($term[0], '(');
-            $hasComma = false;
+		foreach ($terms as $term) {
+			$pos = strpos($term[0], '(');
+			$hasComma = false;
 
-            if ($pos !== false) {
-                $name = substr($term[0], 0, $pos);
+			if ($pos !== false) {
+				$name = substr($term[0], 0, $pos);
 
-                $term[0] = $this->query->parseFunctionExpression($term[0], array($this, 'parse'));
-            } else {
-                if (substr($term[0], 0, 1) !== "'" && substr($term[0], -1) !== "'") {
+				$term[0] = $this->query
+						->parseFunctionExpression($term[0],
+								array($this, 'parse'));
+			} else {
+				if (substr($term[0], 0, 1) !== "'"
+						&& substr($term[0], -1) !== "'") {
 
-                    if (strpos($term[0], '.') !== false) {
-                        if ( ! is_numeric($term[0])) {
-                            $e = explode('.', $term[0]);
+					if (strpos($term[0], '.') !== false) {
+						if (!is_numeric($term[0])) {
+							$e = explode('.', $term[0]);
 
-                            $field = array_pop($e);
-                            
-                            // Check if field name still has comma
-                            if (($pos = strpos($field, ',')) !== false) {
-                                $field = substr($field, 0, $pos);
-                                $hasComma = true;
-                            }
+							$field = array_pop($e);
 
-                            // Grab query connection
-                            $conn = $this->query->getConnection();
+							// Check if field name still has comma
+							if (($pos = strpos($field, ',')) !== false) {
+								$field = substr($field, 0, $pos);
+								$hasComma = true;
+							}
 
-                            if ($this->query->getType() === Doctrine_Query::SELECT) {
-                                $componentAlias = implode('.', $e);
+							// Grab query connection
+							$conn = $this->query->getConnection();
 
-                                if (empty($componentAlias)) {
-                                    $componentAlias = $this->query->getRootAlias();
-                                }
+							if ($this->query->getType()
+									=== Doctrine_Query::SELECT) {
+								$componentAlias = implode('.', $e);
 
-                                $this->query->load($componentAlias);
+								if (empty($componentAlias)) {
+									$componentAlias = $this->query
+											->getRootAlias();
+								}
 
-                                // check the existence of the component alias
-                                $queryComponent = $this->query->getQueryComponent($componentAlias);
+								$this->query->load($componentAlias);
 
-                                $table = $queryComponent['table'];
+								// check the existence of the component alias
+								$queryComponent = $this->query
+										->getQueryComponent($componentAlias);
 
-                                $def = $table->getDefinitionOf($field);
+								$table = $queryComponent['table'];
 
-                                // get the actual field name from alias
-                                $field = $table->getColumnName($field);
+								$def = $table->getDefinitionOf($field);
 
-                                // check column existence
-                                if ( ! $def) {
-                                    throw new Doctrine_Query_Exception('Unknown column ' . $field);
-                                }
+								// get the actual field name from alias
+								$field = $table->getColumnName($field);
 
-                                if (isset($def['owner'])) {
-                                    $componentAlias = $componentAlias . '.' . $def['owner'];
-                                }
+								// check column existence
+								if (!$def) {
+									throw new Doctrine_Query_Exception(
+											'Unknown column ' . $field);
+								}
 
-                                $tableAlias = $this->query->getSqlTableAlias($componentAlias);
+								if (isset($def['owner'])) {
+									$componentAlias = $componentAlias . '.'
+											. $def['owner'];
+								}
 
-                                // build sql expression
-                                $term[0] = $conn->quoteIdentifier($tableAlias) . '.' . $conn->quoteIdentifier($field);
-                                
-                                // driver specific modifications
-                                $term[0] = method_exists($conn, 'modifyOrderByColumn') ? $conn->modifyOrderByColumn($table, $field, $term[0]) : $term[0];
-                            } else {
-                                // build sql expression
-                                $field = $this->query->getRoot()->getColumnName($field);
-                                $term[0] = $conn->quoteIdentifier($field);
-                            }
-                        }
-                    } else {
-                        if ( ! empty($term[0]) &&
-                             ! is_numeric($term[0]) &&
-                            $term[0] !== '?' && substr($term[0], 0, 1) !== ':') {
+								$tableAlias = $this->query
+										->getSqlTableAlias($componentAlias);
 
-                            $componentAlias = $this->query->getRootAlias();
+								// build sql expression
+								$term[0] = $conn->quoteIdentifier($tableAlias)
+										. '.' . $conn->quoteIdentifier($field);
 
-                            $found = false;
-                            
-                            // Check if field name still has comma
-                            if (($pos = strpos($term[0], ',')) !== false) {
-                                $term[0] = substr($term[0], 0, $pos);
-                                $hasComma = true;
-                            }
+								// driver specific modifications
+								$term[0] = method_exists($conn,
+										'modifyOrderByColumn') ? $conn
+												->modifyOrderByColumn($table,
+														$field, $term[0])
+										: $term[0];
+							} else {
+								// build sql expression
+								$field = $this->query->getRoot()
+										->getColumnName($field);
+								$term[0] = $conn->quoteIdentifier($field);
+							}
+						}
+					} else {
+						if (!empty($term[0]) && !is_numeric($term[0])
+								&& $term[0] !== '?'
+								&& substr($term[0], 0, 1) !== ':') {
 
-                            if ($componentAlias !== false &&
-                                $componentAlias !== null) {
-                                $queryComponent = $this->query->getQueryComponent($componentAlias);
+							$componentAlias = $this->query->getRootAlias();
 
-                                $table = $queryComponent['table'];
+							$found = false;
 
-                                // check column existence
-                                if ($table->hasField($term[0])) {
-                                    $found = true;
+							// Check if field name still has comma
+							if (($pos = strpos($term[0], ',')) !== false) {
+								$term[0] = substr($term[0], 0, $pos);
+								$hasComma = true;
+							}
 
-                                    $def = $table->getDefinitionOf($term[0]);
+							if ($componentAlias !== false
+									&& $componentAlias !== null) {
+								$queryComponent = $this->query
+										->getQueryComponent($componentAlias);
 
-                                    // get the actual column name from field name
-                                    $field = $table->getColumnName($term[0]);
+								$table = $queryComponent['table'];
 
+								// check column existence
+								if ($table->hasField($term[0])) {
+									$found = true;
 
-                                    if (isset($def['owner'])) {
-                                        $componentAlias = $componentAlias . '.' . $def['owner'];
-                                    }
+									$def = $table->getDefinitionOf($term[0]);
 
-                                    $tableAlias = $this->query->getSqlTableAlias($componentAlias);
-                                    $conn = $this->query->getConnection();
+									// get the actual column name from field name
+									$field = $table->getColumnName($term[0]);
 
-                                    if ($this->query->getType() === Doctrine_Query::SELECT) {
-                                        // build sql expression
-                                        $term[0] = $conn->quoteIdentifier($tableAlias)
-                                                 . '.' . $conn->quoteIdentifier($field);
-                                    } else {
-                                        // build sql expression
-                                        $term[0] = $conn->quoteIdentifier($field);
-                                    }
-                                    
-                                    // driver specific modifications
-                                    $term[0] = method_exists($conn, 'modifyOrderByColumn') ? $conn->modifyOrderByColumn($table, $field, $term[0]) : $term[0];
-                                } else {
-                                    $found = false;
-                                }
-                            }
+									if (isset($def['owner'])) {
+										$componentAlias = $componentAlias . '.'
+												. $def['owner'];
+									}
 
-                            if ( ! $found) {
-                                $tmp = strtoupper(trim($term[0], ', '));
+									$tableAlias = $this->query
+											->getSqlTableAlias($componentAlias);
+									$conn = $this->query->getConnection();
 
-                                if ($tmp !== 'DESC' && $tmp !== 'ASC') {
-                                    $term[0] = $this->query->getSqlAggregateAlias($term[0]);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+									if ($this->query->getType()
+											=== Doctrine_Query::SELECT) {
+										// build sql expression
+										$term[0] = $conn
+												->quoteIdentifier($tableAlias)
+												. '.'
+												. $conn
+														->quoteIdentifier(
+																$field);
+									} else {
+										// build sql expression
+										$term[0] = $conn
+												->quoteIdentifier($field);
+									}
 
-            $str .= $term[0] . ($hasComma ? ',' : '') . $term[1];
-        }
+									// driver specific modifications
+									$term[0] = method_exists($conn,
+											'modifyOrderByColumn') ? $conn
+													->modifyOrderByColumn(
+															$table, $field,
+															$term[0]) : $term[0];
+								} else {
+									$found = false;
+								}
+							}
 
-        return $str;
-    }
+							if (!$found) {
+								$tmp = strtoupper(trim($term[0], ', '));
+
+								if ($tmp !== 'DESC' && $tmp !== 'ASC') {
+									$term[0] = $this->query
+											->getSqlAggregateAlias($term[0]);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			$str .= $term[0] . ($hasComma ? ',' : '') . $term[1];
+		}
+
+		return $str;
+	}
 }

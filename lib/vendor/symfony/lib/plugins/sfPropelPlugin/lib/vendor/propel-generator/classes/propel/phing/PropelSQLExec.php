@@ -111,8 +111,7 @@ class PropelSQLExec extends Task {
 	 *
 	 * @param      sqldbmap filename for the sqldbmap
 	 */
-	public function setSqlDbMap($sqldbmap)
-	{
+	public function setSqlDbMap($sqldbmap) {
 		$this->sqldbmap = $this->project->resolveFile($sqldbmap);
 	}
 
@@ -121,8 +120,7 @@ class PropelSQLExec extends Task {
 	 *
 	 * @return     filename for the sqldbmap
 	 */
-	public function getSqlDbMap()
-	{
+	public function getSqlDbMap() {
 		return $this->sqldbmap;
 	}
 
@@ -131,8 +129,7 @@ class PropelSQLExec extends Task {
 	 *
 	 * @param      PhingFile $srcDir sql source directory
 	 */
-	public function setSrcDir(PhingFile $srcDir)
-	{
+	public function setSrcDir(PhingFile $srcDir) {
 		$this->srcDir = $srcDir;
 	}
 
@@ -141,8 +138,7 @@ class PropelSQLExec extends Task {
 	 *
 	 * @return     PhingFile SQL Source directory
 	 */
-	public function getSrcDir()
-	{
+	public function getSrcDir() {
 		return $this->srcDir;
 	}
 
@@ -151,8 +147,7 @@ class PropelSQLExec extends Task {
 	 *
 	 * @param      sql sql command to execute
 	 */
-	public function addText($sql)
-	{
+	public function addText($sql) {
 		$this->sqlCommand .= $sql;
 	}
 
@@ -161,8 +156,7 @@ class PropelSQLExec extends Task {
 	 *
 	 * @param      string $url connection url
 	 */
-	public function setUrl($url)
-	{
+	public function setUrl($url) {
 		$this->url = $url;
 	}
 
@@ -172,8 +166,7 @@ class PropelSQLExec extends Task {
 	 * @param      string $userId database user
 	 * @deprecated Specify userid in the DSN URL.
 	 */
-	public function setUserid($userId)
-	{
+	public function setUserid($userId) {
 		$this->userId = $userId;
 	}
 
@@ -183,8 +176,7 @@ class PropelSQLExec extends Task {
 	 * @param      string $password database password
 	 * @deprecated Specify password in the DSN URL.
 	 */
-	public function setPassword($password)
-	{
+	public function setPassword($password) {
 		$this->password = $password;
 	}
 
@@ -193,8 +185,7 @@ class PropelSQLExec extends Task {
 	 *
 	 * @param      boolean $autocommit the autocommit flag
 	 */
-	public function setAutoCommit($autocommit)
-	{
+	public function setAutoCommit($autocommit) {
 		$this->autocommit = (boolean) $autocommit;
 	}
 
@@ -206,8 +197,7 @@ class PropelSQLExec extends Task {
 	 *
 	 * @param      string $delimiter
 	 */
-	public function setDelimiter($delimiter)
-	{
+	public function setDelimiter($delimiter) {
 		$this->delimiter = $delimiter;
 	}
 
@@ -219,8 +209,7 @@ class PropelSQLExec extends Task {
 	 *
 	 * @param      string $delimiterType
 	 */
-	public function setDelimiterType($delimiterType)
-	{
+	public function setDelimiterType($delimiterType) {
 		$this->delimiterType = $delimiterType;
 	}
 
@@ -229,8 +218,7 @@ class PropelSQLExec extends Task {
 	 *
 	 * @param      boolean $print
 	 */
-	public function setPrint($print)
-	{
+	public function setPrint($print) {
 		$this->print = (boolean) $print;
 	}
 
@@ -239,8 +227,7 @@ class PropelSQLExec extends Task {
 	 *
 	 * @param      boolean $showheaders
 	 */
-	public function setShowheaders($showheaders)
-	{
+	public function setShowheaders($showheaders) {
 		$this->showheaders = (boolean) $showheaders;
 	}
 
@@ -249,8 +236,7 @@ class PropelSQLExec extends Task {
 	 *
 	 * @param      PhingFile $output
 	 */
-	public function setOutput(PhingFile $output)
-	{
+	public function setOutput(PhingFile $output) {
 		$this->output = $output;
 	}
 
@@ -259,8 +245,7 @@ class PropelSQLExec extends Task {
 	 *
 	 * @param      string $action
 	 */
-	public function setOnerror($action)
-	{
+	public function setOnerror($action) {
 		$this->onError = $action;
 	}
 
@@ -269,13 +254,15 @@ class PropelSQLExec extends Task {
 	 *
 	 * @throws     BuildException
 	 */
-	public function main()
-	{
+	public function main() {
 		$this->sqlCommand = trim($this->sqlCommand);
 
-		if ($this->sqldbmap === null || $this->getSqlDbMap()->exists() === false) {
-			throw new BuildException("You haven't provided an sqldbmap, or "
-					. "the one you specified doesn't exist: " . $this->sqldbmap->getPath());
+		if ($this->sqldbmap === null
+				|| $this->getSqlDbMap()->exists() === false) {
+			throw new BuildException(
+					"You haven't provided an sqldbmap, or "
+							. "the one you specified doesn't exist: "
+							. $this->sqldbmap->getPath());
 		}
 
 		if ($this->url === null) {
@@ -298,7 +285,7 @@ class PropelSQLExec extends Task {
 
 			// Q: already there?
 			if (!isset($databases[$database])) {
-			// A: No.
+				// A: No.
 				$databases[$database] = array();
 			}
 
@@ -320,13 +307,18 @@ class PropelSQLExec extends Task {
 				$file = new PhingFile($this->srcDir, $fileName);
 
 				if ($file->exists()) {
-					$this->log("Executing statements in file: " . $file->__toString());
+					$this
+							->log(
+									"Executing statements in file: "
+											. $file->__toString());
 					$transaction = new PropelSQLExecTransaction($this);
 					$transaction->setSrc($file);
 					$transactions[] = $transaction;
 				} else {
-					$this->log("File '" . $file->__toString()
-							. "' in sqldbmap does not exist, so skipping it.");
+					$this
+							->log(
+									"File '" . $file->__toString()
+											. "' in sqldbmap does not exist, so skipping it.");
 				}
 			}
 			$this->insertDatabaseSqlFiles($this->url, $db, $transactions);
@@ -341,27 +333,31 @@ class PropelSQLExec extends Task {
 	 * @param      string $database
 	 * @param      array $transactions
 	 */
-	private function insertDatabaseSqlFiles($url, $database, $transactions)
-	{
+	private function insertDatabaseSqlFiles($url, $database, $transactions) {
 		$url = str_replace("@DB@", $database, $url);
 		$this->log("Our new url -> " . $url);
 
 		try {
 
-			$buf = "Database settings:" . PHP_EOL
-			. " URL: " . $url . PHP_EOL
-			. ($this->userId ? " user: " . $this->userId . PHP_EOL : "")
-			. ($this->password ? " password: " . $this->password . PHP_EOL : "");
+			$buf = "Database settings:" . PHP_EOL . " URL: " . $url . PHP_EOL
+					. ($this->userId ? " user: " . $this->userId . PHP_EOL : "")
+					. ($this->password ? " password: " . $this->password
+									. PHP_EOL : "");
 
 			$this->log($buf, Project::MSG_VERBOSE);
 
 			// Set user + password to null if they are empty strings
-			if (!$this->userId) { $this->userId = null; }
+			if (!$this->userId) {
+				$this->userId = null;
+			}
 
-			if (!$this->password) { $this->password = null; }
+			if (!$this->password) {
+				$this->password = null;
+			}
 
 			$this->conn = new PDO($url, $this->userId, $this->password);
-			$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$this->conn
+					->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 			// $this->conn->setAutoCommit($this->autocommit);
 			// $this->statement = $this->conn->createStatement();
@@ -370,25 +366,33 @@ class PropelSQLExec extends Task {
 
 			try {
 				if ($this->output !== null) {
-					$this->log("Opening PrintStream to output file " . $this->output->__toString(), Project::MSG_VERBOSE);
+					$this
+							->log(
+									"Opening PrintStream to output file "
+											. $this->output->__toString(),
+									Project::MSG_VERBOSE);
 					$out = new FileWriter($this->output);
 				}
 
 				// Process all transactions
-				for ($i=0,$size=count($transactions); $i < $size; $i++) {
+				for ($i = 0, $size = count($transactions); $i < $size; $i++) {
 					$transactions[$i]->runTransaction($out);
 					if (!$this->autocommit) {
-						$this->log("Commiting transaction", Project::MSG_VERBOSE);
+						$this
+								->log("Commiting transaction",
+										Project::MSG_VERBOSE);
 						$this->conn->commit();
 					}
 				}
 			} catch (Exception $e) {
-				if ($out) $out->close();
+				if ($out)
+					$out->close();
 			}
 
 		} catch (IOException $e) {
 
-			if (!$this->autocommit && $this->conn !== null && $this->onError == "abort") {
+			if (!$this->autocommit && $this->conn !== null
+					&& $this->onError == "abort") {
 				try {
 					$this->conn->rollBack();
 				} catch (PDOException $ex) {
@@ -396,10 +400,13 @@ class PropelSQLExec extends Task {
 					System::println("Rollback failed.");
 				}
 			}
-			if ($this->statement) $this->statement = null; // close
+			if ($this->statement)
+				$this->statement = null;
+			// close
 			throw new BuildException($e);
 		} catch (PDOException $e) {
-			if (!$this->autocommit && $this->conn !== null && $this->onError == "abort") {
+			if (!$this->autocommit && $this->conn !== null
+					&& $this->onError == "abort") {
 				try {
 					$this->conn->rollBack();
 				} catch (PDOException $ex) {
@@ -407,14 +414,18 @@ class PropelSQLExec extends Task {
 					System::println("Rollback failed");
 				}
 			}
-			if ($this->statement) $this->statement = null; // close
+			if ($this->statement)
+				$this->statement = null;
+			// close
 			throw new BuildException($e);
 		}
 
-		   $this->statement = null; // close
+		$this->statement = null; // close
 
-		$this->log($this->goodSql . " of " . $this->totalSql
-				. " SQL statements executed successfully");
+		$this
+				->log(
+						$this->goodSql . " of " . $this->totalSql
+								. " SQL statements executed successfully");
 	}
 
 	/**
@@ -429,8 +440,7 @@ class PropelSQLExec extends Task {
 	 * @throws     PDOException
 	 * @throws     IOException
 	 */
-	public function runStatements(Reader $reader, $out = null)
-	{
+	public function runStatements(Reader $reader, $out = null) {
 		$sql = "";
 		$line = "";
 		$sqlBacklog = "";
@@ -449,16 +459,16 @@ class PropelSQLExec extends Task {
 		while (($line = $in->readLine()) !== null) {
 
 			$line = trim($line);
-			$line = ProjectConfigurator::replaceProperties($this->project, $line,
-			$this->project->getProperties());
+			$line = ProjectConfigurator::replaceProperties($this->project,
+					$line, $this->project->getProperties());
 
 			if (StringHelper::startsWith("//", $line)
-				|| StringHelper::startsWith("--", $line)
-		 		|| StringHelper::startsWith("#", $line)) {
+					|| StringHelper::startsWith("--", $line)
+					|| StringHelper::startsWith("#", $line)) {
 				continue;
 			}
 
-			if (strlen($line) > 4 && strtoupper(substr($line,0, 4)) == "REM ") {
+			if (strlen($line) > 4 && strtoupper(substr($line, 0, 4)) == "REM ") {
 				continue;
 			}
 
@@ -490,38 +500,52 @@ class PropelSQLExec extends Task {
 
 					$char = $sql[$i];
 
-					switch($char) {
-						case "\\":
-							$parser['backslashCount']++;
-							$this->log("c$i: found ".$parser['backslashCount']." backslash(es)", Project::MSG_VERBOSE);
-							break;
-						case "'":
-						case "\"":
-							if ($parser['isInString'] && $parser['stringQuotes'] == $char) {
-								if (($parser['backslashCount'] & 1) == 0) {
-									#$this->log("$i: out of string", Project::MSG_VERBOSE);
-									$parser['isInString'] = false;
-								} else {
-									$this->log("c$i: rejected quoted delimiter", Project::MSG_VERBOSE);
-								}
-
-							} elseif (!$parser['isInString']) {
-								$parser['stringQuotes']	= $char;
-								$parser['isInString'] = true;
-								#$this->log("$i: into string with $parser['stringQuotes']", Project::MSG_VERBOSE);
+					switch ($char) {
+					case "\\":
+						$parser['backslashCount']++;
+						$this
+								->log(
+										"c$i: found "
+												. $parser['backslashCount']
+												. " backslash(es)",
+										Project::MSG_VERBOSE);
+						break;
+					case "'":
+					case "\"":
+						if ($parser['isInString']
+								&& $parser['stringQuotes'] == $char) {
+							if (($parser['backslashCount'] & 1) == 0) {
+								#$this->log("$i: out of string", Project::MSG_VERBOSE);
+								$parser['isInString'] = false;
+							} else {
+								$this
+										->log(
+												"c$i: rejected quoted delimiter",
+												Project::MSG_VERBOSE);
 							}
-							break;
+
+						} elseif (!$parser['isInString']) {
+							$parser['stringQuotes'] = $char;
+							$parser['isInString'] = true;
+							#$this->log("$i: into string with $parser['stringQuotes']", Project::MSG_VERBOSE);
+						}
+						break;
 					}
 
 					if ($char == $this->delimiter && !$parser['isInString']) {
-						$this->log("c$i: valid end of command found!", Project::MSG_VERBOSE);
+						$this
+								->log("c$i: valid end of command found!",
+										Project::MSG_VERBOSE);
 						$sqlParts[] = $parser['parsedString'];
 						$sqlParts[] = $this->delimiter;
 						break;
 					}
 					$parser['parsedString'] .= $char;
 					if ($char !== "\\") {
-						if ($parser['backslashCount']) $this->log("$i: backslash reset", Project::MSG_VERBOSE);
+						if ($parser['backslashCount'])
+							$this
+									->log("$i: backslash reset",
+											Project::MSG_VERBOSE);
 						$parser['backslashCount'] = 0;
 					}
 					$i++;
@@ -542,9 +566,12 @@ class PropelSQLExec extends Task {
 				}
 			}
 
-			if ($hasQuery || ($this->delimiterType == self::DELIM_ROW && $line == $this->delimiter)) {
+			if ($hasQuery
+					|| ($this->delimiterType == self::DELIM_ROW
+							&& $line == $this->delimiter)) {
 				// this assumes there is always a delimter on the end of the SQL statement.
-				$sql = StringHelper::substring($sql, 0, strlen($sql) - 1 - strlen($this->delimiter));
+				$sql = StringHelper::substring($sql, 0,
+						strlen($sql) - 1 - strlen($this->delimiter));
 				$this->log("SQL: " . $sql, Project::MSG_VERBOSE);
 				$this->execSQL($sql, $out);
 				$sql = "";
@@ -572,8 +599,7 @@ class PropelSQLExec extends Task {
 	 * @param      out
 	 * @throws     PDOException
 	 */
-	protected function execSQL($sql, $out = null)
-	{
+	protected function execSQL($sql, $out = null) {
 		// Check and ignore empty statements
 		if (trim($sql) == "") {
 			return;
@@ -582,13 +608,17 @@ class PropelSQLExec extends Task {
 		try {
 			$this->totalSql++;
 
-			if (!$this->autocommit) $this->conn->beginTransaction();
+			if (!$this->autocommit)
+				$this->conn->beginTransaction();
 
 			$stmt = $this->conn->prepare($sql);
 			$stmt->execute();
-			$this->log($stmt->rowCount() . " rows affected", Project::MSG_VERBOSE);
+			$this
+					->log($stmt->rowCount() . " rows affected",
+							Project::MSG_VERBOSE);
 
-			if (!$this->autocommit) $this->conn->commit();
+			if (!$this->autocommit)
+				$this->conn->commit();
 
 			$this->goodSql++;
 		} catch (PDOException $e) {
@@ -606,8 +636,7 @@ class PropelSQLExec extends Task {
 	 * @param      out
 	 * @throws     PDOException
 	 */
-	protected function printResults($out = null)
-	{
+	protected function printResults($out = null) {
 		$rs = null;
 
 		do {
@@ -626,7 +655,10 @@ class PropelSQLExec extends Task {
 					if (!$colsprinted && $this->showheaders) {
 						$first = true;
 						foreach ($this->fields as $fieldName => $ignore) {
-							if ($first) $first = false; else $line .= ",";
+							if ($first)
+								$first = false;
+							else
+								$line .= ",";
 							$line .= $fieldName;
 						}
 					} // if show headers
@@ -657,7 +689,8 @@ class PropelSQLExec extends Task {
 			}
 		} while ($this->statement->getMoreResults());
 		System::println();
-		if ($out !== null) $out->newLine();
+		if ($out !== null)
+			$out->newLine();
 	}
 
 }
@@ -675,34 +708,34 @@ class PropelSQLExecTransaction {
 	private $tSqlCommand = "";
 	private $parent;
 
-	function __construct($parent)
-	{
+	function __construct($parent) {
 		// Parent is required so that we can log things ...
 		$this->parent = $parent;
 	}
 
-	public function setSrc(PhingFile $src)
-	{
+	public function setSrc(PhingFile $src) {
 		$this->tSrcFile = $src;
 	}
 
-	public function addText($sql)
-	{
+	public function addText($sql) {
 		$this->tSqlCommand .= $sql;
 	}
 
 	/**
 	 * @throws     IOException, PDOException
 	 */
-	public function runTransaction($out = null)
-	{
+	public function runTransaction($out = null) {
 		if (!empty($this->tSqlCommand)) {
 			$this->parent->log("Executing commands", Project::MSG_INFO);
 			$this->parent->runStatements($this->tSqlCommand, $out);
 		}
 
 		if ($this->tSrcFile !== null) {
-			$this->parent->log("Executing file: " . $this->tSrcFile->getAbsolutePath(), Project::MSG_INFO);
+			$this->parent
+					->log(
+							"Executing file: "
+									. $this->tSrcFile->getAbsolutePath(),
+							Project::MSG_INFO);
 			$reader = new FileReader($this->tSrcFile);
 			$this->parent->runStatements($reader, $out);
 			$reader->close();

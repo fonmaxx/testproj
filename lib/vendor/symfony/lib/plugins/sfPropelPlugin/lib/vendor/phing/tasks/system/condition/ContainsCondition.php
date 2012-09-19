@@ -19,7 +19,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>.
  */
- 
+
 require_once 'phing/tasks/system/condition/Condition.php';
 
 /**
@@ -32,45 +32,46 @@ require_once 'phing/tasks/system/condition/Condition.php';
  */
 class ContainsCondition implements Condition {
 
-    private $string;
-    private $subString;
-    private $caseSensitive = true;
+	private $string;
+	private $subString;
+	private $caseSensitive = true;
 
-    /**
-     * The string to search in.
-     * @param string $a1
-     */
-    public function setString($a1) {
-        $this->string = $a1;
-    }
+	/**
+	 * The string to search in.
+	 * @param string $a1
+	 */
+	public function setString($a1) {
+		$this->string = $a1;
+	}
 
-    /**
-     * The string to search for.
-     * @param string $a2
-     */
-    public function setSubstring($a2) {
-        $this->subString = $a2;
-    }
+	/**
+	 * The string to search for.
+	 * @param string $a2
+	 */
+	public function setSubstring($a2) {
+		$this->subString = $a2;
+	}
 
-    /**
-     * Whether to search ignoring case or not.
-     */
-    public function setCaseSensitive($b) {
-        $this->caseSensitive = (boolean) $b;
-    }
+	/**
+	 * Whether to search ignoring case or not.
+	 */
+	public function setCaseSensitive($b) {
+		$this->caseSensitive = (boolean) $b;
+	}
 
-    /** 
-     * Check whether string contains substring.
-     * @throws BuildException
-     */
-    public function evaluate()  {
-        if ($this->string === null || $this->subString === null) {
-            throw new BuildException("both string and substring are required "
-                                     . "in contains");
-        }
+	/** 
+	 * Check whether string contains substring.
+	 * @throws BuildException
+	 */
+	public function evaluate() {
+		if ($this->string === null || $this->subString === null) {
+			throw new BuildException(
+					"both string and substring are required " . "in contains");
+		}
 
-        return $this->caseSensitive 
-            ? strpos($this->string, $this->subString) !== false
-            : strpos(strtolower($this->string), strtolower($this->subString)) !== false;
-    }
+		return $this->caseSensitive ? strpos($this->string, $this->subString)
+						!== false
+				: strpos(strtolower($this->string),
+						strtolower($this->subString)) !== false;
+	}
 }

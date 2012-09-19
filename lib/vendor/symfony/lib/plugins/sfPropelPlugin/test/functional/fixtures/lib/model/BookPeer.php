@@ -7,6 +7,5 @@
  *
  * @package lib.model
  */ 
-class BookPeer extends BaseBookPeer
-{
+class BookPeer extends BaseBookPeer {
 }

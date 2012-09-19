@@ -30,30 +30,25 @@
  * @link        www.doctrine-project.org
  * @since       1.0
  */
-class Doctrine_Search_Listener extends Doctrine_Record_Listener 
-{
-    protected $_search;
+class Doctrine_Search_Listener extends Doctrine_Record_Listener {
+	protected $_search;
 
-    public function __construct(Doctrine_Search $search)
-    {
-        $this->_search = $search;
-    }
+	public function __construct(Doctrine_Search $search) {
+		$this->_search = $search;
+	}
 
-    public function preUpdate(Doctrine_Event $event)
-    {
-    }
+	public function preUpdate(Doctrine_Event $event) {
+	}
 
-    public function postUpdate(Doctrine_Event $event)
-    {
-        $record = $event->getInvoker(); 
+	public function postUpdate(Doctrine_Event $event) {
+		$record = $event->getInvoker();
 
-        $this->_search->updateIndex($record->toArray()); 
-    }
+		$this->_search->updateIndex($record->toArray());
+	}
 
-    public function postInsert(Doctrine_Event $event)
-    {
-        $record = $event->getInvoker();
-        
-        $this->_search->updateIndex($record->toArray());
-    }
+	public function postInsert(Doctrine_Event $event) {
+		$record = $event->getInvoker();
+
+		$this->_search->updateIndex($record->toArray());
+	}
 }

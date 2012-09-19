@@ -31,58 +31,56 @@
  * @since       1.0
  * @version     $Revision: 7490 $
  */
-class Doctrine_Relation_LocalKey extends Doctrine_Relation
-{
-    /**
-     * fetchRelatedFor
-     *
-     * fetches a component related to given record
-     *
-     * @param Doctrine_Record $record
-     * @return Doctrine_Record|Doctrine_Collection
-     */
-    public function fetchRelatedFor(Doctrine_Record $record)
-    {
-        $localFieldName = $record->getTable()->getFieldName($this->definition['local']);
-        $id = $record->get($localFieldName);
+class Doctrine_Relation_LocalKey extends Doctrine_Relation {
+	/**
+	 * fetchRelatedFor
+	 *
+	 * fetches a component related to given record
+	 *
+	 * @param Doctrine_Record $record
+	 * @return Doctrine_Record|Doctrine_Collection
+	 */
+	public function fetchRelatedFor(Doctrine_Record $record) {
+		$localFieldName = $record->getTable()
+				->getFieldName($this->definition['local']);
+		$id = $record->get($localFieldName);
 
-        if (is_null($id) || ! $this->definition['table']->getAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES)) {
-            $related = $this->getTable()->create();
+		if (is_null($id)
+				|| !$this->definition['table']
+						->getAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES)) {
+			$related = $this->getTable()->create();
 
-            // Ticket #1131 Patch.            
-            if ( ! is_null($id)) {
-                $related->assignIdentifier($id);
-                $related->state(Doctrine_Record::STATE_PROXY);
-            }
-        } else {
-            $dql  = 'FROM ' . $this->getTable()->getComponentName()
-                 . ' WHERE ' . $this->getCondition() . $this->getOrderBy(null, false);
+			// Ticket #1131 Patch.            
+			if (!is_null($id)) {
+				$related->assignIdentifier($id);
+				$related->state(Doctrine_Record::STATE_PROXY);
+			}
+		} else {
+			$dql = 'FROM ' . $this->getTable()->getComponentName() . ' WHERE '
+					. $this->getCondition() . $this->getOrderBy(null, false);
 
-            $related = $this->getTable()
-                            ->getConnection()
-                            ->query($dql, array($id))
-                            ->getFirst();
-            
-            if ( ! $related || empty($related)) {
-                $related = $this->getTable()->create();
-            }
-        }
+			$related = $this->getTable()->getConnection()
+					->query($dql, array($id))->getFirst();
 
-        $record->set($localFieldName, $id, false);
+			if (!$related || empty($related)) {
+				$related = $this->getTable()->create();
+			}
+		}
 
-        return $related;
-    }
+		$record->set($localFieldName, $id, false);
 
-    /**
-     * getCondition
-     *
-     * @param string $alias
-     */
-    public function getCondition($alias = null)
-    {
-        if ( ! $alias) {
-           $alias = $this->getTable()->getComponentName();
-        }
-        return $alias . '.' . $this->definition['foreign'] . ' = ?';
-    }
+		return $related;
+	}
+
+	/**
+	 * getCondition
+	 *
+	 * @param string $alias
+	 */
+	public function getCondition($alias = null) {
+		if (!$alias) {
+			$alias = $this->getTable()->getComponentName();
+		}
+		return $alias . '.' . $this->definition['foreign'] . ' = ?';
+	}
 }

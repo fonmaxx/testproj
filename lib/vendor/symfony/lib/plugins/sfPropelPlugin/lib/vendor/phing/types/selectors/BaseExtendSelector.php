@@ -19,7 +19,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>.
  */
- 
+
 require_once 'phing/types/selectors/ExtendFileSelector.php';
 require_once 'phing/types/selectors/BaseSelector.php';
 include_once 'phing/types/Parameter.php';
@@ -34,29 +34,30 @@ include_once 'phing/types/Parameter.php';
  * @author Bruce Atherton, bruce@callenish.com (Ant)
  * @package phing.types.selectors
  */
-abstract class BaseExtendSelector extends BaseSelector implements ExtendFileSelector {
+abstract class BaseExtendSelector extends BaseSelector implements
+		ExtendFileSelector {
 
-    /** The passed in parameter array. */
-    protected $parameters = null;
+	/** The passed in parameter array. */
+	protected $parameters = null;
 
-    /**
-     * Set all the Parameters for this custom selector, collected by
-     * the ExtendSelector class.
-     *
-     * @param parameters the complete set of parameters for this selector
-     */
-    public function setParameters($parameters) {
-        $this->parameters = $parameters;
-    }
+	/**
+	 * Set all the Parameters for this custom selector, collected by
+	 * the ExtendSelector class.
+	 *
+	 * @param parameters the complete set of parameters for this selector
+	 */
+	public function setParameters($parameters) {
+		$this->parameters = $parameters;
+	}
 
-    /**
-     * Allows access to the parameters gathered and set within the
-     * &lt;custom&gt; tag.
-     *
-     * @return the set of parameters defined for this selector
-     */
-    protected function getParameters() {
-        return $this->parameters;
-    }
+	/**
+	 * Allows access to the parameters gathered and set within the
+	 * &lt;custom&gt; tag.
+	 *
+	 * @return the set of parameters defined for this selector
+	 */
+	protected function getParameters() {
+		return $this->parameters;
+	}
 }
 

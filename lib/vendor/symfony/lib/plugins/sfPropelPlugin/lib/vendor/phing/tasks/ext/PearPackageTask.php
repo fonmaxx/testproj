@@ -77,251 +77,271 @@ include_once 'phing/types/FileSet.php';
  * @version  $Revision: 1.9 $
  */
 class PearPackageTask extends MatchingTask {
-    
-    /** */        
-    protected $package;
 
-    /** Base directory for reading files. */
-    protected $dir;
-    
-    /** Package file */
-    private $packageFile;
-    
-    /** @var array FileSet[] */
-    private $filesets = array();
-    
-    /** @var PEAR_PackageFileManager */
-    protected $pkg;
-    
-    private $preparedOptions = array();
-    
-    /** @var array PearPkgOption[] */
-    protected $options = array();
-    
-    /** Nested <mapping> (complex options) types. */
-    protected $mappings = array();
-    
-    public function init() {
-        include_once 'PEAR/PackageFileManager.php';
-        if (!class_exists('PEAR_PackageFileManager')) {
-            throw new BuildException("You must have installed PEAR_PackageFileManager in order to create a PEAR package.xml file.");
-        }
-    }
-    
-    /**
-     * Sets PEAR package.xml options, based on class properties.
-     * @return void
-     */
-    protected function setOptions() {
-    
-        // 1) first prepare/populate options        
-        $this->populateOptions();
+	/** */ 
+	protected $package;
 
-        // 2) make any final adjustments (this could move into populateOptions() also)
-        
-        // default PEAR basedir would be the name of the package (e.g."phing")
-        if (!isset($this->preparedOptions['baseinstalldir'])) {
-            $this->preparedOptions['baseinstalldir'] = $this->package;
-        }
-        
-        // unless filelistgenerator has been overridden, we use Phing FileSet generator
-        if (!isset($this->preparedOptions['filelistgenerator'])) {
-            if (empty($this->filesets)) {
-                throw new BuildException("You must use a <fileset> tag to specify the files to include in the package.xml");
-            }
-            $this->preparedOptions['filelistgenerator'] = 'Fileset';
-            $this->preparedOptions['usergeneratordir'] = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'pearpackage';
-            // Some PHING-specific options needed by our Fileset reader
-            $this->preparedOptions['phing_project'] = $this->project;
-            $this->preparedOptions['phing_filesets'] = $this->filesets;
-        } elseif ($this->preparedOptions['filelistgeneragor'] != 'Fileset' && !empty($this->filesets)) {
-            throw new BuildException("You cannot use <fileset> element if you have specified the \"filelistgenerator\" option.");
-        }                
-        
-        // 3) Set the options
-                
-        // No need for excessive validation here, since the  PEAR class will do its own 
-        // validation & return errors
-        $e = $this->pkg->setOptions($this->preparedOptions);
-            
-        if (PEAR::isError($e)) {
-            throw new BuildException("Unable to set options.", new Exception($e->getMessage()));
-        }
-    }
-    
-    /**
-     * Fixes the boolean in optional dependencies
-     */
-    private function fixDeps($deps)
-    {
-        foreach (array_keys($deps) as $dep)
-        {
-            if (isset($deps[$dep]['optional']) && $deps[$dep]['optional'])
-            {
-                $deps[$dep]['optional'] = "yes";
-            }
-        }
-        
-        return $deps;
-    }
-    
-    /**
-     * Adds the options that are set via attributes and the nested tags to the options array.
-     */
-    private function populateOptions() {
-        
-        // These values could be overridden if explicitly defined using nested tags    
-        $this->preparedOptions['package'] = $this->package;
-        $this->preparedOptions['packagedirectory'] = $this->dir->getAbsolutePath();
-        
-        if ($this->packageFile !== null) {
-            // create one w/ full path
-            $f = new PhingFile($this->packageFile->getAbsolutePath());
-            $this->preparedOptions['packagefile'] = $f->getName();
-            // must end in trailing slash
-            $this->preparedOptions['outputdirectory'] = $f->getParent() . DIRECTORY_SEPARATOR;
-            $this->log("Creating package file: " . $f->__toString(), Project::MSG_INFO);
-        } else {
-            $this->log("Creating [default] package.xml file in base directory.", Project::MSG_INFO);
-        }
-        
-        // converts option objects and mapping objects into 
-        // key => value options that can be passed to PEAR_PackageFileManager
-        
-        foreach($this->options as $opt) {
-            $this->preparedOptions[ $opt->getName() ] = $opt->getValue(); //no arrays yet. preg_split('/\s*,\s*/', $opt->getValue());
-        }
-        
-        foreach($this->mappings as $map) {
-            $value = $map->getValue(); // getValue returns complex value
-            
-            if ($map->getName() == 'deps')
-            {
-                $value = $this->fixDeps($value);
-            }
-            
-            $this->preparedOptions[ $map->getName() ] = $value;
-        }
-    }
-    
-    /**
-     * Main entry point.
-     * @return void
-     */
-    public function main() {        
-        
-        if ($this->dir === null) {
-            throw new BuildException("You must specify the \"dir\" attribute for PEAR package task.");
-        }
-        
-        if ($this->package === null) {
-            throw new BuildException("You must specify the \"name\" attribute for PEAR package task.");
-        }
-        
-        $this->pkg = new PEAR_PackageFileManager();                
-        
-        $this->setOptions();
-        
-        $e = $this->pkg->writePackageFile();
-        if (PEAR::isError($e)) {
-            throw new BuildException("Unable to write package file.", new Exception($e->getMessage()));
-        }
-        
-    }
-    
-    /**
-     * Used by the PEAR_PackageFileManager_PhingFileSet lister.
-     * @return array FileSet[]
-     */
-    public function getFileSets() {
-        return $this->filesets;
-    }
-    
-    // -------------------------------
-    // Set properties from XML
-    // -------------------------------
+	/** Base directory for reading files. */
+	protected $dir;
 
-    /**
-     * Nested creator, creates a FileSet for this task
-     *
-     * @return FileSet The created fileset object
-     */
-    function createFileSet() {
-        $num = array_push($this->filesets, new FileSet());
-        return $this->filesets[$num-1];
-    }
-    
-    /**
-     * Set "package" property from XML.
-     * @see setName()
-     * @param string $v
-     * @return void
-     */
-    public function setPackage($v) {
-        $this->package = $v;
-    }
-    
-    /**
-     * Sets "dir" property from XML.
-     * @param PhingFile $f
-     * @return void
-     */
-    public function setDir(PhingFile $f) {
-        $this->dir = $f;
-    }
+	/** Package file */
+	private $packageFile;
 
-    /**
-     * Sets "name" property from XML.
-     * @param string $v
-     * @return void
-     */
-    public function setName($v) {
-        $this->package = $v;
-    }
-    
-    /**
-     * Sets the file to use for generated package.xml
-     */
-    public function setDestFile(PhingFile $f) {
-        $this->packageFile = $f;
-    }
-    
-    /**
-     * Handles nested generic <option> elements.
-     */
-    function createOption() {
-        $o = new PearPkgOption();
-        $this->options[] = $o;
-        return $o;
-    }
-    
-    /**
-     * Handles nested generic <option> elements.
-     */
-    function createMapping() {
-        $o = new PearPkgMapping();
-        $this->mappings[] = $o;
-        return $o;
-    }
+	/** @var array FileSet[] */
+	private $filesets = array();
+
+	/** @var PEAR_PackageFileManager */
+	protected $pkg;
+
+	private $preparedOptions = array();
+
+	/** @var array PearPkgOption[] */
+	protected $options = array();
+
+	/** Nested <mapping> (complex options) types. */
+	protected $mappings = array();
+
+	public function init() {
+		include_once 'PEAR/PackageFileManager.php';
+		if (!class_exists('PEAR_PackageFileManager')) {
+			throw new BuildException(
+					"You must have installed PEAR_PackageFileManager in order to create a PEAR package.xml file.");
+		}
+	}
+
+	/**
+	 * Sets PEAR package.xml options, based on class properties.
+	 * @return void
+	 */
+	protected function setOptions() {
+
+		// 1) first prepare/populate options        
+		$this->populateOptions();
+
+		// 2) make any final adjustments (this could move into populateOptions() also)
+
+		// default PEAR basedir would be the name of the package (e.g."phing")
+		if (!isset($this->preparedOptions['baseinstalldir'])) {
+			$this->preparedOptions['baseinstalldir'] = $this->package;
+		}
+
+		// unless filelistgenerator has been overridden, we use Phing FileSet generator
+		if (!isset($this->preparedOptions['filelistgenerator'])) {
+			if (empty($this->filesets)) {
+				throw new BuildException(
+						"You must use a <fileset> tag to specify the files to include in the package.xml");
+			}
+			$this->preparedOptions['filelistgenerator'] = 'Fileset';
+			$this->preparedOptions['usergeneratordir'] = dirname(__FILE__)
+					. DIRECTORY_SEPARATOR . 'pearpackage';
+			// Some PHING-specific options needed by our Fileset reader
+			$this->preparedOptions['phing_project'] = $this->project;
+			$this->preparedOptions['phing_filesets'] = $this->filesets;
+		} elseif ($this->preparedOptions['filelistgeneragor'] != 'Fileset'
+				&& !empty($this->filesets)) {
+			throw new BuildException(
+					"You cannot use <fileset> element if you have specified the \"filelistgenerator\" option.");
+		}
+
+		// 3) Set the options
+
+		// No need for excessive validation here, since the  PEAR class will do its own 
+		// validation & return errors
+		$e = $this->pkg->setOptions($this->preparedOptions);
+
+		if (PEAR::isError($e)) {
+			throw new BuildException("Unable to set options.",
+					new Exception($e->getMessage()));
+		}
+	}
+
+	/**
+	 * Fixes the boolean in optional dependencies
+	 */
+	private function fixDeps($deps) {
+		foreach (array_keys($deps) as $dep) {
+			if (isset($deps[$dep]['optional']) && $deps[$dep]['optional']) {
+				$deps[$dep]['optional'] = "yes";
+			}
+		}
+
+		return $deps;
+	}
+
+	/**
+	 * Adds the options that are set via attributes and the nested tags to the options array.
+	 */
+	private function populateOptions() {
+
+		// These values could be overridden if explicitly defined using nested tags    
+		$this->preparedOptions['package'] = $this->package;
+		$this->preparedOptions['packagedirectory'] = $this->dir
+				->getAbsolutePath();
+
+		if ($this->packageFile !== null) {
+			// create one w/ full path
+			$f = new PhingFile($this->packageFile->getAbsolutePath());
+			$this->preparedOptions['packagefile'] = $f->getName();
+			// must end in trailing slash
+			$this->preparedOptions['outputdirectory'] = $f->getParent()
+					. DIRECTORY_SEPARATOR;
+			$this
+					->log("Creating package file: " . $f->__toString(),
+							Project::MSG_INFO);
+		} else {
+			$this
+					->log(
+							"Creating [default] package.xml file in base directory.",
+							Project::MSG_INFO);
+		}
+
+		// converts option objects and mapping objects into 
+		// key => value options that can be passed to PEAR_PackageFileManager
+
+		foreach ($this->options as $opt) {
+			$this->preparedOptions[$opt->getName()] = $opt->getValue(); //no arrays yet. preg_split('/\s*,\s*/', $opt->getValue());
+		}
+
+		foreach ($this->mappings as $map) {
+			$value = $map->getValue(); // getValue returns complex value
+
+			if ($map->getName() == 'deps') {
+				$value = $this->fixDeps($value);
+			}
+
+			$this->preparedOptions[$map->getName()] = $value;
+		}
+	}
+
+	/**
+	 * Main entry point.
+	 * @return void
+	 */
+	public function main() {
+
+		if ($this->dir === null) {
+			throw new BuildException(
+					"You must specify the \"dir\" attribute for PEAR package task.");
+		}
+
+		if ($this->package === null) {
+			throw new BuildException(
+					"You must specify the \"name\" attribute for PEAR package task.");
+		}
+
+		$this->pkg = new PEAR_PackageFileManager();
+
+		$this->setOptions();
+
+		$e = $this->pkg->writePackageFile();
+		if (PEAR::isError($e)) {
+			throw new BuildException("Unable to write package file.",
+					new Exception($e->getMessage()));
+		}
+
+	}
+
+	/**
+	 * Used by the PEAR_PackageFileManager_PhingFileSet lister.
+	 * @return array FileSet[]
+	 */
+	public function getFileSets() {
+		return $this->filesets;
+	}
+
+	// -------------------------------
+	// Set properties from XML
+	// -------------------------------
+
+	/**
+	 * Nested creator, creates a FileSet for this task
+	 *
+	 * @return FileSet The created fileset object
+	 */
+	function createFileSet() {
+		$num = array_push($this->filesets, new FileSet());
+		return $this->filesets[$num - 1];
+	}
+
+	/**
+	 * Set "package" property from XML.
+	 * @see setName()
+	 * @param string $v
+	 * @return void
+	 */
+	public function setPackage($v) {
+		$this->package = $v;
+	}
+
+	/**
+	 * Sets "dir" property from XML.
+	 * @param PhingFile $f
+	 * @return void
+	 */
+	public function setDir(PhingFile $f) {
+		$this->dir = $f;
+	}
+
+	/**
+	 * Sets "name" property from XML.
+	 * @param string $v
+	 * @return void
+	 */
+	public function setName($v) {
+		$this->package = $v;
+	}
+
+	/**
+	 * Sets the file to use for generated package.xml
+	 */
+	public function setDestFile(PhingFile $f) {
+		$this->packageFile = $f;
+	}
+
+	/**
+	 * Handles nested generic <option> elements.
+	 */
+	function createOption() {
+		$o = new PearPkgOption();
+		$this->options[] = $o;
+		return $o;
+	}
+
+	/**
+	 * Handles nested generic <option> elements.
+	 */
+	function createMapping() {
+		$o = new PearPkgMapping();
+		$this->mappings[] = $o;
+		return $o;
+	}
 }
-
-
 
 /**
  * Generic option class is used for non-complex options.
  */
 class PearPkgOption {
-    
-    private    $name;
-    private $value;
-    
-    public function setName($v) { $this->name = $v; }
-    public function getName() { return $this->name; }
-    
-    public function setValue($v) { $this->value = $v; }
-    public function getValue() { return $this->value; }
-    public function addText($txt) { $this->value = trim($txt); }
-        
+
+	private $name;
+	private $value;
+
+	public function setName($v) {
+		$this->name = $v;
+	}
+	public function getName() {
+		return $this->name;
+	}
+
+	public function setValue($v) {
+		$this->value = $v;
+	}
+	public function getValue() {
+		return $this->value;
+	}
+	public function addText($txt) {
+		$this->value = trim($txt);
+	}
+
 }
 
 /**
@@ -329,42 +349,42 @@ class PearPkgOption {
  */
 class PearPkgMapping {
 
-    private    $name;
-    private $elements = array();    
-    
-    public function setName($v) {
-        $this->name = $v;
-    }
-    
-    public function getName() { 
-        return $this->name;
-    }
+	private $name;
+	private $elements = array();
 
-    public function createElement() { 
-        $e = new PearPkgMappingElement();
-        $this->elements[] = $e;
-        return $e;
-    }
-        
-    public function    getElements() {
-        return $this->elements;
-    }
-    
-    /**
-     * Returns the PHP hash or array of hashes (etc.) that this mapping represents.
-     * @return array
-     */
-    public function getValue() {
-        $value = array();
-        foreach($this->getElements() as $el) {
-            if ($el->getKey() !== null) {
-                $value[ $el->getKey() ] = $el->getValue();
-            } else {
-                $value[] = $el->getValue();
-            }
-        }
-        return $value;
-    }
+	public function setName($v) {
+		$this->name = $v;
+	}
+
+	public function getName() {
+		return $this->name;
+	}
+
+	public function createElement() {
+		$e = new PearPkgMappingElement();
+		$this->elements[] = $e;
+		return $e;
+	}
+
+	public function getElements() {
+		return $this->elements;
+	}
+
+	/**
+	 * Returns the PHP hash or array of hashes (etc.) that this mapping represents.
+	 * @return array
+	 */
+	public function getValue() {
+		$value = array();
+		foreach ($this->getElements() as $el) {
+			if ($el->getKey() !== null) {
+				$value[$el->getKey()] = $el->getValue();
+			} else {
+				$value[] = $el->getValue();
+			}
+		}
+		return $value;
+	}
 }
 
 /**
@@ -372,50 +392,50 @@ class PearPkgMapping {
  */
 class PearPkgMappingElement {
 
-    private    $key;
-    private $value;
-    private $elements = array();
-    
-    public function setKey($v) {
-        $this->key = $v;
-    }
-    
-    public function getKey() {
-        return $this->key;
-    }
-    
-    public function setValue($v) {
-        $this->value = $v;
-    }
-    
-    /**
-     * Returns either the simple value or
-     * the calculated value (array) of nested elements.
-     * @return mixed
-     */
-    public function getValue() {    
-        if (!empty($this->elements)) {
-            $value = array();
-            foreach($this->elements as $el) {
-                if ($el->getKey() !== null) {
-                    $value[ $el->getKey() ] = $el->getValue();
-                } else {
-                    $value[] = $el->getValue();
-                }
-            }            
-            return $value;
-        } else  {
-            return $this->value;        
-        }
-    }
-    
-    /**
-     * Handles nested <element> tags.
-     */
-    public function createElement() {
-        $e = new PearPkgMappingElement();
-        $this->elements[] = $e;
-        return $e;
-    }
-    
+	private $key;
+	private $value;
+	private $elements = array();
+
+	public function setKey($v) {
+		$this->key = $v;
+	}
+
+	public function getKey() {
+		return $this->key;
+	}
+
+	public function setValue($v) {
+		$this->value = $v;
+	}
+
+	/**
+	 * Returns either the simple value or
+	 * the calculated value (array) of nested elements.
+	 * @return mixed
+	 */
+	public function getValue() {
+		if (!empty($this->elements)) {
+			$value = array();
+			foreach ($this->elements as $el) {
+				if ($el->getKey() !== null) {
+					$value[$el->getKey()] = $el->getValue();
+				} else {
+					$value[] = $el->getValue();
+				}
+			}
+			return $value;
+		} else {
+			return $this->value;
+		}
+	}
+
+	/**
+	 * Handles nested <element> tags.
+	 */
+	public function createElement() {
+		$e = new PearPkgMappingElement();
+		$this->elements[] = $e;
+		return $e;
+	}
+
 }

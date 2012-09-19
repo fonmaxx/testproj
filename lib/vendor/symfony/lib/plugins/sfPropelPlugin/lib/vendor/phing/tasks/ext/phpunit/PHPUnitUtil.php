@@ -27,40 +27,36 @@
  * @package phing.tasks.ext.phpunit
  * @since 2.1.0
  */
-class PHPUnitUtil
-{
+class PHPUnitUtil {
 	/**
 	 * Installed PHPUnit major version
 	 */
 	public static $installedVersion = 2;
-	
+
 	/**
 	 * Installed PHPUnit minor version
 	 */
 	public static $installedMinorVersion = 0;
-	
+
 	protected static $definedClasses = array();
-	
+
 	/**
 	 * Returns the package of a class as defined in the docblock of the class using @package
 	 *
 	 * @param string the name of the class
 	 * @return string the name of the package
 	 */
-	static function getPackageName($classname)
-	{
+	static function getPackageName($classname) {
 		$reflect = new ReflectionClass($classname);
 
-		if (preg_match('/@package[\s]+([\.\w]+)/', $reflect->getDocComment(), $matches))
-		{
+		if (preg_match('/@package[\s]+([\.\w]+)/', $reflect->getDocComment(),
+				$matches)) {
 			return $matches[1];
-		}
-		else
-		{
+		} else {
 			return "default";
 		}
 	}
-	
+
 	/**
 	 * Derives the classname from a filename.
 	 * Assumes that there is only one class defined in that particular file, and that
@@ -69,17 +65,15 @@ class PHPUnitUtil
 	 * @param string the filename
 	 * @return string the name fo the class
 	 */
-	static function getClassFromFileName($filename)
-	{
+	static function getClassFromFileName($filename) {
 		$filename = basename($filename);
-		
+
 		$rpos = strrpos($filename, '.');
-		
-		if ($rpos != -1)
-		{
+
+		if ($rpos != -1) {
 			$filename = substr($filename, 0, $rpos);
 		}
-		
+
 		return $filename;
 	}
 
@@ -88,42 +82,35 @@ class PHPUnitUtil
 	 * @param Path optional classpath
 	 * @return array list of classes defined in the file
 	 */
-	static function getDefinedClasses($filename, $classpath = NULL)
-	{
+	static function getDefinedClasses($filename, $classpath = NULL) {
 		$filename = realpath($filename);
-		
-		if (!file_exists($filename))
-		{
+
+		if (!file_exists($filename)) {
 			throw new Exception("File '" . $filename . "' does not exist");
 		}
-		
-		if (isset(self::$definedClasses[$filename]))
-		{
+
+		if (isset(self::$definedClasses[$filename])) {
 			return self::$definedClasses[$filename];
 		}
-		
+
 		Phing::__import($filename, $classpath);
 
 		$declaredClasses = get_declared_classes();
-		
-		foreach ($declaredClasses as $classname)
-		{
+
+		foreach ($declaredClasses as $classname) {
 			$reflect = new ReflectionClass($classname);
-			
+
 			self::$definedClasses[$reflect->getFilename()][] = $classname;
-			
-			if (is_array(self::$definedClasses[$reflect->getFilename()]))
-			{			
-				self::$definedClasses[$reflect->getFilename()] = array_unique(self::$definedClasses[$reflect->getFilename()]);
+
+			if (is_array(self::$definedClasses[$reflect->getFilename()])) {
+				self::$definedClasses[$reflect->getFilename()] = array_unique(
+						self::$definedClasses[$reflect->getFilename()]);
 			}
 		}
-		
-		if (isset(self::$definedClasses[$filename]))
-		{
+
+		if (isset(self::$definedClasses[$filename])) {
 			return self::$definedClasses[$filename];
-		}
-		else
-		{
+		} else {
 			return array();
 		}
 	}

@@ -37,25 +37,33 @@ class MssqlDDLBuilder extends DDLBuilder {
 	 *
 	 * @see        parent::addDropStatement()
 	 */
-	protected function addDropStatements(&$script)
-	{
+	protected function addDropStatements(&$script) {
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 
 		foreach ($table->getForeignKeys() as $fk) {
 			$script .= "
-IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='".$fk->getName()."')
-	ALTER TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))." DROP CONSTRAINT ".$this->quoteIdentifier($fk->getName()).";
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='"
+					. $fk->getName() . "')
+	ALTER TABLE "
+					. $this
+							->quoteIdentifier(
+									$this->prefixTablename($table->getName()))
+					. " DROP CONSTRAINT "
+					. $this->quoteIdentifier($fk->getName()) . ";
 ";
 		}
-
 
 		self::$dropCount++;
 
 		$script .= "
-IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = '".$this->prefixTablename($table->getName())."')
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = '"
+				. $this->prefixTablename($table->getName())
+				. "')
 BEGIN
-	 DECLARE @reftable_".self::$dropCount." nvarchar(60), @constraintname_".self::$dropCount." nvarchar(60)
+	 DECLARE @reftable_" . self::$dropCount . " nvarchar(60), @constraintname_"
+				. self::$dropCount
+				. " nvarchar(60)
 	 DECLARE refcursor CURSOR FOR
 	 select reftables.name tablename, cons.name constraintname
 	  from sysobjects tables,
@@ -65,17 +73,28 @@ BEGIN
 	   where tables.id = ref.rkeyid
 		 and cons.id = ref.constid
 		 and reftables.id = ref.fkeyid
-		 and tables.name = '".$this->prefixTablename($table->getName())."'
+		 and tables.name = '" . $this->prefixTablename($table->getName())
+				. "'
 	 OPEN refcursor
-	 FETCH NEXT from refcursor into @reftable_".self::$dropCount.", @constraintname_".self::$dropCount."
+	 FETCH NEXT from refcursor into @reftable_" . self::$dropCount
+				. ", @constraintname_" . self::$dropCount
+				. "
 	 while @@FETCH_STATUS = 0
 	 BEGIN
-	   exec ('alter table '+@reftable_".self::$dropCount."+' drop constraint '+@constraintname_".self::$dropCount.")
-	   FETCH NEXT from refcursor into @reftable_".self::$dropCount.", @constraintname_".self::$dropCount."
+	   exec ('alter table '+@reftable_" . self::$dropCount
+				. "+' drop constraint '+@constraintname_" . self::$dropCount
+				. ")
+	   FETCH NEXT from refcursor into @reftable_" . self::$dropCount
+				. ", @constraintname_" . self::$dropCount
+				. "
 	 END
 	 CLOSE refcursor
 	 DEALLOCATE refcursor
-	 DROP TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))."
+	 DROP TABLE "
+				. $this
+						->quoteIdentifier(
+								$this->prefixTablename($table->getName()))
+				. "
 END
 ";
 	}
@@ -83,14 +102,14 @@ END
 	/**
 	 * @see        parent::addColumns()
 	 */
-	protected function addTable(&$script)
-	{
+	protected function addTable(&$script) {
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 
 		$script .= "
 /* ---------------------------------------------------------------------- */
-/* ".$table->getName()."											*/
+/* " . $table->getName()
+				. "											*/
 /* ---------------------------------------------------------------------- */
 
 ";
@@ -99,7 +118,11 @@ END
 
 		$script .= "
 
-CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))."
+CREATE TABLE "
+				. $this
+						->quoteIdentifier(
+								$this->prefixTablename($table->getName()))
+				. "
 (
 	";
 
@@ -110,11 +133,15 @@ CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))
 		}
 
 		if ($table->hasPrimaryKey()) {
-			$lines[] = "CONSTRAINT ".$this->quoteIdentifier($table->getName()."_PK") . " PRIMARY KEY (".$this->getColumnList($table->getPrimaryKey()).")";
+			$lines[] = "CONSTRAINT "
+					. $this->quoteIdentifier($table->getName() . "_PK")
+					. " PRIMARY KEY ("
+					. $this->getColumnList($table->getPrimaryKey()) . ")";
 		}
 
-		foreach ($table->getUnices() as $unique ) {
-			$lines[] = "UNIQUE (".$this->getColumnList($unique->getColumns()).")";
+		foreach ($table->getUnices() as $unique) {
+			$lines[] = "UNIQUE (" . $this->getColumnList($unique->getColumns())
+					. ")";
 		}
 
 		$sep = ",
@@ -129,8 +156,7 @@ CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))
 	 * Adds CREATE INDEX statements for this table.
 	 * @see        parent::addIndices()
 	 */
-	protected function addIndices(&$script)
-	{
+	protected function addIndices(&$script) {
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 
@@ -140,7 +166,13 @@ CREATE ";
 			if ($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}
-			$script .= "INDEX ".$this->quoteIdentifier($index->getName())." ON ".$this->quoteIdentifier($this->prefixTablename($table->getName()))." (".$this->getColumnList($index->getColumns()).");
+			$script .= "INDEX " . $this->quoteIdentifier($index->getName())
+					. " ON "
+					. $this
+							->quoteIdentifier(
+									$this->prefixTablename($table->getName()))
+					. " (" . $this->getColumnList($index->getColumns())
+					. ");
 ";
 		}
 	}
@@ -149,30 +181,57 @@ CREATE ";
 	 *
 	 * @see        parent::addForeignKeys()
 	 */
-	protected function addForeignKeys(&$script)
-	{
+	protected function addForeignKeys(&$script) {
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 
 		foreach ($table->getForeignKeys() as $fk) {
 			$script .= "
 BEGIN
-ALTER TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))." ADD CONSTRAINT ".$this->quoteIdentifier($fk->getName())." FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()) .") REFERENCES ".$this->quoteIdentifier($this->prefixTablename($fk->getForeignTableName()))." (".$this->getColumnList($fk->getForeignColumns()).")";
+ALTER TABLE "
+					. $this
+							->quoteIdentifier(
+									$this->prefixTablename($table->getName()))
+					. " ADD CONSTRAINT "
+					. $this->quoteIdentifier($fk->getName()) . " FOREIGN KEY ("
+					. $this->getColumnList($fk->getLocalColumns())
+					. ") REFERENCES "
+					. $this
+							->quoteIdentifier(
+									$this
+											->prefixTablename(
+													$fk->getForeignTableName()))
+					. " (" . $this->getColumnList($fk->getForeignColumns())
+					. ")";
 			if ($fk->hasOnUpdate()) {
 				if ($fk->getOnUpdate() == ForeignKey::SETNULL) { // there may be others that also won't work
-					// we have to skip this because it's unsupported.
-					$this->warn("MSSQL doesn't support the 'SET NULL' option for ON UPDATE (ignoring for ".$this->getColumnList($fk->getLocalColumns())." fk).");
+				// we have to skip this because it's unsupported.
+					$this
+							->warn(
+									"MSSQL doesn't support the 'SET NULL' option for ON UPDATE (ignoring for "
+											. $this
+													->getColumnList(
+															$fk
+																	->getLocalColumns())
+											. " fk).");
 				} else {
-					$script .= " ON UPDATE ".$fk->getOnUpdate();
+					$script .= " ON UPDATE " . $fk->getOnUpdate();
 				}
 
 			}
 			if ($fk->hasOnDelete()) {
 				if ($fk->getOnDelete() == ForeignKey::SETNULL) { // there may be others that also won't work
-					// we have to skip this because it's unsupported.
-					$this->warn("MSSQL doesn't support the 'SET NULL' option for ON DELETE (ignoring for ".$this->getColumnList($fk->getLocalColumns())." fk).");
+				// we have to skip this because it's unsupported.
+					$this
+							->warn(
+									"MSSQL doesn't support the 'SET NULL' option for ON DELETE (ignoring for "
+											. $this
+													->getColumnList(
+															$fk
+																	->getLocalColumns())
+											. " fk).");
 				} else {
-					$script .= " ON DELETE ".$fk->getOnDelete();
+					$script .= " ON DELETE " . $fk->getOnDelete();
 				}
 			}
 			$script .= "

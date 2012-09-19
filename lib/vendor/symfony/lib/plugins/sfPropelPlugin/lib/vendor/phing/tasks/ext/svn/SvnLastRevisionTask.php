@@ -31,23 +31,20 @@ require_once 'phing/tasks/ext/svn/SvnBaseTask.php';
  * @see VersionControl_SVN
  * @since 2.1.0
  */
-class SvnLastRevisionTask extends SvnBaseTask
-{
+class SvnLastRevisionTask extends SvnBaseTask {
 	private $propertyName = "svn.lastrevision";
 
 	/**
 	 * Sets the name of the property to use
 	 */
-	function setPropertyName($propertyName)
-	{
+	function setPropertyName($propertyName) {
 		$this->propertyName = $propertyName;
 	}
 
 	/**
 	 * Returns the name of the property to use
 	 */
-	function getPropertyName()
-	{
+	function getPropertyName() {
 		return $this->propertyName;
 	}
 
@@ -56,19 +53,16 @@ class SvnLastRevisionTask extends SvnBaseTask
 	 *
 	 * @throws BuildException
 	 */
-	function main()
-	{
+	function main() {
 		$this->setup('info');
-		
+
 		$output = $this->run();
-		
-		if (preg_match('/Rev:[\s]+([\d]+)/', $output, $matches))
-		{
+
+		if (preg_match('/Rev:[\s]+([\d]+)/', $output, $matches)) {
 			$this->project->setProperty($this->getPropertyName(), $matches[1]);
-		}
-		else
-		{
-			throw new BuildException("Failed to parse the output of 'svn info'.");
+		} else {
+			throw new BuildException(
+					"Failed to parse the output of 'svn info'.");
 		}
 	}
 }

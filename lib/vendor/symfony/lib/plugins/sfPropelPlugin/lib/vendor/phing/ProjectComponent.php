@@ -30,41 +30,41 @@
  */
 abstract class ProjectComponent {
 
-    /**
-     * Holds a reference to the project that a project component
-     * (a task, a target, etc.) belongs to
-     *
-     * @var Project A reference to the current project instance
-     */
-    protected $project = null;
+	/**
+	 * Holds a reference to the project that a project component
+	 * (a task, a target, etc.) belongs to
+	 *
+	 * @var Project A reference to the current project instance
+	 */
+	protected $project = null;
 
-    /**
-     * References the project to the current component.
-     *
-     * @param Project $project The reference to the current project
-     */
-    public function setProject($project) {
-        $this->project = $project;
-    }
+	/**
+	 * References the project to the current component.
+	 *
+	 * @param Project $project The reference to the current project
+	 */
+	public function setProject($project) {
+		$this->project = $project;
+	}
 
-    /**
-     * Returns a reference to current project
-     *
-     * @return Project Reference to current porject object
-     */
-    public function getProject() {
-        return $this->project;
-    }
+	/**
+	 * Returns a reference to current project
+	 *
+	 * @return Project Reference to current porject object
+	 */
+	public function getProject() {
+		return $this->project;
+	}
 
-    /**
-     *  Logs a message with the given priority.
-     *
-     *  @param string $msg The message to be logged.
-     *  @param integer $level The message's priority at this message should have
-     */
-    public function log($msg, $level = Project::MSG_INFO) {
-        if ($this->project !== null) {
-            $this->project->log($msg, $level);
-        }
-    }
+	/**
+	 *  Logs a message with the given priority.
+	 *
+	 *  @param string $msg The message to be logged.
+	 *  @param integer $level The message's priority at this message should have
+	 */
+	public function log($msg, $level = Project::MSG_INFO) {
+		if ($this->project !== null) {
+			$this->project->log($msg, $level);
+		}
+	}
 }

@@ -16,18 +16,15 @@
  * @author     Fabien Potencier <fabien.potencier@symfony-project.com>
  * @version    SVN: $Id: sfWebDebugPanelSymfonyVersion.class.php 11726 2008-09-22 12:38:17Z fabien $
  */
-class sfWebDebugPanelSymfonyVersion extends sfWebDebugPanel
-{
-  public function getTitle()
-  {
-    return '<span id="sfWebDebugSymfonyVersion">'.SYMFONY_VERSION.'</span>';
-  }
+class sfWebDebugPanelSymfonyVersion extends sfWebDebugPanel {
+	public function getTitle() {
+		return '<span id="sfWebDebugSymfonyVersion">' . SYMFONY_VERSION
+				. '</span>';
+	}
 
-  public function getPanelTitle()
-  {
-  }
+	public function getPanelTitle() {
+	}
 
-  public function getPanelContent()
-  {
-  }
+	public function getPanelContent() {
+	}
 }

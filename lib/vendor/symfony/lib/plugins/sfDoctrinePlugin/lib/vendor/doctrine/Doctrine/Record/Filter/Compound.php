@@ -30,68 +30,69 @@
  * @since       1.0
  * @version     $Revision: 1298 $
  */
-class Doctrine_Record_Filter_Compound extends Doctrine_Record_Filter
-{
-    protected $_aliases = array();
+class Doctrine_Record_Filter_Compound extends Doctrine_Record_Filter {
+	protected $_aliases = array();
 
-    public function __construct(array $aliases)
-    {
-        $this->_aliases = $aliases;
-    }
+	public function __construct(array $aliases) {
+		$this->_aliases = $aliases;
+	}
 
-    public function init()
-    {
-    	// check that all aliases exist
-    	foreach ($this->_aliases as $alias) {
-            $this->_table->getRelation($alias);
-    	}
-    }
+	public function init() {
+		// check that all aliases exist
+		foreach ($this->_aliases as $alias) {
+			$this->_table->getRelation($alias);
+		}
+	}
 
-    /**
-     * filterSet
-     * defines an implementation for filtering the set() method of Doctrine_Record
-     *
-     * @param mixed $name                       name of the property or related component
-     */
-    public function filterSet(Doctrine_Record $record, $name, $value)
-    {
-        foreach ($this->_aliases as $alias) {
-            if ( ! $record->exists()) {
-                if (isset($record[$alias][$name])) {
-                    $record[$alias][$name] = $value;
-                    
-                    return $record;
-                }
-            } else {
-                if (isset($record[$alias][$name])) {
-                    $record[$alias][$name] = $value;
-                }
+	/**
+	 * filterSet
+	 * defines an implementation for filtering the set() method of Doctrine_Record
+	 *
+	 * @param mixed $name                       name of the property or related component
+	 */
+	public function filterSet(Doctrine_Record $record, $name, $value) {
+		foreach ($this->_aliases as $alias) {
+			if (!$record->exists()) {
+				if (isset($record[$alias][$name])) {
+					$record[$alias][$name] = $value;
 
-                return $record;
-            }
-        }
-        throw new Doctrine_Record_UnknownPropertyException(sprintf('Unknown record property / related component "%s" on "%s"', $name, get_class($record)));
-    }
+					return $record;
+				}
+			} else {
+				if (isset($record[$alias][$name])) {
+					$record[$alias][$name] = $value;
+				}
 
-    /**
-     * filterGet
-     * defines an implementation for filtering the get() method of Doctrine_Record
-     *
-     * @param mixed $name                       name of the property or related component
-     */
-    public function filterGet(Doctrine_Record $record, $name)
-    {
-        foreach ($this->_aliases as $alias) {
-            if ( ! $record->exists()) {
-                if (isset($record[$alias][$name])) {
-                    return $record[$alias][$name];
-                }
-            } else {
-                if (isset($record[$alias][$name])) {
-                    return $record[$alias][$name];
-                }
-            }
-        }
-        throw new Doctrine_Record_UnknownPropertyException(sprintf('Unknown record property / related component "%s" on "%s"', $name, get_class($record)));
-    }
+				return $record;
+			}
+		}
+		throw new Doctrine_Record_UnknownPropertyException(
+				sprintf(
+						'Unknown record property / related component "%s" on "%s"',
+						$name, get_class($record)));
+	}
+
+	/**
+	 * filterGet
+	 * defines an implementation for filtering the get() method of Doctrine_Record
+	 *
+	 * @param mixed $name                       name of the property or related component
+	 */
+	public function filterGet(Doctrine_Record $record, $name) {
+		foreach ($this->_aliases as $alias) {
+			if (!$record->exists()) {
+				if (isset($record[$alias][$name])) {
+					return $record[$alias][$name];
+				}
+			} else {
+				if (isset($record[$alias][$name])) {
+					return $record[$alias][$name];
+				}
+			}
+		}
+		throw new Doctrine_Record_UnknownPropertyException(
+				sprintf(
+						'Unknown record property / related component "%s" on "%s"',
+						$name, get_class($record)));
+	}
 }

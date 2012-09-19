@@ -40,8 +40,7 @@ abstract class DDLBuilder extends DataModelBuilder {
 	 *
 	 * @return     string The resulting SQL DDL.
 	 */
-	public function build()
-	{
+	public function build() {
 		$script = "";
 		$this->addTable($script);
 		$this->addIndices($script);
@@ -57,26 +56,34 @@ abstract class DDLBuilder extends DataModelBuilder {
 	 *
 	 * @return     string Sequence name for this table.
 	 */
-	public function getSequenceName()
-	{
+	public function getSequenceName() {
 		$table = $this->getTable();
 		static $longNamesMap = array();
 		$result = null;
 		if ($table->getIdMethod() == IDMethod::NATIVE) {
 			$idMethodParams = $table->getIdMethodParameters();
-			$maxIdentifierLength = $table->getDatabase()->getPlatform()->getMaxColumnNameLength();
+			$maxIdentifierLength = $table->getDatabase()->getPlatform()
+					->getMaxColumnNameLength();
 			if (empty($idMethodParams)) {
 				if (strlen($table->getName() . "_SEQ") > $maxIdentifierLength) {
 					if (!isset($longNamesMap[$table->getName()])) {
-						$longNamesMap[$table->getName()] = strval(count($longNamesMap) + 1);
+						$longNamesMap[$table->getName()] = strval(
+								count($longNamesMap) + 1);
 					}
-					$result = substr($table->getName(), 0, $maxIdentifierLength - strlen("_SEQ_" . $longNamesMap[$table->getName()])) . "_SEQ_" . $longNamesMap[$table->getName()];
-				}
-				else {
-					$result = substr($table->getName(), 0, $maxIdentifierLength -4) . "_SEQ";
+					$result = substr($table->getName(), 0,
+							$maxIdentifierLength
+									- strlen(
+											"_SEQ_"
+													. $longNamesMap[$table
+															->getName()]))
+							. "_SEQ_" . $longNamesMap[$table->getName()];
+				} else {
+					$result = substr($table->getName(), 0,
+							$maxIdentifierLength - 4) . "_SEQ";
 				}
 			} else {
-				$result = substr($idMethodParams[0]->getValue(), 0, $maxIdentifierLength);
+				$result = substr($idMethodParams[0]->getValue(), 0,
+						$maxIdentifierLength);
 			}
 		}
 		return $result;
@@ -86,8 +93,7 @@ abstract class DDLBuilder extends DataModelBuilder {
 	 * Builds the DDL SQL for a Column object.
 	 * @return     string
 	 */
-	public function getColumnDDL(Column $col)
-	{
+	public function getColumnDDL(Column $col) {
 		$platform = $this->getPlatform();
 		$domain = $col->getDomain();
 
@@ -111,8 +117,7 @@ abstract class DDLBuilder extends DataModelBuilder {
 	 * @param      string $delim The delimiter to use in separating the column names.
 	 * @return     string
 	 */
-	public function getColumnList($columns, $delim=',')
-	{
+	public function getColumnList($columns, $delim = ',') {
 		$list = array();
 		foreach ($columns as $col) {
 			if ($col instanceof Column) {
@@ -128,8 +133,7 @@ abstract class DDLBuilder extends DataModelBuilder {
 	 * This is designed to be called for a database, not a specific table, hence it is static.
 	 * @return     string The DDL is returned as astring.
 	 */
-	public static function getDatabaseStartDDL()
-	{
+	public static function getDatabaseStartDDL() {
 		return '';
 	}
 
@@ -138,8 +142,7 @@ abstract class DDLBuilder extends DataModelBuilder {
 	 * This is designed to be called for a database, not a specific table, hence it is static.
 	 * @return     string The DDL is returned as astring.
 	 */
-	public static function getDatabaseEndDDL()
-	{
+	public static function getDatabaseEndDDL() {
 		return '';
 	}
 
@@ -151,8 +154,7 @@ abstract class DDLBuilder extends DataModelBuilder {
 	 * a way to clear out static values between iterations, if the subclasses choose to implement
 	 * it.
 	 */
-	public static function reset()
-	{
+	public static function reset() {
 		// nothing by default
 	}
 

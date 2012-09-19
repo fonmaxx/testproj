@@ -67,9 +67,9 @@ abstract class BaseSchemaParser implements SchemaParser {
 	/**
 	 * @param      PDO $dbh Optional database connection
 	 */
-	public function __construct(PDO $dbh = null)
-	{
-		if ($dbh) $this->setConnection($dbh);
+	public function __construct(PDO $dbh = null) {
+		if ($dbh)
+			$this->setConnection($dbh);
 	}
 
 	/**
@@ -77,8 +77,7 @@ abstract class BaseSchemaParser implements SchemaParser {
 	 *
 	 * @param      PDO $dbh
 	 */
-	public function setConnection(PDO $dbh)
-	{
+	public function setConnection(PDO $dbh) {
 		$this->dbh = $dbh;
 	}
 
@@ -86,8 +85,7 @@ abstract class BaseSchemaParser implements SchemaParser {
 	 * Gets the database connection.
 	 * @return     PDO
 	 */
-	public function getConnection()
-	{
+	public function getConnection() {
 		return $this->dbh;
 	}
 
@@ -96,8 +94,7 @@ abstract class BaseSchemaParser implements SchemaParser {
 	 *
 	 * @param      string $msg The warning message.
 	 */
-	protected function warn($msg)
-	{
+	protected function warn($msg) {
 		$this->warnings[] = $msg;
 	}
 
@@ -106,8 +103,7 @@ abstract class BaseSchemaParser implements SchemaParser {
 	 *
 	 * @return     array string[]
 	 */
-	public function getWarnings()
-	{
+	public function getWarnings() {
 		return $this->warnings;
 	}
 
@@ -116,8 +112,7 @@ abstract class BaseSchemaParser implements SchemaParser {
 	 *
 	 * @param      GeneratorConfig $config
 	 */
-	public function setGeneratorConfig(GeneratorConfig $config)
-	{
+	public function setGeneratorConfig(GeneratorConfig $config) {
 		$this->generatorConfig = $config;
 	}
 
@@ -126,8 +121,7 @@ abstract class BaseSchemaParser implements SchemaParser {
 	 *
 	 * @return     GeneratorConfig
 	 */
-	public function getGeneratorConfig()
-	{
+	public function getGeneratorConfig() {
 		return $this->generatorConfig;
 	}
 
@@ -137,8 +131,7 @@ abstract class BaseSchemaParser implements SchemaParser {
 	 * @param      string $name
 	 * @return     mixed
 	 */
-	public function getBuildProperty($name)
-	{
+	public function getBuildProperty($name) {
 		if ($this->generatorConfig !== null) {
 			return $this->generatorConfig->getBuildProperty($name);
 		}
@@ -158,8 +151,7 @@ abstract class BaseSchemaParser implements SchemaParser {
 	 * @param      string $nativeType
 	 * @return     string The mapped Propel type.
 	 */
-	protected function getMappedPropelType($nativeType)
-	{
+	protected function getMappedPropelType($nativeType) {
 		if ($this->nativeToPropelTypeMap === null) {
 			$this->nativeToPropelTypeMap = $this->getTypeMapping();
 		}
@@ -175,12 +167,12 @@ abstract class BaseSchemaParser implements SchemaParser {
 	 * @param      string $propelType
 	 * @return     string The native SQL type that best matches the specified Propel type.
 	 */
-	protected function getMappedNativeType($propelType)
-	{
+	protected function getMappedNativeType($propelType) {
 		if ($this->reverseTypeMap === null) {
 			$this->reverseTypeMap = array_flip($this->getTypeMapping());
 		}
-		return isset($this->reverseTypeMap[$propelType]) ? $this->reverseTypeMap[$propelType] : null;
+		return isset($this->reverseTypeMap[$propelType]) ? $this
+						->reverseTypeMap[$propelType] : null;
 	}
 
 	/**
@@ -188,9 +180,9 @@ abstract class BaseSchemaParser implements SchemaParser {
 	 *
 	 * @param      array $params
 	 */
-	protected function getNewVendorInfoObject(array $params)
-	{
-		$type = $this->getGeneratorConfig()->getConfiguredPlatform()->getDatabaseType();
+	protected function getNewVendorInfoObject(array $params) {
+		$type = $this->getGeneratorConfig()->getConfiguredPlatform()
+				->getDatabaseType();
 		$vi = new VendorInfo($type);
 		$vi->setParameters($params);
 		return $vi;

@@ -30,126 +30,124 @@
  * @version     $Revision: 1080 $
  * @author      Jonathan H. Wage <jwage@mac.com>
  */
-class Doctrine_Parser_Xml extends Doctrine_Parser
-{
-    /**
-     * dumpData
-     * 
-     * Convert array to xml and dump to specified path or return the xml
-     *
-     * @param  string $array Array of data to convert to xml
-     * @param  string $path  Path to write xml data to
-     * @param string $charset The charset of the data being dumped
-     * @return string $xml
-     * @return void
-     */
-    public function dumpData($array, $path = null, $charset = null)
-    {
-        $data = self::arrayToXml($array, 'data', null, $charset);
-        
-        return $this->doDump($data, $path);
-    }
+class Doctrine_Parser_Xml extends Doctrine_Parser {
+	/**
+	 * dumpData
+	 * 
+	 * Convert array to xml and dump to specified path or return the xml
+	 *
+	 * @param  string $array Array of data to convert to xml
+	 * @param  string $path  Path to write xml data to
+	 * @param string $charset The charset of the data being dumped
+	 * @return string $xml
+	 * @return void
+	 */
+	public function dumpData($array, $path = null, $charset = null) {
+		$data = self::arrayToXml($array, 'data', null, $charset);
 
-    /**
-     * arrayToXml
-     *
-     * @param  string $array        Array to convert to xml    
-     * @param  string $rootNodeName Name of the root node
-     * @param  string $xml          SimpleXmlElement
-     * @return string $asXml        String of xml built from array
-     */
-    public static function arrayToXml($array, $rootNodeName = 'data', $xml = null, $charset = null)
-    {
-        if ($xml === null) {
-            $xml = new SimpleXmlElement("<?xml version=\"1.0\" encoding=\"utf-8\"?><$rootNodeName/>");
-        }
+		return $this->doDump($data, $path);
+	}
 
-        foreach($array as $key => $value)
-        {
-            $key = preg_replace('/[^a-z]/i', '', $key);
+	/**
+	 * arrayToXml
+	 *
+	 * @param  string $array        Array to convert to xml    
+	 * @param  string $rootNodeName Name of the root node
+	 * @param  string $xml          SimpleXmlElement
+	 * @return string $asXml        String of xml built from array
+	 */
+	public static function arrayToXml($array, $rootNodeName = 'data',
+			$xml = null, $charset = null) {
+		if ($xml === null) {
+			$xml = new SimpleXmlElement(
+					"<?xml version=\"1.0\" encoding=\"utf-8\"?><$rootNodeName/>");
+		}
 
-            if (is_array($value) && ! empty($value)) {
-                $node = $xml->addChild($key);
+		foreach ($array as $key => $value) {
+			$key = preg_replace('/[^a-z]/i', '', $key);
 
-                foreach ($value as $k => $v) {
-                    if (is_numeric($v)) {
-                        unset($value[$k]);
-                        $node->addAttribute($k, $v);
-                    }
-                }
+			if (is_array($value) && !empty($value)) {
+				$node = $xml->addChild($key);
 
-                self::arrayToXml($value, $rootNodeName, $node, $charset);
-            } else if (is_int($key)) {               
-                $xml->addChild($value, 'true');
-            } else {
-                $charset = $charset ? $charset : 'utf-8';
-                if (strcasecmp($charset, 'utf-8') !== 0 && strcasecmp($charset, 'utf8') !== 0) {
-                    $value = iconv($charset, 'UTF-8', $value);
-                }
-                $value = htmlspecialchars($value, ENT_COMPAT, 'UTF-8');
-                $xml->addChild($key, $value);
-            }
-        }
+				foreach ($value as $k => $v) {
+					if (is_numeric($v)) {
+						unset($value[$k]);
+						$node->addAttribute($k, $v);
+					}
+				}
 
-        return $xml->asXML();
-    }
+				self::arrayToXml($value, $rootNodeName, $node, $charset);
+			} else if (is_int($key)) {
+				$xml->addChild($value, 'true');
+			} else {
+				$charset = $charset ? $charset : 'utf-8';
+				if (strcasecmp($charset, 'utf-8') !== 0
+						&& strcasecmp($charset, 'utf8') !== 0) {
+					$value = iconv($charset, 'UTF-8', $value);
+				}
+				$value = htmlspecialchars($value, ENT_COMPAT, 'UTF-8');
+				$xml->addChild($key, $value);
+			}
+		}
 
-    /**
-     * loadData
-     *
-     * Load xml file and return array of data
-     *
-     * @param  string $path  Path to load xml data from
-     * @return array  $array Array of data converted from xml
-     */
-    public function loadData($path)
-    {
-        $contents = $this->doLoad($path);
-        
-        $simpleXml = simplexml_load_string($contents);
-        
-        return $this->prepareData($simpleXml);
-    }
+		return $xml->asXML();
+	}
 
-    /**
-     * prepareData
-     *
-     * Prepare simple xml to array for return
-     *
-     * @param  string $simpleXml 
-     * @return array  $return
-     */
-    public function prepareData($simpleXml)
-    {
-        if ($simpleXml instanceof SimpleXMLElement) {
-            $children = $simpleXml->children();
-            $return = null;
-        }
+	/**
+	 * loadData
+	 *
+	 * Load xml file and return array of data
+	 *
+	 * @param  string $path  Path to load xml data from
+	 * @return array  $array Array of data converted from xml
+	 */
+	public function loadData($path) {
+		$contents = $this->doLoad($path);
 
-        foreach ($children as $element => $value) {
-            if ($value instanceof SimpleXMLElement) {
-                $values = (array) $value->children();
+		$simpleXml = simplexml_load_string($contents);
 
-                if (count($values) > 0) {
-                    $return[$element] = $this->prepareData($value);
-                } else {
-                    if ( ! isset($return[$element])) {
-                        $return[$element] = (string) $value;
-                    } else {
-                        if ( ! is_array($return[$element])) {
-                            $return[$element] = array($return[$element], (string) $value);
-                        } else {
-                            $return[$element][] = (string) $value;
-                        }
-                    }
-                }
-            }
-        }
+		return $this->prepareData($simpleXml);
+	}
 
-        if (is_array($return)) {
-            return $return;
-        } else {
-            return array();
-        }
-    }
+	/**
+	 * prepareData
+	 *
+	 * Prepare simple xml to array for return
+	 *
+	 * @param  string $simpleXml 
+	 * @return array  $return
+	 */
+	public function prepareData($simpleXml) {
+		if ($simpleXml instanceof SimpleXMLElement) {
+			$children = $simpleXml->children();
+			$return = null;
+		}
+
+		foreach ($children as $element => $value) {
+			if ($value instanceof SimpleXMLElement) {
+				$values = (array) $value->children();
+
+				if (count($values) > 0) {
+					$return[$element] = $this->prepareData($value);
+				} else {
+					if (!isset($return[$element])) {
+						$return[$element] = (string) $value;
+					} else {
+						if (!is_array($return[$element])) {
+							$return[$element] = array($return[$element],
+									(string) $value);
+						} else {
+							$return[$element][] = (string) $value;
+						}
+					}
+				}
+			}
+		}
+
+		if (is_array($return)) {
+			return $return;
+		} else {
+			return array();
+		}
+	}
 }

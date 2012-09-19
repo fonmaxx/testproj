@@ -30,31 +30,28 @@
  * @version     $Revision: 1080 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Validator_Unsigned extends Doctrine_Validator_Driver
-{
-    /**
-     * checks if given value is a valid unsigned integer or float
-     *
-     * valid values: null, '', 5, '5', 5.9, '5.9'
-     * invalid values: -5, '-5', 'five', -5.9, '-5.9', '5.5.5'
-     *
-     * @param mixed $value
-     * @return boolean
-     */
-    public function validate($value)
-    {
-        if (is_null($value) || $value == '') {
-            return true;
-        }
-        if (preg_match('/[^0-9\-\.]/', $value)) {
-            return false;
-        }
+class Doctrine_Validator_Unsigned extends Doctrine_Validator_Driver {
+	/**
+	 * checks if given value is a valid unsigned integer or float
+	 *
+	 * valid values: null, '', 5, '5', 5.9, '5.9'
+	 * invalid values: -5, '-5', 'five', -5.9, '-5.9', '5.5.5'
+	 *
+	 * @param mixed $value
+	 * @return boolean
+	 */
+	public function validate($value) {
+		if (is_null($value) || $value == '') {
+			return true;
+		}
+		if (preg_match('/[^0-9\-\.]/', $value)) {
+			return false;
+		}
 
-        if ((double) $value >= 0)
-        {
-            return true;
-        }
+		if ((double) $value >= 0) {
+			return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 }

@@ -35,47 +35,51 @@ include_once 'phing/filters/XsltFilter.php';
  * @package   phing.tasks.system
  */
 class XsltTask extends CopyTask {
-    
-    /** XSLTFilter object that we use to handle transformation. */
-    private $xsltFilter;
-    
-    /** Parameters to pass to XSLT procesor. */
-    private $parameters = array();
-    
-    /**
-     * Setup the filterchains w/ XSLTFilter that we will use while copying the files.
-     */
-    function init() {
-        $xf = new XsltFilter();
-        $chain = $this->createFilterChain($this->getProject());
-        $chain->addXsltFilter($xf);
-        $this->xsltFilter = $xf;        
-    }
-    
-    /**
-     * Set any XSLT Param and invoke CopyTask::main()
-     * @see CopyTask::main()
-     */
-    function main() {        
-        $this->log("Doing XSLT transformation using stylesheet " . $this->xsltFilter->getStyle(), Project::MSG_VERBOSE);
-        $this->xsltFilter->setParams($this->parameters);
-        parent::main();
-    }
-    
-    /**
-     * Set the stylesheet to use.
-     * @param PhingFile $style
-     */
-    function setStyle(PhingFile $style) {
-        $this->xsltFilter->setStyle($style);
-    }
-    
-    /**
-     * Support nested <param> tags useing XSLTParam class.
-     * @return XSLTParam
-     */
-    function createParam() {
-        $num = array_push($this->parameters, new XSLTParam());
-        return $this->parameters[$num-1];
-    }
+
+	/** XSLTFilter object that we use to handle transformation. */
+	private $xsltFilter;
+
+	/** Parameters to pass to XSLT procesor. */
+	private $parameters = array();
+
+	/**
+	 * Setup the filterchains w/ XSLTFilter that we will use while copying the files.
+	 */
+	function init() {
+		$xf = new XsltFilter();
+		$chain = $this->createFilterChain($this->getProject());
+		$chain->addXsltFilter($xf);
+		$this->xsltFilter = $xf;
+	}
+
+	/**
+	 * Set any XSLT Param and invoke CopyTask::main()
+	 * @see CopyTask::main()
+	 */
+	function main() {
+		$this
+				->log(
+						"Doing XSLT transformation using stylesheet "
+								. $this->xsltFilter->getStyle(),
+						Project::MSG_VERBOSE);
+		$this->xsltFilter->setParams($this->parameters);
+		parent::main();
+	}
+
+	/**
+	 * Set the stylesheet to use.
+	 * @param PhingFile $style
+	 */
+	function setStyle(PhingFile $style) {
+		$this->xsltFilter->setStyle($style);
+	}
+
+	/**
+	 * Support nested <param> tags useing XSLTParam class.
+	 * @return XSLTParam
+	 */
+	function createParam() {
+		$num = array_push($this->parameters, new XSLTParam());
+		return $this->parameters[$num - 1];
+	}
 }

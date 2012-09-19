@@ -35,8 +35,7 @@ class SqliteDataSQLBuilder extends DataSQLBuilder {
 	 * @param      mixed $blob Blob or string
 	 * @return     string encoded text
 	 */
-	protected function getBlobSql($blob)
-	{
+	protected function getBlobSql($blob) {
 		// they took magic __toString() out of PHP5.0.0; this sucks
 		if (is_object($blob)) {
 			$blob = $blob->__toString();

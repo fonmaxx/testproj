@@ -29,17 +29,17 @@
  */
 interface InputHandler {
 
-    /**
-     * Handle the request encapsulated in the argument.
-     *
-     * <p>Precondition: the request.getPrompt will return a non-null
-     * value.</p>
-     *
-     * <p>Postcondition: request.getInput will return a non-null
-     * value, request.isInputValid will return true.</p>
-     * @return void
-     * @throws BuildException
-     */
-    public function handleInput(InputRequest $request);
-    
+	/**
+	 * Handle the request encapsulated in the argument.
+	 *
+	 * <p>Precondition: the request.getPrompt will return a non-null
+	 * value.</p>
+	 *
+	 * <p>Postcondition: request.getInput will return a non-null
+	 * value, request.isInputValid will return true.</p>
+	 * @return void
+	 * @throws BuildException
+	 */
+	public function handleInput(InputRequest $request);
+
 }

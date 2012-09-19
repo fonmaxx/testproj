@@ -38,8 +38,7 @@ class DBMySQL extends DBAdapter {
 	 * @param      in The string to transform to upper case.
 	 * @return     The upper case string.
 	 */
-	public function toUpperCase($in)
-	{
+	public function toUpperCase($in) {
 		return "UPPER(" . $in . ")";
 	}
 
@@ -49,8 +48,7 @@ class DBMySQL extends DBAdapter {
 	 * @param      in The string whose case to ignore.
 	 * @return     The string in a case that can be ignored.
 	 */
-	public function ignoreCase($in)
-	{
+	public function ignoreCase($in) {
 		return "UPPER(" . $in . ")";
 	}
 
@@ -61,8 +59,7 @@ class DBMySQL extends DBAdapter {
 	 * @param      string String to append.
 	 * @return     string
 	 */
-	public function concatString($s1, $s2)
-	{
+	public function concatString($s1, $s2) {
 		return "CONCAT($s1, $s2)";
 	}
 
@@ -74,8 +71,7 @@ class DBMySQL extends DBAdapter {
 	 * @param      int Number of characters to extract.
 	 * @return     string
 	 */
-	public function subString($s, $pos, $len)
-	{
+	public function subString($s, $pos, $len) {
 		return "SUBSTRING($s, $pos, $len)";
 	}
 
@@ -85,11 +81,9 @@ class DBMySQL extends DBAdapter {
 	 * @param      string String to calculate length of.
 	 * @return     string
 	 */
-	public function strLength($s)
-	{
+	public function strLength($s) {
 		return "CHAR_LENGTH($s)";
 	}
-
 
 	/**
 	 * Locks the specified table.
@@ -99,8 +93,7 @@ class DBMySQL extends DBAdapter {
 	 * @throws     PDOException No Statement could be created or
 	 * executed.
 	 */
-	public function lockTable(PDO $con, $table)
-	{
+	public function lockTable(PDO $con, $table) {
 		$con->exec("LOCK TABLE " . $table . " WRITE");
 	}
 
@@ -112,35 +105,31 @@ class DBMySQL extends DBAdapter {
 	 * @throws     PDOException No Statement could be created or
 	 * executed.
 	 */
-	public function unlockTable(PDO $con, $table)
-	{
+	public function unlockTable(PDO $con, $table) {
 		$statement = $con->exec("UNLOCK TABLES");
 	}
 
 	/**
 	 * @see        DBAdapter::quoteIdentifier()
 	 */
-	public function quoteIdentifier($text)
-	{
+	public function quoteIdentifier($text) {
 		return '`' . $text . '`';
 	}
 
 	/**
 	 * @see        DBAdapter::useQuoteIdentifier()
 	 */
-	public function useQuoteIdentifier()
-	{
+	public function useQuoteIdentifier() {
 		return true;
 	}
 
 	/**
 	 * @see        DBAdapter::applyLimit()
 	 */
-	public function applyLimit(&$sql, $offset, $limit)
-	{
-		if ( $limit > 0 ) {
+	public function applyLimit(&$sql, $offset, $limit) {
+		if ($limit > 0) {
 			$sql .= " LIMIT " . ($offset > 0 ? $offset . ", " : "") . $limit;
-		} else if ( $offset > 0 ) {
+		} else if ($offset > 0) {
 			$sql .= " LIMIT " . $offset . ", 18446744073709551615";
 		}
 	}
@@ -148,9 +137,8 @@ class DBMySQL extends DBAdapter {
 	/**
 	 * @see        DBAdapter::random()
 	 */
-	public function random($seed = null)
-	{
-		return 'rand('.((int) $seed).')';
+	public function random($seed = null) {
+		return 'rand(' . ((int) $seed) . ')';
 	}
 
 }

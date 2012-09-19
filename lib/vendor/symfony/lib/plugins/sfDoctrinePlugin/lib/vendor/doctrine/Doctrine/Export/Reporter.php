@@ -30,22 +30,18 @@
  * @since       1.0
  * @version     $Revision: 7490 $
  */
-class Doctrine_Export_Reporter implements IteratorAggregate
-{
-    protected $messages = array();
+class Doctrine_Export_Reporter implements IteratorAggregate {
+	protected $messages = array();
 
-    public function add($code, $message)
-    {
-        $this->messages[] = array($code, $message);
-    }
+	public function add($code, $message) {
+		$this->messages[] = array($code, $message);
+	}
 
-    public function pop()
-    {
-        return array_pop($this->messages);
-    }
+	public function pop() {
+		return array_pop($this->messages);
+	}
 
-    public function getIterator()
-    {
-        return new ArrayIterator($this->messages);
-    }
+	public function getIterator() {
+		return new ArrayIterator($this->messages);
+	}
 }

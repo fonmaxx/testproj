@@ -17,7 +17,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>.
-*/
+ */
 
 include_once 'phing/types/DataType.php';
 
@@ -29,71 +29,70 @@ include_once 'phing/types/DataType.php';
  * @author    Manuel Holtgrewe
  * @author    <a href="mailto:yl@seasonfive.com">Yannick Lecaillez</a>
  * @package   phing.types
-*/
+ */
 class Parameter extends DataType {
 
-    /** Parameter name */
-    protected $name;
-    
-    /** Paramter type */
-    protected $type;
-    
-    /** Parameter value */
-    protected $value;
-    
-    /** Nested parameters */
-    protected $parameters = array();
+	/** Parameter name */
+	protected $name;
 
-    function setName($name) {
-        $this->name = (string) $name;
-    }
-    
-    function setType($type) {
-        $this->type = (string) $type;
-    }
+	/** Paramter type */
+	protected $type;
+
+	/** Parameter value */
+	protected $value;
+
+	/** Nested parameters */
+	protected $parameters = array();
+
+	function setName($name) {
+		$this->name = (string) $name;
+	}
+
+	function setType($type) {
+		$this->type = (string) $type;
+	}
 
 	/**
-     * Sets value to dynamic register slot.
-     * @param RegisterSlot $value
-     */
-    public function setListeningValue(RegisterSlot $value) {
-        $this->value = $value;
-    }
-	
-    function setValue($value) {
-        $this->value = (string) $value;
-    }
+	 * Sets value to dynamic register slot.
+	 * @param RegisterSlot $value
+	 */
+	public function setListeningValue(RegisterSlot $value) {
+		$this->value = $value;
+	}
 
-    function getName() {
-        return $this->name;
-    }
+	function setValue($value) {
+		$this->value = (string) $value;
+	}
 
-    function getType() {
-        return $this->type;
-    }
+	function getName() {
+		return $this->name;
+	}
 
-    function getValue() {
+	function getType() {
+		return $this->type;
+	}
+
+	function getValue() {
 		if ($this->value instanceof RegisterSlot) {
-            return $this->value->getValue();
-        } else {
-            return $this->value;
-        }
-    }
-    
-    /**
-     * @return Parameter
-     */
-    function createParam() {
-        $num = array_push($this->parameters, new Parameter());
-        return $this->parameters[$num-1];
-    }
+			return $this->value->getValue();
+		} else {
+			return $this->value;
+		}
+	}
 
-    /**
-     * @return array Nested parameters.
-     */
-    function getParams() {
-        return $this->parameters;
-    }
+	/**
+	 * @return Parameter
+	 */
+	function createParam() {
+		$num = array_push($this->parameters, new Parameter());
+		return $this->parameters[$num - 1];
+	}
+
+	/**
+	 * @return array Nested parameters.
+	 */
+	function getParams() {
+		return $this->parameters;
+	}
 }
-
 

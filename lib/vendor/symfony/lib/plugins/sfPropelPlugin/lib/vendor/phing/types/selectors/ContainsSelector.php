@@ -32,120 +32,121 @@ include_once 'phing/types/selectors/BaseExtendSelector.php';
  */
 class ContainsSelector extends BaseExtendSelector {
 
-    private $contains = null;
-    private $casesensitive = true;
-    const CONTAINS_KEY = "text";
-    const CASE_KEY = "casesensitive";
+	private $contains = null;
+	private $casesensitive = true;
+	const CONTAINS_KEY = "text";
+	const CASE_KEY = "casesensitive";
 
-    public function toString() {
-        $buf = "{containsselector text: ";
-        $buf .= $this->contains;
-        $buf .= " casesensitive: ";
-        if ($this->casesensitive) {
-            $buf .= "true";
-        } else {
-            $buf .= "false";
-        }
-        $buf .= "}";
-        return $buf;
-    }
+	public function toString() {
+		$buf = "{containsselector text: ";
+		$buf .= $this->contains;
+		$buf .= " casesensitive: ";
+		if ($this->casesensitive) {
+			$buf .= "true";
+		} else {
+			$buf .= "false";
+		}
+		$buf .= "}";
+		return $buf;
+	}
 
-    /**
-     * The string to search for within a file.
-     *
-     * @param string $contains the string that a file must contain to be selected.
-     */
-    public function setText($contains) {
-        $this->contains = $contains;
-    }
+	/**
+	 * The string to search for within a file.
+	 *
+	 * @param string $contains the string that a file must contain to be selected.
+	 */
+	public function setText($contains) {
+		$this->contains = $contains;
+	}
 
-    /**
-     * Whether to ignore case in the string being searched.
-     *
-     * @param boolean $casesensitive whether to pay attention to case sensitivity
-     */
-    public function setCasesensitive($casesensitive) {
-        $this->casesensitive = $casesensitive;
-    }
+	/**
+	 * Whether to ignore case in the string being searched.
+	 *
+	 * @param boolean $casesensitive whether to pay attention to case sensitivity
+	 */
+	public function setCasesensitive($casesensitive) {
+		$this->casesensitive = $casesensitive;
+	}
 
-    /**
-     * When using this as a custom selector, this method will be called.
-     * It translates each parameter into the appropriate setXXX() call.
-     *
-     * @param array $parameters the complete set of parameters for this selector
-     */
-    public function setParameters($parameters) {
-        parent::setParameters($parameters);
-        if ($parameters !== null) {
-            for ($i=0,$size=count($parameters); $i < $size; $i++) {
-                $paramname = $parameters[$i]->getName();
-                switch(strtolower($paramname)) {
-                    case self::CONTAINS_KEY:
-                        $this->setText($parameters[$i]->getValue());
-                        break;
-                    case self::CASE_KEY:
-                        $this->setCasesensitive($parameters[$i]->getValue());
-                        break;
-                    default:
-                        $this->setError("Invalid parameter " . $paramname);
-                }                
-            } // for each param
-        } // if params
-    }
+	/**
+	 * When using this as a custom selector, this method will be called.
+	 * It translates each parameter into the appropriate setXXX() call.
+	 *
+	 * @param array $parameters the complete set of parameters for this selector
+	 */
+	public function setParameters($parameters) {
+		parent::setParameters($parameters);
+		if ($parameters !== null) {
+			for ($i = 0, $size = count($parameters); $i < $size; $i++) {
+				$paramname = $parameters[$i]->getName();
+				switch (strtolower($paramname)) {
+				case self::CONTAINS_KEY:
+					$this->setText($parameters[$i]->getValue());
+					break;
+				case self::CASE_KEY:
+					$this->setCasesensitive($parameters[$i]->getValue());
+					break;
+				default:
+					$this->setError("Invalid parameter " . $paramname);
+				}
+			} // for each param
+		} // if params
+	}
 
-    /**
-     * Checks to make sure all settings are kosher. In this case, it
-     * means that the pattern attribute has been set.
-     *
-     */
-    public function verifySettings() {
-        if ($this->contains === null) {
-            $this->setError("The text attribute is required");
-        }
-    }
+	/**
+	 * Checks to make sure all settings are kosher. In this case, it
+	 * means that the pattern attribute has been set.
+	 *
+	 */
+	public function verifySettings() {
+		if ($this->contains === null) {
+			$this->setError("The text attribute is required");
+		}
+	}
 
-    /**
-     * The heart of the matter. This is where the selector gets to decide
-     * on the inclusion of a file in a particular fileset.
-     *
-     * @param basedir the base directory the scan is being done from
-     * @param filename is the name of the file to check
-     * @param file a PhingFile object the selector can use
-     * @return whether the file should be selected or not
-     */
-    public function isSelected(PhingFile $basedir, $filename, PhingFile $file) {
+	/**
+	 * The heart of the matter. This is where the selector gets to decide
+	 * on the inclusion of a file in a particular fileset.
+	 *
+	 * @param basedir the base directory the scan is being done from
+	 * @param filename is the name of the file to check
+	 * @param file a PhingFile object the selector can use
+	 * @return whether the file should be selected or not
+	 */
+	public function isSelected(PhingFile $basedir, $filename, PhingFile $file) {
 
-        $this->validate();
+		$this->validate();
 
-        if ($file->isDirectory()) {
-            return true;
-        }
+		if ($file->isDirectory()) {
+			return true;
+		}
 
-        $userstr = $this->contains;
-        if (!$this->casesensitive) {
-            $userstr = strtolower($this->contains);
-        }
-        
-        $in = null;
-        try {
-            $in = new BufferedReader(new FileReader($file));        
-            $teststr = $in->readLine();
-            while ($teststr !== null) {
-                if (!$this->casesensitive) {
-                    $teststr = strtolower($teststr);
-                }
-                if (strpos($teststr, $userstr) !== false) {
-                    return true;
-                }
-                $teststr = $in->readLine();
-            }
-            return false;
-        } catch (IOException $ioe) {
-            if ($in) $in->close();
-            throw new BuildException("Could not read file " . $filename);
-        }
-        $in->close();                
-    }
+		$userstr = $this->contains;
+		if (!$this->casesensitive) {
+			$userstr = strtolower($this->contains);
+		}
+
+		$in = null;
+		try {
+			$in = new BufferedReader(new FileReader($file));
+			$teststr = $in->readLine();
+			while ($teststr !== null) {
+				if (!$this->casesensitive) {
+					$teststr = strtolower($teststr);
+				}
+				if (strpos($teststr, $userstr) !== false) {
+					return true;
+				}
+				$teststr = $in->readLine();
+			}
+			return false;
+		} catch (IOException $ioe) {
+			if ($in)
+				$in->close();
+			throw new BuildException("Could not read file " . $filename);
+		}
+		$in->close();
+	}
 
 }
 

@@ -18,7 +18,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>. 
  */
- 
+
 include_once 'phing/system/io/PhingFile.php';
 include_once 'phing/system/io/Reader.php';
 
@@ -31,96 +31,96 @@ include_once 'phing/system/io/Reader.php';
  *  * @package   phing.system.io
  */
 class InputStreamReader extends Reader {
-	
+
 	/**
 	 * @var InputStream
 	 */
 	protected $inStream;
-	
-	/**
-     * Construct a new InputStreamReader.
-     * @param InputStream $$inStream InputStream to read from
-     */
-    public function __construct(InputStream $inStream) {
-        $this->inStream = $inStream;
-    }
-	
-    /**
-     * Close the stream.
-     */
-    public function close() {
-    	return $this->inStream->close();
-    }
-	
-    /**
-     * Skip over $n bytes.
-     * @param int $n
-     */
-    public function skip($n) {
-    	return $this->inStream->skip($n);
-    }
-    
-    /**
-     * Read data from file.
-     * @param int $len Num chars to read.
-     * @return string chars read or -1 if eof.
-     */
-    public function read($len = null) {
-    	return $this->inStream->read($len);
-    }
-    
-    /**
-     * Marks the current position in this input stream.
-     * @throws IOException - if the underlying stream doesn't support this method.
-     */
-    public function mark() {
-        $this->inStream->mark();
-    }
-    
-    /**
-     * Whether the attached stream supports mark/reset.
-     * @return boolean
-     */
-    public function markSupported() {
-    	return $this->inStream->markSupported();
-    }
-    
-    /**
-     * Repositions this stream to the position at the time the mark method was last called on this input stream.
-     * @throws IOException - if the underlying stream doesn't support this method.
-     */
-    public function reset() {
-        $this->inStream->reset();
-    }
 
-    /**
-     * Whether eof has been reached with stream.
-     * @return boolean
-     */
-    public function eof() {
-        return $this->inStream->eof();
-    }
-     
-    /**
-     * Reads a entire file and stores the data in the variable
-     * passed by reference.
-     *
-     * @param    string $file    String. Path and/or name of file to read.
-     * @param    object &$rBuffer    Reference. Variable of where to put contents.
-     *
-     * @return    TRUE on success. Err object on failure.
-     * @author  Charlie Killian, charlie@tizac.com
-     * @deprecated Use read() or BufferedReader instead.
-     */
-    public function readInto(&$rBuffer) {
+	/**
+	 * Construct a new InputStreamReader.
+	 * @param InputStream $$inStream InputStream to read from
+	 */
+	public function __construct(InputStream $inStream) {
+		$this->inStream = $inStream;
+	}
+
+	/**
+	 * Close the stream.
+	 */
+	public function close() {
+		return $this->inStream->close();
+	}
+
+	/**
+	 * Skip over $n bytes.
+	 * @param int $n
+	 */
+	public function skip($n) {
+		return $this->inStream->skip($n);
+	}
+
+	/**
+	 * Read data from file.
+	 * @param int $len Num chars to read.
+	 * @return string chars read or -1 if eof.
+	 */
+	public function read($len = null) {
+		return $this->inStream->read($len);
+	}
+
+	/**
+	 * Marks the current position in this input stream.
+	 * @throws IOException - if the underlying stream doesn't support this method.
+	 */
+	public function mark() {
+		$this->inStream->mark();
+	}
+
+	/**
+	 * Whether the attached stream supports mark/reset.
+	 * @return boolean
+	 */
+	public function markSupported() {
+		return $this->inStream->markSupported();
+	}
+
+	/**
+	 * Repositions this stream to the position at the time the mark method was last called on this input stream.
+	 * @throws IOException - if the underlying stream doesn't support this method.
+	 */
+	public function reset() {
+		$this->inStream->reset();
+	}
+
+	/**
+	 * Whether eof has been reached with stream.
+	 * @return boolean
+	 */
+	public function eof() {
+		return $this->inStream->eof();
+	}
+
+	/**
+	 * Reads a entire file and stores the data in the variable
+	 * passed by reference.
+	 *
+	 * @param    string $file    String. Path and/or name of file to read.
+	 * @param    object &$rBuffer    Reference. Variable of where to put contents.
+	 *
+	 * @return    TRUE on success. Err object on failure.
+	 * @author  Charlie Killian, charlie@tizac.com
+	 * @deprecated Use read() or BufferedReader instead.
+	 */
+	public function readInto(&$rBuffer) {
 		return $this->inStream->readInto($rBuffer);
-    }
-    
-    /**
-     * Returns string representation of attached stream.
-     * @return string
-     */
-    public function getResource() {
-        return $this->inStream->__toString();
-    }
+	}
+
+	/**
+	 * Returns string representation of attached stream.
+	 * @return string
+	 */
+	public function getResource() {
+		return $this->inStream->__toString();
+	}
 }

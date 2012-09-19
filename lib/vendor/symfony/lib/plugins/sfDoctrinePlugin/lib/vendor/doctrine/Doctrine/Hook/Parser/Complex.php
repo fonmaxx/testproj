@@ -30,78 +30,74 @@
  * @version     $Revision: 7490 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-abstract class Doctrine_Hook_Parser_Complex extends Doctrine_Hook_Parser
-{
-    protected $_tokenizer;
-    
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        $this->_tokenizer = new Doctrine_Query_Tokenizer();
-    }
-    
-    /**
-     * parse
-     * Parses given field and field value to DQL condition
-     * and parameters. This method should always return
-     * prepared statement conditions (conditions that use
-     * placeholders instead of literal values).
-     *
-     * @param string $alias     component alias
-     * @param string $field     the field name
-     * @param mixed $value      the value of the field
-     * @return void
-     */
-    public function parse($alias, $field, $value)
-    {
-        $this->condition = $this->parseClause($alias, $field, $value);
-    }
+abstract class Doctrine_Hook_Parser_Complex extends Doctrine_Hook_Parser {
+	protected $_tokenizer;
 
-    /**
-     * parseClause
-     *
-     * @param string $alias     component alias
-     * @param string $field     the field name
-     * @param mixed $value      the value of the field
-     * @return void
-     */
-    public function parseClause($alias, $field, $value)
-    {
-        $parts = $this->_tokenizer->quoteExplode($value, ' AND ');
+	/**
+	 * Constructor.
+	 */
+	public function __construct() {
+		$this->_tokenizer = new Doctrine_Query_Tokenizer();
+	}
 
-        if (count($parts) > 1) {
-            $ret = array();
-            foreach ($parts as $part) {
-                $ret[] = $this->parseSingle($alias, $field, $part);
-            }
+	/**
+	 * parse
+	 * Parses given field and field value to DQL condition
+	 * and parameters. This method should always return
+	 * prepared statement conditions (conditions that use
+	 * placeholders instead of literal values).
+	 *
+	 * @param string $alias     component alias
+	 * @param string $field     the field name
+	 * @param mixed $value      the value of the field
+	 * @return void
+	 */
+	public function parse($alias, $field, $value) {
+		$this->condition = $this->parseClause($alias, $field, $value);
+	}
 
-            $r = implode(' AND ', $ret);
-        } else {
-            $parts = $this->_tokenizer->quoteExplode($value, ' OR ');
-            if (count($parts) > 1) {
-                $ret = array();
-                foreach ($parts as $part) {
-                    $ret[] = $this->parseClause($alias, $field, $part);
-                }
+	/**
+	 * parseClause
+	 *
+	 * @param string $alias     component alias
+	 * @param string $field     the field name
+	 * @param mixed $value      the value of the field
+	 * @return void
+	 */
+	public function parseClause($alias, $field, $value) {
+		$parts = $this->_tokenizer->quoteExplode($value, ' AND ');
 
-                $r = implode(' OR ', $ret);
-            } else {
-                $ret = $this->parseSingle($alias, $field, $parts[0]);
-                return $ret;
-            }
-        }
-        return '(' . $r . ')';
-    }
+		if (count($parts) > 1) {
+			$ret = array();
+			foreach ($parts as $part) {
+				$ret[] = $this->parseSingle($alias, $field, $part);
+			}
 
-    /**
-     * parseSingle
-     *
-     * @param string $alias     component alias
-     * @param string $field     the field name
-     * @param mixed $value      the value of the field
-     * @return void
-     */
-    abstract public function parseSingle($alias, $field, $value);
+			$r = implode(' AND ', $ret);
+		} else {
+			$parts = $this->_tokenizer->quoteExplode($value, ' OR ');
+			if (count($parts) > 1) {
+				$ret = array();
+				foreach ($parts as $part) {
+					$ret[] = $this->parseClause($alias, $field, $part);
+				}
+
+				$r = implode(' OR ', $ret);
+			} else {
+				$ret = $this->parseSingle($alias, $field, $parts[0]);
+				return $ret;
+			}
+		}
+		return '(' . $r . ')';
+	}
+
+	/**
+	 * parseSingle
+	 *
+	 * @param string $alias     component alias
+	 * @param string $field     the field name
+	 * @param mixed $value      the value of the field
+	 * @return void
+	 */
+	abstract public function parseSingle($alias, $field, $value);
 }

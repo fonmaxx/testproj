@@ -8,9 +8,7 @@
  * @author     Your name here
  * @version    SVN: $Id: AttachmentFormFilter.class.php 24068 2009-11-17 06:39:35Z Kris.Wallsmith $
  */
-class AttachmentFormFilter extends BaseAttachmentFormFilter
-{
-  public function configure()
-  {
-  }
+class AttachmentFormFilter extends BaseAttachmentFormFilter {
+	public function configure() {
+	}
 }

@@ -18,7 +18,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>. 
  */
- 
+
 require_once 'phing/BuildException.php';
 
 /**
@@ -28,4 +28,5 @@ require_once 'phing/BuildException.php';
  * @version  $Revision: 1.5 $ $Date: 2006-09-14 22:19:08 +0200 (Thu, 14 Sep 2006) $
  * @package  phing.parser
  */
-class ExpatParseException extends BuildException {}
+class ExpatParseException extends BuildException {
+}

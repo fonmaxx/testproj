@@ -31,108 +31,109 @@
  * @since       1.0
  * @version     $Revision: 7677 $
  */
-class Doctrine_Compiler
-{
-    /**
-     * method for making a single file of most used doctrine runtime components
-     * including the compiled file instead of multiple files (in worst
-     * cases dozens of files) can improve performance by an order of magnitude
-     *
-     * @throws Doctrine_Compiler_Exception      if something went wrong during the compile operation
-     * @return $target Path the compiled file was written to
-     */
-    public static function compile($target = null, $includedDrivers = array())
-    {
-        if ( ! is_array($includedDrivers)) {
-            $includedDrivers = array($includedDrivers);
-        }
-        
-        $excludedDrivers = array();
-        
-        // If we have an array of specified drivers then lets determine which drivers we should exclude
-        if ( ! empty($includedDrivers)) {
-            $drivers = array('db2',
-                             'mssql',
-                             'mysql',
-                             'oracle',
-                             'pgsql',
-                             'sqlite');
-            
-            $excludedDrivers = array_diff($drivers, $includedDrivers);
-        }
-        
-        $path = Doctrine_Core::getPath();
-        $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path . '/Doctrine'), RecursiveIteratorIterator::LEAVES_ONLY);
+class Doctrine_Compiler {
+	/**
+	 * method for making a single file of most used doctrine runtime components
+	 * including the compiled file instead of multiple files (in worst
+	 * cases dozens of files) can improve performance by an order of magnitude
+	 *
+	 * @throws Doctrine_Compiler_Exception      if something went wrong during the compile operation
+	 * @return $target Path the compiled file was written to
+	 */
+	public static function compile($target = null, $includedDrivers = array()) {
+		if (!is_array($includedDrivers)) {
+			$includedDrivers = array($includedDrivers);
+		}
 
-        foreach ($it as $file) {
-            $e = explode('.', $file->getFileName());
-            
-            //@todo what is a versioning file? do we have these anymore? None 
-            //exists in my version of doctrine from svn.
-            // we don't want to require versioning files
-            if (end($e) === 'php' && strpos($file->getFileName(), '.inc') === false
-                && strpos($file->getFileName(), 'sfYaml') === false) {
-                require_once $file->getPathName();
-            }
-        }
+		$excludedDrivers = array();
 
-        $classes = array_merge(get_declared_classes(), get_declared_interfaces());
+		// If we have an array of specified drivers then lets determine which drivers we should exclude
+		if (!empty($includedDrivers)) {
+			$drivers = array('db2', 'mssql', 'mysql', 'oracle', 'pgsql',
+					'sqlite');
 
-        $ret     = array();
+			$excludedDrivers = array_diff($drivers, $includedDrivers);
+		}
 
-        foreach ($classes as $class) {
-            $e = explode('_', $class);
+		$path = Doctrine_Core::getPath();
+		$it = new RecursiveIteratorIterator(
+				new RecursiveDirectoryIterator($path . '/Doctrine'),
+				RecursiveIteratorIterator::LEAVES_ONLY);
 
-            if ($e[0] !== 'Doctrine') {
-                continue;
-            }
-            
-            // Exclude drivers
-            if ( ! empty($excludedDrivers)) {
-                foreach ($excludedDrivers as $excludedDriver) {
-                    $excludedDriver = ucfirst($excludedDriver);
-                    
-                    if (in_array($excludedDriver, $e)) {
-                        continue(2);
-                    }
-                }
-            }
-            
-            $refl  = new ReflectionClass($class);
-            $file  = $refl->getFileName();
-            
-            $lines = file($file);
+		foreach ($it as $file) {
+			$e = explode('.', $file->getFileName());
 
-            $start = $refl->getStartLine() - 1;
-            $end   = $refl->getEndLine();
+			//@todo what is a versioning file? do we have these anymore? None 
+			//exists in my version of doctrine from svn.
+			// we don't want to require versioning files
+			if (end($e) === 'php'
+					&& strpos($file->getFileName(), '.inc') === false
+					&& strpos($file->getFileName(), 'sfYaml') === false) {
+				require_once $file->getPathName();
+			}
+		}
 
-            $ret = array_merge($ret, array_slice($lines, $start, ($end - $start)));
-        }
+		$classes = array_merge(get_declared_classes(),
+				get_declared_interfaces());
 
-        if ($target == null) {
-            $target = $path . DIRECTORY_SEPARATOR . 'Doctrine.compiled.php';
-        }
+		$ret = array();
 
-        // first write the 'compiled' data to a text file, so
-        // that we can use php_strip_whitespace (which only works on files)
-        $fp = @fopen($target, 'w');
+		foreach ($classes as $class) {
+			$e = explode('_', $class);
 
-        if ($fp === false) {
-            throw new Doctrine_Compiler_Exception("Couldn't write compiled data. Failed to open $target");
-        }
-        
-        fwrite($fp, "<?php ". implode('', $ret));
-        fclose($fp);
+			if ($e[0] !== 'Doctrine') {
+				continue;
+			}
 
-        $stripped = php_strip_whitespace($target);
-        $fp = @fopen($target, 'w');
-        if ($fp === false) {
-            throw new Doctrine_Compiler_Exception("Couldn't write compiled data. Failed to open $file");
-        }
-        
-        fwrite($fp, $stripped);
-        fclose($fp);
+			// Exclude drivers
+			if (!empty($excludedDrivers)) {
+				foreach ($excludedDrivers as $excludedDriver) {
+					$excludedDriver = ucfirst($excludedDriver);
 
-        return $target;
-    }
+					if (in_array($excludedDriver, $e)) {
+						continue (2);
+					}
+				}
+			}
+
+			$refl = new ReflectionClass($class);
+			$file = $refl->getFileName();
+
+			$lines = file($file);
+
+			$start = $refl->getStartLine() - 1;
+			$end = $refl->getEndLine();
+
+			$ret = array_merge($ret,
+					array_slice($lines, $start, ($end - $start)));
+		}
+
+		if ($target == null) {
+			$target = $path . DIRECTORY_SEPARATOR . 'Doctrine.compiled.php';
+		}
+
+		// first write the 'compiled' data to a text file, so
+		// that we can use php_strip_whitespace (which only works on files)
+		$fp = @fopen($target, 'w');
+
+		if ($fp === false) {
+			throw new Doctrine_Compiler_Exception(
+					"Couldn't write compiled data. Failed to open $target");
+		}
+
+		fwrite($fp, "<?php " . implode('', $ret));
+		fclose($fp);
+
+		$stripped = php_strip_whitespace($target);
+		$fp = @fopen($target, 'w');
+		if ($fp === false) {
+			throw new Doctrine_Compiler_Exception(
+					"Couldn't write compiled data. Failed to open $file");
+		}
+
+		fwrite($fp, $stripped);
+		fclose($fp);
+
+		return $target;
+	}
 }

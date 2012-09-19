@@ -17,7 +17,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information, see
  * <http://www.doctrine-project.org>.
- */        
+ */ 
 
 /**
  * Doctrine_Relation_Exception
@@ -30,5 +30,5 @@
  * @version     $Revision: 1344 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Relation_Exception extends Doctrine_Exception
-{ }
+class Doctrine_Relation_Exception extends Doctrine_Exception {
+}

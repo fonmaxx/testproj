@@ -30,157 +30,160 @@
  * @version     $Revision: 7672 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Query_Where extends Doctrine_Query_Condition
-{
-    public function load($where)
-    {
-        // Handle operator ("AND" | "OR"), reducing overhead of this method processment
-        $possibleOp = strtolower($where);
+class Doctrine_Query_Where extends Doctrine_Query_Condition {
+	public function load($where) {
+		// Handle operator ("AND" | "OR"), reducing overhead of this method processment
+		$possibleOp = strtolower($where);
 
-        if ($possibleOp == 'and' || $possibleOp == 'or')
-        {
-            return $where;
-        }
+		if ($possibleOp == 'and' || $possibleOp == 'or') {
+			return $where;
+		}
 
-        $where = $this->_tokenizer->bracketTrim(trim($where));
-        $conn  = $this->query->getConnection();
-        $terms = $this->_tokenizer->sqlExplode($where);  
+		$where = $this->_tokenizer->bracketTrim(trim($where));
+		$conn = $this->query->getConnection();
+		$terms = $this->_tokenizer->sqlExplode($where);
 
-        if (count($terms) > 1) {
-            if (substr($where, 0, 6) == 'EXISTS') {
-                return $this->parseExists($where, true);
-            } elseif (preg_match('/^NOT\s+EXISTS\b/i', $where) !== 0) {
-                return $this->parseExists($where, false);
-            }
-        }
+		if (count($terms) > 1) {
+			if (substr($where, 0, 6) == 'EXISTS') {
+				return $this->parseExists($where, true);
+			} elseif (preg_match('/^NOT\s+EXISTS\b/i', $where) !== 0) {
+				return $this->parseExists($where, false);
+			}
+		}
 
-        if (count($terms) < 3) {
-            $terms = $this->_tokenizer->sqlExplode($where, array('=', '<', '<>', '>', '!='));
-        }
+		if (count($terms) < 3) {
+			$terms = $this->_tokenizer
+					->sqlExplode($where, array('=', '<', '<>', '>', '!='));
+		}
 
-        if (count($terms) > 1) {
-            $leftExpr = array_shift($terms);
-            $rightExpr = array_pop($terms);
-            $operator = trim(substr($where, strlen($leftExpr), -strlen($rightExpr)));
+		if (count($terms) > 1) {
+			$leftExpr = array_shift($terms);
+			$rightExpr = array_pop($terms);
+			$operator = trim(
+					substr($where, strlen($leftExpr), -strlen($rightExpr)));
 
-            if (strpos($leftExpr, "'") === false && strpos($leftExpr, '(') === false) {
-                // normal field reference found
-                $a = explode('.', $leftExpr);
-                $fieldname = array_pop($a); // Discard the field name (not needed!)
-                $reference = implode('.', $a);
+			if (strpos($leftExpr, "'") === false
+					&& strpos($leftExpr, '(') === false) {
+				// normal field reference found
+				$a = explode('.', $leftExpr);
+				$fieldname = array_pop($a); // Discard the field name (not needed!)
+				$reference = implode('.', $a);
 
-                if (empty($reference)) {
-                    $map = $this->query->getRootDeclaration();
-                    $alias = $this->query->getSqlTableAlias($this->query->getRootAlias());
-                } else {
-                    $map = $this->query->load($reference, false);
-                    $alias = $this->query->getSqlTableAlias($reference);
-                }
-                
-                // DC-843 Modifiy operator for MSSQL
-                // @TODO apply database dependent parsing
-                //       list($leftExpr, $operator, $rightExpr) = $conn->modifyWhereCondition($leftExpr, $operator, $rightExpr); 
-                $driverName = strtolower($conn->getDriverName());
-                if ($driverName == 'mssql' && !empty($reference)) {
-                    $cmp = $this->query->getQueryComponent($reference);
-                    $table = $cmp['table'];
-                
-                    /* @var $table Doctrine_Table */
-                    $column = $table->getColumnName($fieldname);
-                    $columndef = $table->getColumnDefinition($column);
+				if (empty($reference)) {
+					$map = $this->query->getRootDeclaration();
+					$alias = $this->query
+							->getSqlTableAlias($this->query->getRootAlias());
+				} else {
+					$map = $this->query->load($reference, false);
+					$alias = $this->query->getSqlTableAlias($reference);
+				}
 
-                    if ($columndef['type'] == 'string' && ($columndef['length'] == NULL || $columndef['length'] > $conn->varchar_max_length)) {
-                        $operator = 'LIKE';
-                    }
-                }
-            }
+				// DC-843 Modifiy operator for MSSQL
+				// @TODO apply database dependent parsing
+				//       list($leftExpr, $operator, $rightExpr) = $conn->modifyWhereCondition($leftExpr, $operator, $rightExpr); 
+				$driverName = strtolower($conn->getDriverName());
+				if ($driverName == 'mssql' && !empty($reference)) {
+					$cmp = $this->query->getQueryComponent($reference);
+					$table = $cmp['table'];
 
-            $sql = $this->_buildSql($leftExpr, $operator, $rightExpr);
+					/* @var $table Doctrine_Table */
+					$column = $table->getColumnName($fieldname);
+					$columndef = $table->getColumnDefinition($column);
 
-            return $sql;
-        } else {
-            return $where;
-        }
-    }
+					if ($columndef['type'] == 'string'
+							&& ($columndef['length'] == NULL
+									|| $columndef['length']
+											> $conn->varchar_max_length)) {
+						$operator = 'LIKE';
+					}
+				}
+			}
 
+			$sql = $this->_buildSql($leftExpr, $operator, $rightExpr);
 
-    protected function _buildSql($leftExpr, $operator, $rightExpr)
-    {
-        $leftExprOriginal = $leftExpr;
-        $leftExpr = $this->query->parseClause($leftExpr);
+			return $sql;
+		} else {
+			return $where;
+		}
+	}
 
-        // BETWEEN operation
-        if ('BETWEEN' == strtoupper(substr($operator, 0, 7))) {
-            $midExpr = trim(substr($operator, 7, -3));
-            $operator = 'BETWEEN ' . $this->query->parseClause($midExpr) . ' AND';
-        }
+	protected function _buildSql($leftExpr, $operator, $rightExpr) {
+		$leftExprOriginal = $leftExpr;
+		$leftExpr = $this->query->parseClause($leftExpr);
 
-        // NOT BETWEEN operation
-        if ('NOT BETWEEN' == strtoupper(substr($operator, 0, 11))) {
-            $midExpr = trim(substr($operator, 11, -3));
-            $operator = 'NOT BETWEEN ' . $this->query->parseClause($midExpr) . ' AND';
-        }
+		// BETWEEN operation
+		if ('BETWEEN' == strtoupper(substr($operator, 0, 7))) {
+			$midExpr = trim(substr($operator, 7, -3));
+			$operator = 'BETWEEN ' . $this->query->parseClause($midExpr)
+					. ' AND';
+		}
 
-        $op = strtolower($operator);
-        $isInX = ($op == 'in' || $op == 'not in');
+		// NOT BETWEEN operation
+		if ('NOT BETWEEN' == strtoupper(substr($operator, 0, 11))) {
+			$midExpr = trim(substr($operator, 11, -3));
+			$operator = 'NOT BETWEEN ' . $this->query->parseClause($midExpr)
+					. ' AND';
+		}
 
-        // Check if we are not dealing with "obj.field IN :named"
-        if (substr($rightExpr, 0 , 1) == ':' && $isInX) {
-            throw new Doctrine_Query_Exception(
-                'Cannot use ' . $operator . ' with a named parameter in "' .
-                $leftExprOriginal . ' ' . $operator . ' ' . $rightExpr . '"'
-            );
-        }
-        
-        // Right Expression
-        $rightExpr = ($rightExpr == '?' && $isInX)
-            ? $this->_buildWhereInArraySqlPart($rightExpr)
-            : $this->query->parseClause($rightExpr);
+		$op = strtolower($operator);
+		$isInX = ($op == 'in' || $op == 'not in');
 
-        return $leftExpr . ' ' . $operator . ' ' . $rightExpr;
-    }
+		// Check if we are not dealing with "obj.field IN :named"
+		if (substr($rightExpr, 0, 1) == ':' && $isInX) {
+			throw new Doctrine_Query_Exception(
+					'Cannot use ' . $operator . ' with a named parameter in "'
+							. $leftExprOriginal . ' ' . $operator . ' '
+							. $rightExpr . '"');
+		}
 
+		// Right Expression
+		$rightExpr = ($rightExpr == '?' && $isInX) ? $this
+						->_buildWhereInArraySqlPart($rightExpr)
+				: $this->query->parseClause($rightExpr);
 
-    protected function _buildWhereInArraySqlPart($rightExpr)
-    {
-        $params = $this->query->getInternalParams();
-        $value = array();
+		return $leftExpr . ' ' . $operator . ' ' . $rightExpr;
+	}
 
-        for ($i = 0, $l = count($params); $i < $l; $i++) {
-            if (is_array($params[$i])) {
-                $value = array_fill(0, count($params[$i]), $rightExpr);
-                $this->query->adjustProcessedParam($i);
+	protected function _buildWhereInArraySqlPart($rightExpr) {
+		$params = $this->query->getInternalParams();
+		$value = array();
 
-                break;
-            }
-        }
+		for ($i = 0, $l = count($params); $i < $l; $i++) {
+			if (is_array($params[$i])) {
+				$value = array_fill(0, count($params[$i]), $rightExpr);
+				$this->query->adjustProcessedParam($i);
 
-        return '(' . (count($value) > 0 ? implode(', ', $value) : $rightExpr) . ')';
-    }
+				break;
+			}
+		}
 
-    /**
-     * parses an EXISTS expression
-     *
-     * @param string $where         query where part to be parsed
-     * @param boolean $negation     whether or not to use the NOT keyword
-     * @return string
-     */
-    public function parseExists($where, $negation)
-    {
-        $operator = ($negation) ? 'EXISTS' : 'NOT EXISTS';
+		return '(' . (count($value) > 0 ? implode(', ', $value) : $rightExpr)
+				. ')';
+	}
 
-        $pos = strpos($where, '(');
+	/**
+	 * parses an EXISTS expression
+	 *
+	 * @param string $where         query where part to be parsed
+	 * @param boolean $negation     whether or not to use the NOT keyword
+	 * @return string
+	 */
+	public function parseExists($where, $negation) {
+		$operator = ($negation) ? 'EXISTS' : 'NOT EXISTS';
 
-        if ($pos == false) {
-            throw new Doctrine_Query_Exception('Unknown expression, expected a subquery with () -marks');
-        }
+		$pos = strpos($where, '(');
 
-        $sub = $this->_tokenizer->bracketTrim(substr($where, $pos));
+		if ($pos == false) {
+			throw new Doctrine_Query_Exception(
+					'Unknown expression, expected a subquery with () -marks');
+		}
 
-        $q = $this->query->createSubquery()->parseDqlQuery($sub, false);
-        $sql = $q->getSqlQuery();
-        $q->free();
+		$sub = $this->_tokenizer->bracketTrim(substr($where, $pos));
 
-        return $operator . ' (' . $sql . ')';
-    }
+		$q = $this->query->createSubquery()->parseDqlQuery($sub, false);
+		$sql = $q->getSqlQuery();
+		$q->free();
+
+		return $operator . ' (' . $sql . ')';
+	}
 }

@@ -33,65 +33,66 @@ include_once 'phing/util/regexp/Regexp.php';
  */
 class RegexpMapper implements FileNameMapper {
 
-    /**
-     * @var string
-     */
-    private $to;
-    
-    /**
-     * The Regexp engine.
-     * @var Regexp
-     */
-    private $reg;
+	/**
+	 * @var string
+	 */
+	private $to;
 
-    function __construct() {                
-        // instantiage regexp matcher here
-        $this->reg = new Regexp();
-    }
+	/**
+	 * The Regexp engine.
+	 * @var Regexp
+	 */
+	private $reg;
 
-    /**
-     * Sets the &quot;from&quot; pattern. Required.
-     */
-    function setFrom($from) {
-        $this->reg->SetPattern($from);
-    }
+	function __construct() {
+		// instantiage regexp matcher here
+		$this->reg = new Regexp();
+	}
 
-    /**
-     * Sets the &quot;to&quot; pattern. Required.
-     */
-    function setTo($to) {
-    
-        // [HL] I'm changing the way this works for now to just use string
-        //$this->to = StringHelper::toCharArray($to);
-        
-        $this->to = $to;
-    }
+	/**
+	 * Sets the &quot;from&quot; pattern. Required.
+	 */
+	function setFrom($from) {
+		$this->reg->SetPattern($from);
+	}
 
-    function main($sourceFileName) {
-        if ($this->reg === null  || $this->to === null || !$this->reg->matches((string) $sourceFileName)) {
-            return null;
-        }
-        return array($this->replaceReferences($sourceFileName));
-    }
+	/**
+	 * Sets the &quot;to&quot; pattern. Required.
+	 */
+	function setTo($to) {
 
-    /**
-     * Replace all backreferences in the to pattern with the matched groups.
-     * groups of the source.
-     * @param string $source The source filename.
-     */
-    private function replaceReferences($source) {
-        
-        // FIXME
-        // Can't we just use engine->replace() to handle this?  the Preg engine
-        // will automatically convert \1 references to $1
-        
-        // the expression has already been processed (when ->matches() was run in Main())
-        // so no need to pass $source again to the engine.
-        $groups = (array) $this->reg->getGroups();            
-        
-        // replace \1 with value of $groups[1] and return the modified "to" string
-        return preg_replace('/\\\([\d]+)/e', "\$groups[$1]", $this->to);            
-    }
-    
+		// [HL] I'm changing the way this works for now to just use string
+		//$this->to = StringHelper::toCharArray($to);
+
+		$this->to = $to;
+	}
+
+	function main($sourceFileName) {
+		if ($this->reg === null || $this->to === null
+				|| !$this->reg->matches((string) $sourceFileName)) {
+			return null;
+		}
+		return array($this->replaceReferences($sourceFileName));
+	}
+
+	/**
+	 * Replace all backreferences in the to pattern with the matched groups.
+	 * groups of the source.
+	 * @param string $source The source filename.
+	 */
+	private function replaceReferences($source) {
+
+		// FIXME
+		// Can't we just use engine->replace() to handle this?  the Preg engine
+		// will automatically convert \1 references to $1
+
+		// the expression has already been processed (when ->matches() was run in Main())
+		// so no need to pass $source again to the engine.
+		$groups = (array) $this->reg->getGroups();
+
+		// replace \1 with value of $groups[1] and return the modified "to" string
+		return preg_replace('/\\\([\d]+)/e', "\$groups[$1]", $this->to);
+	}
+
 }
 

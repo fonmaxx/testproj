@@ -30,38 +30,35 @@
  * @version     $Revision: 7490 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-abstract class Doctrine_Hook_Parser
-{
-    protected $condition;
-    protected $params = array();
+abstract class Doctrine_Hook_Parser {
+	protected $condition;
+	protected $params = array();
 
-    public function getCondition()
-    {
-        return $this->condition;
-    }
+	public function getCondition() {
+		return $this->condition;
+	}
 
-    /**
-     * getParams
-     * returns the parameters associated with this parser
-     *
-     * @return array
-     */
-    public function getParams()
-    {
-        return $this->params;
-    }
+	/**
+	 * getParams
+	 * returns the parameters associated with this parser
+	 *
+	 * @return array
+	 */
+	public function getParams() {
+		return $this->params;
+	}
 
-    /**
-     * parse
-     * Parses given field and field value to DQL condition
-     * and parameters. This method should always return
-     * prepared statement conditions (conditions that use
-     * placeholders instead of literal values).
-     *
-     * @param string $alias     component alias
-     * @param string $field     the field name
-     * @param mixed $value      the value of the field
-     * @return void
-     */
-    abstract public function parse($alias, $field, $value);
+	/**
+	 * parse
+	 * Parses given field and field value to DQL condition
+	 * and parameters. This method should always return
+	 * prepared statement conditions (conditions that use
+	 * placeholders instead of literal values).
+	 *
+	 * @param string $alias     component alias
+	 * @param string $field     the field name
+	 * @param mixed $value      the value of the field
+	 * @return void
+	 */
+	abstract public function parse($alias, $field, $value);
 }

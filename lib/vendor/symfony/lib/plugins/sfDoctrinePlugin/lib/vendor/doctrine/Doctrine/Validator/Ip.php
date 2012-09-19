@@ -30,16 +30,15 @@
  * @version     $Revision: 7490 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Validator_Ip extends Doctrine_Validator_Driver
-{
-    /**
-     * checks if given value is valid ip address
-     *
-     * @param mixed $value
-     * @return boolean
-     */
-    public function validate($value)
-    {
-        return is_null($value) ? true : (bool) filter_var($value, FILTER_VALIDATE_IP);
-    }
+class Doctrine_Validator_Ip extends Doctrine_Validator_Driver {
+	/**
+	 * checks if given value is valid ip address
+	 *
+	 * @param mixed $value
+	 * @return boolean
+	 */
+	public function validate($value) {
+		return is_null($value) ? true
+				: (bool) filter_var($value, FILTER_VALIDATE_IP);
+	}
 }

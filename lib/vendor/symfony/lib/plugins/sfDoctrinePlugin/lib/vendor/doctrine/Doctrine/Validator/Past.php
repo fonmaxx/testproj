@@ -30,50 +30,48 @@
  * @version     $Revision$
  * @author      Roman Borschel <roman@code-factory.org>
  */
-class Doctrine_Validator_Past extends Doctrine_Validator_Driver
-{
-    /**
-     * checks if the given value is a valid date in the past.
-     *
-     * @param mixed $value
-     * @return boolean
-     */
-    public function validate($value)
-    {
-        if (is_null($value)) {
-            return true;
-        }
-        $e = explode('-', $value);
+class Doctrine_Validator_Past extends Doctrine_Validator_Driver {
+	/**
+	 * checks if the given value is a valid date in the past.
+	 *
+	 * @param mixed $value
+	 * @return boolean
+	 */
+	public function validate($value) {
+		if (is_null($value)) {
+			return true;
+		}
+		$e = explode('-', $value);
 
-        if (count($e) !== 3) {
-            return false;
-        }
-        
-        if (is_array($this->args) && isset($this->args['timezone'])) {
-            switch (strtolower($this->args['timezone'])) {
-                case 'gmt':
-                    $now = gmdate("U") - date("Z");
-                    break;
-                default:
-                    $now = getdate();
-                    break;
-            }
-        } else {
-            $now = getdate();
-        }
-        
-        if ($now['year'] < $e[0]) {
-            return false;
-        } else if ($now['year'] == $e[0]) {
-            if ($now['mon'] < $e[1]) {
-                return false;
-            } else if ($now['mon'] == $e[1]) {
-                return $now['mday'] > $e[2];
-            } else {
-                return true;
-            }
-        } else {
-            return true;
-        }
-    }
+		if (count($e) !== 3) {
+			return false;
+		}
+
+		if (is_array($this->args) && isset($this->args['timezone'])) {
+			switch (strtolower($this->args['timezone'])) {
+			case 'gmt':
+				$now = gmdate("U") - date("Z");
+				break;
+			default:
+				$now = getdate();
+				break;
+			}
+		} else {
+			$now = getdate();
+		}
+
+		if ($now['year'] < $e[0]) {
+			return false;
+		} else if ($now['year'] == $e[0]) {
+			if ($now['mon'] < $e[1]) {
+				return false;
+			} else if ($now['mon'] == $e[1]) {
+				return $now['mday'] > $e[2];
+			} else {
+				return true;
+			}
+		} else {
+			return true;
+		}
+	}
 }

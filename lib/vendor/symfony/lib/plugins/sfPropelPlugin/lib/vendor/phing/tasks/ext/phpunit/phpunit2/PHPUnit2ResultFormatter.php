@@ -31,26 +31,24 @@ require_once 'phing/system/io/Writer.php';
  * @package phing.tasks.ext.phpunit.phpunit2
  * @since 2.1.0
  */
-abstract class PHPUnit2ResultFormatter implements PHPUnit2_Framework_TestListener
-{
+abstract class PHPUnit2ResultFormatter implements PHPUnit2_Framework_TestListener {
 	protected $out = NULL;
-	
+
 	protected $project = NULL;
-	
+
 	private $timer = NULL;
 
 	private $runCount = 0;
-	
+
 	private $failureCount = 0;
-	
-	private $errorCount = 0;	
-	
+
+	private $errorCount = 0;
+
 	/**
 	 * Sets the writer the formatter is supposed to write its results to.
-   	 */
-	function setOutput(Writer $out)
-	{
-		$this->out = $out;	
+	 */
+	function setOutput(Writer $out) {
+		$this->out = $out;
 	}
 
 	/**
@@ -58,8 +56,7 @@ abstract class PHPUnit2ResultFormatter implements PHPUnit2_Framework_TestListene
 	 *
 	 * @return string the extension
 	 */
-	function getExtension()
-	{
+	function getExtension() {
 		return "";
 	}
 
@@ -68,89 +65,71 @@ abstract class PHPUnit2ResultFormatter implements PHPUnit2_Framework_TestListene
 	 *
 	 * @param Project the project
 	 */
-	function setProject(Project $project)
-	{
+	function setProject(Project $project) {
 		$this->project = $project;
 	}
-	
-	function getPreferredOutfile()
-	{
+
+	function getPreferredOutfile() {
 		return "";
 	}
-	
-	function startTestRun()
-	{
+
+	function startTestRun() {
 	}
-	
-	function endTestRun()
-	{
+
+	function endTestRun() {
 	}
-	
-	function startTestSuite(PHPUnit2_Framework_TestSuite $suite)
-	{
+
+	function startTestSuite(PHPUnit2_Framework_TestSuite $suite) {
 		$this->runCount = 0;
 		$this->failureCount = 0;
 		$this->errorCount = 0;
-		
+
 		$this->timer = new Timer();
 		$this->timer->start();
 	}
-	
-	function endTestSuite(PHPUnit2_Framework_TestSuite $suite)
-	{
+
+	function endTestSuite(PHPUnit2_Framework_TestSuite $suite) {
 		$this->timer->stop();
 	}
 
-	function startTest(PHPUnit2_Framework_Test $test)
-	{
+	function startTest(PHPUnit2_Framework_Test $test) {
 		$this->runCount++;
 	}
 
-	function endTest(PHPUnit2_Framework_Test $test)
-	{
+	function endTest(PHPUnit2_Framework_Test $test) {
 	}
 
-	function addError(PHPUnit2_Framework_Test $test, Exception $e)
-	{
+	function addError(PHPUnit2_Framework_Test $test, Exception $e) {
 		$this->errorCount++;
 	}
 
-	function addFailure(PHPUnit2_Framework_Test $test, PHPUnit2_Framework_AssertionFailedError $t)
-	{
+	function addFailure(PHPUnit2_Framework_Test $test,
+			PHPUnit2_Framework_AssertionFailedError $t) {
 		$this->failureCount++;
 	}
 
-	function addIncompleteTest(PHPUnit2_Framework_Test $test, Exception $e)
-	{
+	function addIncompleteTest(PHPUnit2_Framework_Test $test, Exception $e) {
 	}
 
-	function addSkippedTest(PHPUnit2_Framework_Test $test, Exception $e)
-	{
+	function addSkippedTest(PHPUnit2_Framework_Test $test, Exception $e) {
 	}
-	
-	function getRunCount()
-	{
+
+	function getRunCount() {
 		return $this->runCount;
 	}
-	
-	function getFailureCount()
-	{
+
+	function getFailureCount() {
 		return $this->failureCount;
 	}
-	
-	function getErrorCount()
-	{
+
+	function getErrorCount() {
 		return $this->errorCount;
 	}
-	
-	function getElapsedTime()
-	{
-		if ($this->timer)
-		{
+
+	function getElapsedTime() {
+		if ($this->timer) {
 			return $this->timer->getElapsedTime();
-		}
-		else
-		{
+		} else {
 			return 0;
 		}
 	}

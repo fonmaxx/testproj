@@ -1,5 +1,4 @@
 <?php
 
-class ModelFromLinkedSchemaTable extends Doctrine_Table
-{
+class ModelFromLinkedSchemaTable extends Doctrine_Table {
 }

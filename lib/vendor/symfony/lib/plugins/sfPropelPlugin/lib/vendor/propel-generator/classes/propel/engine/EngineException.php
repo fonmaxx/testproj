@@ -30,4 +30,5 @@ require_once 'phing/BuildException.php';
  * @version    $Revision: 1262 $
  * @package    propel.engine
  */
-class EngineException extends BuildException {}
+class EngineException extends BuildException {
+}

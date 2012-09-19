@@ -31,8 +31,7 @@ require_once 'phing/system/util/Timer.php';
  * @package phing.tasks.ext.phpunit
  * @since 2.1.0
  */
-class PHPUnitTestRunner
-{
+class PHPUnitTestRunner {
 	const SUCCESS = 0;
 	const FAILURES = 1;
 	const ERRORS = 2;
@@ -43,97 +42,78 @@ class PHPUnitTestRunner
 	private $suite = NULL;
 	private $retCode = 0;
 	private $formatters = array();
-	
+
 	private $codecoverage = false;
-	
+
 	private $project = NULL;
 
 	private $groups = array();
 	private $excludeGroups = array();
 
-	function __construct($suite, Project $project, $groups = array(), $excludeGroups = array())
-	{
+	function __construct($suite, Project $project, $groups = array(),
+			$excludeGroups = array()) {
 		$this->suite = $suite;
 		$this->project = $project;
 		$this->groups = $groups;
 		$this->excludeGroups = $excludeGroups;
 		$this->retCode = self::SUCCESS;
 	}
-	
-	function setCodecoverage($codecoverage)
-	{
+
+	function setCodecoverage($codecoverage) {
 		$this->codecoverage = $codecoverage;
 	}
 
-	function addFormatter($formatter)
-	{
+	function addFormatter($formatter) {
 		$this->formatters[] = $formatter;
 	}
 
-	function run()
-	{
+	function run() {
 		$res = NULL;
-		
-		if (PHPUnitUtil::$installedVersion == 3)
-		{
-			require_once 'PHPUnit/Framework/TestSuite.php';			
+
+		if (PHPUnitUtil::$installedVersion == 3) {
+			require_once 'PHPUnit/Framework/TestSuite.php';
 			$res = new PHPUnit_Framework_TestResult();
-		}
-		else
-		{
+		} else {
 			require_once 'PHPUnit2/Framework/TestSuite.php';
 			$res = new PHPUnit2_Framework_TestResult();
 		}
 
-		if ($this->codecoverage)
-		{
+		if ($this->codecoverage) {
 			$res->collectCodeCoverageInformation(TRUE);
 		}
 
-		foreach ($this->formatters as $formatter)
-		{
+		foreach ($this->formatters as $formatter) {
 			$res->addListener($formatter);
 		}
 
 		$this->suite->run($res, false, $this->groups, $this->excludeGroups);
-		
-		if ($this->codecoverage)
-		{
+
+		if ($this->codecoverage) {
 			$coverageInformation = $res->getCodeCoverageInformation();
-			
-			if (PHPUnitUtil::$installedVersion == 3)
-			{
-				foreach ($coverageInformation as $coverage_info)
-				{
-					CoverageMerger::merge($this->project, array($coverage_info['files']));
+
+			if (PHPUnitUtil::$installedVersion == 3) {
+				foreach ($coverageInformation as $coverage_info) {
+					CoverageMerger::merge($this->project,
+							array($coverage_info['files']));
 				}
-			}
-			else
-			{
+			} else {
 				CoverageMerger::merge($this->project, $coverageInformation);
 			}
 		}
-		
-		if ($res->errorCount() != 0)
-		{
+
+		if ($res->errorCount() != 0) {
 			$this->retCode = self::ERRORS;
-		}
-		else if ($res->failureCount() != 0)
-		{
+		} else if ($res->failureCount() != 0) {
 			$this->retCode = self::FAILURES;
-		}
-		else if ($res->notImplementedCount() != 0)
-		{
+		} else if ($res->notImplementedCount() != 0) {
 			$this->retCode = self::INCOMPLETES;
-		}
-		else if (PHPUnitUtil::$installedVersion == 3 && $res->skippedCount() != 0)
-		{
+		} else if (PHPUnitUtil::$installedVersion == 3
+				&& $res->skippedCount() != 0) {
 			$this->retCode = self::SKIPPED;
 		}
 	}
 
-	function getRetCode()
-	{
+	function getRetCode() {
 		return $this->retCode;
 	}
 }

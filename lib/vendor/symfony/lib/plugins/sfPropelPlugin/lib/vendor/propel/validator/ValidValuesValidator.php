@@ -34,11 +34,9 @@
  * @version    $Revision: 1262 $
  * @package    propel.validator
  */
-class ValidValuesValidator implements BasicValidator
-{
+class ValidValuesValidator implements BasicValidator {
 
-	public function isValid (ValidatorMap $map, $str)
-	{
+	public function isValid(ValidatorMap $map, $str) {
 		return in_array($str, preg_split("/[|,]/", $map->getValue()));
 	}
 }

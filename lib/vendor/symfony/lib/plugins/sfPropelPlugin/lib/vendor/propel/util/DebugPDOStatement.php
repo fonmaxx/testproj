@@ -29,8 +29,7 @@
  * @since      2007-07-12
  * @package    propel.util
  */
-class DebugPDOStatement extends PDOStatement
-{
+class DebugPDOStatement extends PDOStatement {
 
 	/**
 	 * The PDO connection from which this instance was created.
@@ -38,7 +37,7 @@ class DebugPDOStatement extends PDOStatement
 	 * @var        DebugPDO
 	 */
 	protected $pdo;
-	
+
 	/**
 	 * Hashmap for resolving the PDO::PARAM_* class constants to their human-readable names.
 	 * 
@@ -47,18 +46,16 @@ class DebugPDOStatement extends PDOStatement
 	 * @see        self::bindValue()
 	 * @var        array
 	 */
-	protected static $typeMap = array(
-		PDO::PARAM_BOOL => "PDO::PARAM_BOOL",
-		PDO::PARAM_INT => "PDO::PARAM_INT",
-		PDO::PARAM_STR => "PDO::PARAM_STR",
-		PDO::PARAM_LOB => "PDO::PARAM_LOB",
-		PDO::PARAM_NULL => "PDO::PARAM_NULL",
-	);
+	protected static $typeMap = array(PDO::PARAM_BOOL => "PDO::PARAM_BOOL",
+			PDO::PARAM_INT => "PDO::PARAM_INT",
+			PDO::PARAM_STR => "PDO::PARAM_STR",
+			PDO::PARAM_LOB => "PDO::PARAM_LOB",
+			PDO::PARAM_NULL => "PDO::PARAM_NULL",);
 
-  /**
-   * @var array The values that have been bound
-   */
-  protected $boundValues = array();
+	/**
+	 * @var array The values that have been bound
+	 */
+	protected $boundValues = array();
 
 	/**
 	 * Construct a new statement class with reference to main DebugPDO object from
@@ -66,24 +63,22 @@ class DebugPDOStatement extends PDOStatement
 	 * 
 	 * @param      DebugPDO $pdo Reference to the parent PDO instance.
 	 */
-	protected function __construct(DebugPDO $pdo)
-	{
+	protected function __construct(DebugPDO $pdo) {
 		$this->pdo = $pdo;
 	}
 
-	public function getExecutedQueryString()
-	{
+	public function getExecutedQueryString() {
 		$sql = $this->queryString;
-		
+
 		$matches = array();
 		if (preg_match_all('/(:p[0-9]+\b)/', $sql, $matches)) {
 			$size = count($matches[1]);
-			for ($i = $size-1; $i >= 0; $i--) { 
+			for ($i = $size - 1; $i >= 0; $i--) {
 				$pos = $matches[1][$i];
 				$sql = str_replace($pos, $this->boundValues[$pos], $sql);
 			}
 		}
-		
+
 		return $sql;
 	}
 
@@ -94,16 +89,15 @@ class DebugPDOStatement extends PDOStatement
 	 * 
 	 * @return     bool
 	 */
-	public function execute($input_parameters = null)
-	{
-		$debug	= $this->pdo->getDebugSnapshot();
-		$return	= parent::execute($input_parameters);
-		
+	public function execute($input_parameters = null) {
+		$debug = $this->pdo->getDebugSnapshot();
+		$return = parent::execute($input_parameters);
+
 		$sql = $this->getExecutedQueryString();
 		$this->pdo->log($sql, null, __METHOD__, $debug);
-		$this->pdo->setLastExecutedQuery($sql); 
+		$this->pdo->setLastExecutedQuery($sql);
 		$this->pdo->incrementQueryCount();
-		
+
 		return $return;
 	}
 
@@ -116,19 +110,20 @@ class DebugPDOStatement extends PDOStatement
 	 * @param      int $type Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
 	 * @return     boolean
 	 */
-	public function bindValue($pos, $value, $type = PDO::PARAM_STR)
-	{
-		$debug		= $this->pdo->getDebugSnapshot();
-		$typestr	= isset(self::$typeMap[$type]) ? self::$typeMap[$type] : '(default)';
-		$return		= parent::bindValue($pos, $value, $type);
-		$valuestr	= $type == PDO::PARAM_LOB ? '[LOB value]' : var_export($value, true);
-		$msg		= "Binding $valuestr at position $pos w/ PDO type $typestr";
+	public function bindValue($pos, $value, $type = PDO::PARAM_STR) {
+		$debug = $this->pdo->getDebugSnapshot();
+		$typestr = isset(self::$typeMap[$type]) ? self::$typeMap[$type]
+				: '(default)';
+		$return = parent::bindValue($pos, $value, $type);
+		$valuestr = $type == PDO::PARAM_LOB ? '[LOB value]'
+				: var_export($value, true);
+		$msg = "Binding $valuestr at position $pos w/ PDO type $typestr";
 
-    $this->boundValues[$pos] = $valuestr;
-		
+		$this->boundValues[$pos] = $valuestr;
+
 		$this->pdo->log($msg, null, __METHOD__, $debug);
-		
+
 		return $return;
 	}
-	
+
 }

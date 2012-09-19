@@ -1,11 +1,9 @@
 <?php
 
 require_once ##SYMFONY_CORE_AUTOLOAD##;
-sfCoreAutoload::register();
+ sfCoreAutoload::register();
 
-class ProjectConfiguration extends sfProjectConfiguration
-{
-  public function setup()
-  {
-  }
+class ProjectConfiguration extends sfProjectConfiguration {
+	public function setup() {
+	}
 }

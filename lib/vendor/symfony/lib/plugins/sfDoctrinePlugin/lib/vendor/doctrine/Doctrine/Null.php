@@ -33,15 +33,12 @@
  * @version     $Revision: 7490 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-final class Doctrine_Null
-{ 
-    public function exists()
-    {
-        return false;    
-    }
+final class Doctrine_Null {
+	public function exists() {
+		return false;
+	}
 
-    public function __toString()
-    {
-        return '';
-    }
+	public function __toString() {
+		return '';
+	}
 }

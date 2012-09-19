@@ -32,39 +32,34 @@ require_once 'phing/tasks/ext/svn/SvnBaseTask.php';
  * @package phing.tasks.ext.svn
  * @since 2.2.0
  */
-class SvnExportTask extends SvnBaseTask
-{
-#
-    /**
-     * Which Revision to Export
-     * 
-     * @todo check if version_control_svn supports constants
-     * 
-     * @var string
-     */
-    private $revision = 'HEAD';
+class SvnExportTask extends SvnBaseTask {
+	#
+	/**
+	 * Which Revision to Export
+	 * 
+	 * @todo check if version_control_svn supports constants
+	 * 
+	 * @var string
+	 */
+	private $revision = 'HEAD';
 
-    /**
-     * The main entry point
-     *
-     * @throws BuildException
-     */
-    function main()
-    {
-        $this->setup('export');
-        
-        $this->log("Exporting SVN repository to '" . $this->getToDir() . "'");
+	/**
+	 * The main entry point
+	 *
+	 * @throws BuildException
+	 */
+	function main() {
+		$this->setup('export');
 
-        // revision
-        $switches = array(
-            'r' => $this->revision,
-        );
+		$this->log("Exporting SVN repository to '" . $this->getToDir() . "'");
 
-        $this->run(array($this->getToDir()), $switches);
-    }
+		// revision
+		$switches = array('r' => $this->revision,);
 
-    public function setRevision($revision)
-    {
-        $this->revision = $revision;
-    }
+		$this->run(array($this->getToDir()), $switches);
+	}
+
+	public function setRevision($revision) {
+		$this->revision = $revision;
+	}
 }

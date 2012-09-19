@@ -36,8 +36,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 *
 	 * This can be used, for example, to clear any stored start/end SQL.
 	 */
-	public static function reset()
-	{
+	public static function reset() {
 		// does nothing by default
 	}
 
@@ -46,8 +45,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 *
 	 * @return     string
 	 */
-	public static function getDatabaseStartSql()
-	{
+	public static function getDatabaseStartSql() {
 		return '';
 	}
 
@@ -56,8 +54,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 *
 	 * @return     string
 	 */
-	public static function getDatabaseEndSql()
-	{
+	public static function getDatabaseEndSql() {
 		return '';
 	}
 
@@ -66,8 +63,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 *
 	 * @return     string
 	 */
-	public function getTableStartSql()
-	{
+	public function getTableStartSql() {
 		return '';
 	}
 
@@ -76,8 +72,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 *
 	 * @return     string
 	 */
-	public function getTableEndSql()
-	{
+	public function getTableEndSql() {
 		return '';
 	}
 
@@ -86,18 +81,24 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 * @param      DataRow $row The row to process.
 	 * @return     string
 	 */
-	public function buildRowSql(DataRow $row)
-	{
+	public function buildRowSql(DataRow $row) {
 		$sql = "";
 		$platform = $this->getPlatform();
 		$table = $this->getTable();
 
-		$sql .= "INSERT INTO ".$this->quoteIdentifier($this->prefixTablename($this->getTable()->getName()))." (";
+		$sql .= "INSERT INTO "
+				. $this
+						->quoteIdentifier(
+								$this
+										->prefixTablename(
+												$this->getTable()->getName()))
+				. " (";
 
 		// add column names to SQL
 		$colNames = array();
 		foreach ($row->getColumnValues() as $colValue) {
-			$colNames[] = $this->quoteIdentifier($colValue->getColumn()->getName());
+			$colNames[] = $this
+					->quoteIdentifier($colValue->getColumn()->getName());
 		}
 
 		$sql .= implode(',', $colNames);
@@ -121,14 +122,11 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 * @param      ColumnValue $colValue
 	 * @return     mixed The proper value to be added to the string.
 	 */
-	protected function getColumnValueSql(ColumnValue $colValue)
-	{
+	protected function getColumnValueSql(ColumnValue $colValue) {
 		$column = $colValue->getColumn();
 		$method = 'get' . $column->getPhpNative() . 'Sql';
 		return $this->$method($colValue->getValue());
 	}
-
-
 
 	/**
 	 * Gets a representation of a binary value suitable for use in a SQL statement.
@@ -136,19 +134,16 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 * @param      boolean $value
 	 * @return     int
 	 */
-	protected function getBooleanSql($value)
-	{
+	protected function getBooleanSql($value) {
 		return (int) $value;
 	}
-
 
 	/**
 	 * Gets a representation of a BLOB/LONGVARBINARY value suitable for use in a SQL statement.
 	 * @param      mixed $blob Blob object or string data.
 	 * @return     string
 	 */
-	protected function getBlobSql($blob)
-	{
+	protected function getBlobSql($blob) {
 		// they took magic __toString() out of PHP5.0.0; this sucks
 		if (is_object($blob)) {
 			return $this->getPlatform()->quote($blob->__toString());
@@ -162,8 +157,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 * @param      mixed $clob Clob object or string data.
 	 * @return     string
 	 */
-	protected function getClobSql($clob)
-	{
+	protected function getClobSql($clob) {
 		// they took magic __toString() out of PHP5.0.0; this sucks
 		if (is_object($clob)) {
 			return $this->getPlatform()->quote($clob->__toString());
@@ -177,8 +171,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 * @param      string $value
 	 * @return     string
 	 */
-	protected function getDateSql($value)
-	{
+	protected function getDateSql($value) {
 		return "'" . date('Y-m-d', strtotime($value)) . "'";
 	}
 
@@ -187,8 +180,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 * @param      double $value
 	 * @return     float
 	 */
-	protected function getDecimalSql($value)
-	{
+	protected function getDecimalSql($value) {
 		return (float) $value;
 	}
 
@@ -197,8 +189,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 * @param      double $value
 	 * @return     double
 	 */
-	protected function getDoubleSql($value)
-	{
+	protected function getDoubleSql($value) {
 		return (double) $value;
 	}
 
@@ -207,8 +198,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 * @param      float $value
 	 * @return     float
 	 */
-	protected function getFloatSql($value)
-	{
+	protected function getFloatSql($value) {
 		return (float) $value;
 	}
 
@@ -217,8 +207,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 * @param      int $value
 	 * @return     int
 	 */
-	protected function getIntSql($value)
-	{
+	protected function getIntSql($value) {
 		return (int) $value;
 	}
 
@@ -226,8 +215,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 * Gets a representation of a NULL value suitable for use in a SQL statement.
 	 * @return     null
 	 */
-	protected function getNullSql()
-	{
+	protected function getNullSql() {
 		return 'NULL';
 	}
 
@@ -236,8 +224,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 * @param      string $value
 	 * @return     string
 	 */
-	protected function getStringSql($value)
-	{
+	protected function getStringSql($value) {
 		return $this->getPlatform()->quote($value);
 	}
 
@@ -246,8 +233,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 * @param      string $value
 	 * @return     string
 	 */
-	protected function getTimeSql($paramIndex, $value)
-	{
+	protected function getTimeSql($paramIndex, $value) {
 		return "'" . date('H:i:s', strtotime($value)) . "'";
 	}
 
@@ -256,8 +242,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 * @param      string $value
 	 * @return     string
 	 */
-	function getTimestampSql($value)
-	{
+	function getTimestampSql($value) {
 		return "'" . date('Y-m-d H:i:s', strtotime($value)) . "'";
 	}
 

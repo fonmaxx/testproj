@@ -30,10 +30,8 @@
  * @version     $Revision: 1080 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Query_Select extends Doctrine_Query_Part
-{
-    public function parse($dql) 
-    {
-        $this->query->parseSelect($dql);
-    }
+class Doctrine_Query_Select extends Doctrine_Query_Part {
+	public function parse($dql) {
+		$this->query->parseSelect($dql);
+	}
 }

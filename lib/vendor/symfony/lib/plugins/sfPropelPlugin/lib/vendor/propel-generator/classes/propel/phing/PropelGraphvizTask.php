@@ -48,26 +48,22 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
 	 */
 	private $outDir;
 
-
 	/**
 	 * Set the sqldbmap.
 	 * @param      PhingFile $sqldbmap The db map.
 	 */
-	public function setOutputDirectory(PhingFile $out)
-	{
+	public function setOutputDirectory(PhingFile $out) {
 		if (!$out->exists()) {
 			$out->mkdirs();
 		}
 		$this->outDir = $out;
 	}
 
-
 	/**
 	 * Set the sqldbmap.
 	 * @param      PhingFile $sqldbmap The db map.
 	 */
-	public function setSqlDbMap(PhingFile $sqldbmap)
-	{
+	public function setSqlDbMap(PhingFile $sqldbmap) {
 		$this->sqldbmap = $sqldbmap;
 	}
 
@@ -75,8 +71,7 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
 	 * Get the sqldbmap.
 	 * @return     PhingFile $sqldbmap.
 	 */
-	public function getSqlDbMap()
-	{
+	public function getSqlDbMap() {
 		return $this->sqldbmap;
 	}
 
@@ -84,8 +79,7 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
 	 * Set the database name.
 	 * @param      string $database
 	 */
-	public function setDatabase($database)
-	{
+	public function setDatabase($database) {
 		$this->database = $database;
 	}
 
@@ -93,14 +87,11 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
 	 * Get the database name.
 	 * @return     string
 	 */
-	public function getDatabase()
-	{
+	public function getDatabase() {
 		return $this->database;
 	}
 
-
-	public function main()
-	{
+	public function main() {
 
 		$count = 0;
 
@@ -123,10 +114,12 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
 					$this->log("\t+ " . $tbl->getName());
 
 					++$count;
-					$dotSyntax .= 'node'.$tbl->getName().' [label="{<table>'.$tbl->getName().'|<cols>';
+					$dotSyntax .= 'node' . $tbl->getName()
+							. ' [label="{<table>' . $tbl->getName() . '|<cols>';
 
 					foreach ($tbl->getColumns() as $col) {
-						$dotSyntax .= $col->getName() . ' (' . $col->getType()  . ')';
+						$dotSyntax .= $col->getName() . ' (' . $col->getType()
+								. ')';
 						if (count($col->getForeignKeys()) > 0) {
 							$dotSyntax .= ' [FK]';
 						} elseif ($col->isPrimaryKey()) {
@@ -147,27 +140,30 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
 
 					foreach ($tbl->getColumns() as $col) {
 						$fk = $col->getForeignKeys();
-						if ( count($fk) == 0 or $fk === null ) continue;
-						if ( count($fk) > 1 ) throw( new Exception("not sure what to do here...") );
-						$fk = $fk[0];   // try first one
-						$dotSyntax .= 'node'.$tbl->getName() .':cols -> node'.$fk->getForeignTableName() . ':table [label="' . $col->getName() . '=' . implode(',', $fk->getForeignColumns()) . ' "];';
+						if (count($fk) == 0 or $fk === null)
+							continue;
+						if (count($fk) > 1)
+							throw (new Exception("not sure what to do here..."));
+						$fk = $fk[0]; // try first one
+						$dotSyntax .= 'node' . $tbl->getName()
+								. ':cols -> node' . $fk->getForeignTableName()
+								. ':table [label="' . $col->getName() . '='
+								. implode(',', $fk->getForeignColumns())
+								. ' "];';
 						$dotSyntax .= "\n";
 					}
 				}
 
-
-
 			} // foreach database
 			$dotSyntax .= "}\n";
 
-			$this->writeDot($dotSyntax,$this->outDir,$database->getName());
+			$this->writeDot($dotSyntax, $this->outDir, $database->getName());
 
-		$dotSyntax = '';
+			$dotSyntax = '';
 
 		} //foreach datamodels
 
 	} // main()
-
 
 	/**
 	 * probably insecure

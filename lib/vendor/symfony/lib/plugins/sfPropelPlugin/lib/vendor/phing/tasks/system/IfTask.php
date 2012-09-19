@@ -19,7 +19,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>.
  */
- 
+
 require_once 'phing/tasks/system/condition/ConditionBase.php';
 require_once 'phing/tasks/system/SequentialTask.php';
 
@@ -108,76 +108,77 @@ require_once 'phing/tasks/system/SequentialTask.php';
  */
 class IfTask extends ConditionBase {
 
+	private $thenTasks = null;
+	private $elseIfTasks = array();
+	private $elseTasks = null;
 
-    private $thenTasks = null;
-    private $elseIfTasks = array();
-    private $elseTasks = null;
+	/***
+	 * A nested Else if task
+	 */
+	public function addElseIf(ElseIfTask $ei) {
+		$this->elseIfTasks[] = $ei;
+	}
 
-    /***
-     * A nested Else if task
-     */
-    public function addElseIf(ElseIfTask $ei)
-    {
-        $this->elseIfTasks[] = $ei;
-    }
+	/**
+	 * A nested <then> element - a container of tasks that will
+	 * be run if the condition holds true.
+	 *
+	 * <p>Not required.</p>
+	 */
+	public function addThen(SequentialTask $t) {
+		if ($this->thenTasks != null) {
+			throw new BuildException(
+					"You must not nest more than one <then> into <if>");
+		}
+		$this->thenTasks = $t;
+	}
 
-    /**
-     * A nested <then> element - a container of tasks that will
-     * be run if the condition holds true.
-     *
-     * <p>Not required.</p>
-     */
-    public function addThen(SequentialTask $t) {
-        if ($this->thenTasks != null) {
-            throw new BuildException("You must not nest more than one <then> into <if>");
-        }
-        $this->thenTasks = $t;
-    }
+	/**
+	 * A nested <else> element - a container of tasks that will
+	 * be run if the condition doesn't hold true.
+	 *
+	 * <p>Not required.</p>
+	 */
+	public function addElse(SequentialTask $e) {
+		if ($this->elseTasks != null) {
+			throw new BuildException(
+					"You must not nest more than one <else> into <if>");
+		}
+		$this->elseTasks = $e;
+	}
 
-    /**
-     * A nested <else> element - a container of tasks that will
-     * be run if the condition doesn't hold true.
-     *
-     * <p>Not required.</p>
-     */
-    public function addElse(SequentialTask $e) {
-        if ($this->elseTasks != null) {
-            throw new BuildException("You must not nest more than one <else> into <if>");
-        }
-        $this->elseTasks = $e;
-    }
+	public function main() {
 
-    public function main() {
-	
-        if ($this->countConditions() > 1) {
-            throw new BuildException("You must not nest more than one condition into <if>");
-        }
-        if ($this->countConditions() < 1) {
-            throw new BuildException("You must nest a condition into <if>");
-        }
+		if ($this->countConditions() > 1) {
+			throw new BuildException(
+					"You must not nest more than one condition into <if>");
+		}
+		if ($this->countConditions() < 1) {
+			throw new BuildException("You must nest a condition into <if>");
+		}
 		$conditions = $this->getConditions();
 		$c = $conditions[0];
-		
-        if ($c->evaluate()) {
-            if ($this->thenTasks != null) {
-                $this->thenTasks->main();
-            }
-        } else {
-            $done = false;
-            $sz = count($this->elseIfTasks);
-			for($i=0; $i < $sz && !$done; $i++) {
-				$ei = $this->elseIfTasks[$i];
-                if ($ei->evaluate()) {
-                    $done = true;
-                    $ei->main();
-                }
-            }
 
-            if (!$done && $this->elseTasks != null) {
-                $this->elseTasks->main();
-            }
-        }
-    }
+		if ($c->evaluate()) {
+			if ($this->thenTasks != null) {
+				$this->thenTasks->main();
+			}
+		} else {
+			$done = false;
+			$sz = count($this->elseIfTasks);
+			for ($i = 0; $i < $sz && !$done; $i++) {
+				$ei = $this->elseIfTasks[$i];
+				if ($ei->evaluate()) {
+					$done = true;
+					$ei->main();
+				}
+			}
+
+			if (!$done && $this->elseTasks != null) {
+				$this->elseTasks->main();
+			}
+		}
+	}
 }
 
 /**
@@ -186,39 +187,41 @@ class IfTask extends ConditionBase {
  */
 class ElseIfTask extends ConditionBase {
 
-        private $thenTasks = null;
+	private $thenTasks = null;
 
-        public function addThen(SequentialTask $t) {
-            if ($this->thenTasks != null) {
-                throw new BuildException("You must not nest more than one <then> into <elseif>");
-            }
-            $this->thenTasks = $t;
-        }
-	
-		/**
-		 * @return boolean
-		 */
-        public function evaluate() {
-		
-            if ($this->countConditions() > 1) {
-                throw new BuildException("You must not nest more than one condition into <elseif>");
-            }
-            if ($this->countConditions() < 1) {
-                throw new BuildException("You must nest a condition into <elseif>");
-            }
-			
-			$conditions = $this->getConditions();
-			$c = $conditions[0];
+	public function addThen(SequentialTask $t) {
+		if ($this->thenTasks != null) {
+			throw new BuildException(
+					"You must not nest more than one <then> into <elseif>");
+		}
+		$this->thenTasks = $t;
+	}
 
-            return $c->evaluate();
-        }
-		
-		/**
-		 * 
-		 */
-        public function main() {
-            if ($this->thenTasks != null) {
-                $this->thenTasks->main();
-            }
-        }
-    }
+	/**
+	 * @return boolean
+	 */
+	public function evaluate() {
+
+		if ($this->countConditions() > 1) {
+			throw new BuildException(
+					"You must not nest more than one condition into <elseif>");
+		}
+		if ($this->countConditions() < 1) {
+			throw new BuildException("You must nest a condition into <elseif>");
+		}
+
+		$conditions = $this->getConditions();
+		$c = $conditions[0];
+
+		return $c->evaluate();
+	}
+
+	/**
+	 * 
+	 */
+	public function main() {
+		if ($this->thenTasks != null) {
+			$this->thenTasks->main();
+		}
+	}
+}

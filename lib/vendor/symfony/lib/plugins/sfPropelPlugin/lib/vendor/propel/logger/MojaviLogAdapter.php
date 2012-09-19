@@ -39,8 +39,7 @@ class MojaviLogAdapter implements BasicLogger {
 	 * @param      ErrorLog   $logger   instance of Mojavi error log obtained by
 	 *                               calling LogManager::getLogger();
 	 */
-	public function __construct($logger = null)
-	{
+	public function __construct($logger = null) {
 		$this->logger = $logger;
 	}
 
@@ -50,8 +49,7 @@ class MojaviLogAdapter implements BasicLogger {
 	 * @param      mixed   $message    String or Exception object containing the message
 	 *                              to log.
 	 */
-	public function alert($message)
-	{
+	public function alert($message) {
 		$this->log($message, 'alert');
 	}
 
@@ -61,8 +59,7 @@ class MojaviLogAdapter implements BasicLogger {
 	 * @param      mixed   $message    String or Exception object containing the message
 	 *                              to log.
 	 */
-	public function crit($message)
-	{
+	public function crit($message) {
 		$this->log($message, 'crit');
 	}
 
@@ -72,8 +69,7 @@ class MojaviLogAdapter implements BasicLogger {
 	 * @param      mixed   $message    String or Exception object containing the message
 	 *                              to log.
 	 */
-	public function err($message)
-	{
+	public function err($message) {
 		$this->log($message, 'err');
 	}
 
@@ -83,11 +79,9 @@ class MojaviLogAdapter implements BasicLogger {
 	 * @param      mixed   $message    String or Exception object containing the message
 	 *                              to log.
 	 */
-	public function warning($message)
-	{
+	public function warning($message) {
 		$this->log($message, 'warning');
 	}
-
 
 	/**
 	 * A convenience function for logging an critical event.
@@ -95,8 +89,7 @@ class MojaviLogAdapter implements BasicLogger {
 	 * @param      mixed   $message    String or Exception object containing the message
 	 *                              to log.
 	 */
-	public function notice($message)
-	{
+	public function notice($message) {
 		$this->log($message, 'notice');
 	}
 	/**
@@ -105,8 +98,7 @@ class MojaviLogAdapter implements BasicLogger {
 	 * @param      mixed   $message    String or Exception object containing the message
 	 *                              to log.
 	 */
-	public function info($message)
-	{
+	public function info($message) {
 		$this->log($message, 'info');
 	}
 
@@ -116,8 +108,7 @@ class MojaviLogAdapter implements BasicLogger {
 	 * @param      mixed   $message    String or Exception object containing the message
 	 *                              to log.
 	 */
-	public function debug($message)
-	{
+	public function debug($message) {
 		$this->log($message, 'debug');
 	}
 
@@ -129,42 +120,37 @@ class MojaviLogAdapter implements BasicLogger {
 	 * @param      int     $severity   The numeric severity.  Defaults to null so that no
 	 *                              assumptions are made about the logging backend.
 	 */
-	public function log($message, $severity = null)
-	{
+	public function log($message, $severity = null) {
 		if (is_null($this->logger))
 			$this->logger = LogManager::getLogger('propel');
 
-		switch($severity)
-		{
-			case 'crit':
-				$method = 'fatal';
-				break;
-			case 'err':
-				$method = 'error';
-				break;
-			case 'alert':
-			case 'warning':
-				$method = 'warning';
-				break;
-			case 'notice':
-			case 'info':
-				$method = 'info';
-				break;
-			case 'debug':
-			default:
-				$method = 'debug';
+		switch ($severity) {
+		case 'crit':
+			$method = 'fatal';
+			break;
+		case 'err':
+			$method = 'error';
+			break;
+		case 'alert':
+		case 'warning':
+			$method = 'warning';
+			break;
+		case 'notice':
+		case 'info':
+			$method = 'info';
+			break;
+		case 'debug':
+		default:
+			$method = 'debug';
 		}
 
 		// get a backtrace to pass class, function, file, & line to Mojavi logger
 		$trace = debug_backtrace();
 
 		// call the appropriate Mojavi logger method
-		$this->logger->{$method} (
-			$message,
-			$trace[2]['class'],
-			$trace[2]['function'],
-			$trace[1]['file'],
-			$trace[1]['line']
-			);
+		$this->logger
+				->{$method}($message, $trace[2]['class'],
+						$trace[2]['function'], $trace[1]['file'],
+						$trace[1]['line']);
 	}
 }

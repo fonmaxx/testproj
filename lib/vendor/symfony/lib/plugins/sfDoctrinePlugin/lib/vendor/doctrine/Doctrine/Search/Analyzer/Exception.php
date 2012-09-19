@@ -30,5 +30,5 @@
  * @link        www.doctrine-project.org
  * @since       1.0
  */
-class Doctrine_Search_Analyzer_Exception extends Doctrine_Search_Exception
-{ }
+class Doctrine_Search_Analyzer_Exception extends Doctrine_Search_Exception {
+}

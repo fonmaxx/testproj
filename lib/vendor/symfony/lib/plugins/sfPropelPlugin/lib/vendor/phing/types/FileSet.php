@@ -36,21 +36,21 @@ require_once 'phing/types/AbstractFileSet.php';
  * @package phing.types
  */
 class FileSet extends AbstractFileSet {
-    
-    function __construct($fileset = null) {
-        parent::__construct($fileset);
-    }
 
-    /**
-     * Return a FileSet that has the same basedir and same patternsets
-     * as this one.
-     */
-    public function __clone() {
-        if ($this->isReference()) {
-            return new FileSet($this->getRef($this->getProject()));
-        } else {
-            return new FileSet($this);
-        }
-    }
+	function __construct($fileset = null) {
+		parent::__construct($fileset);
+	}
+
+	/**
+	 * Return a FileSet that has the same basedir and same patternsets
+	 * as this one.
+	 */
+	public function __clone() {
+		if ($this->isReference()) {
+			return new FileSet($this->getRef($this->getProject()));
+		} else {
+			return new FileSet($this);
+		}
+	}
 
 }

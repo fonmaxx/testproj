@@ -31,70 +31,62 @@
  * @version     $Revision$
  * @author      Geoff Davis <geoff.davis@gmedia.com.au>
  */
-class Doctrine_Collection_OnDemand implements Iterator
-{
-    protected $_stmt;
-    protected $_current;
-    protected $_tableAliasMap;
-    protected $_hydrator;
-    protected $index;
+class Doctrine_Collection_OnDemand implements Iterator {
+	protected $_stmt;
+	protected $_current;
+	protected $_tableAliasMap;
+	protected $_hydrator;
+	protected $index;
 
-    public function __construct($stmt, $hydrator, $tableAliasMap)
-    {
-        $this->_stmt = $stmt;
-        $this->_hydrator = $hydrator;
-        $this->_tableAliasMap = $tableAliasMap;
-        $this->_current = null;
-        $this->index = 0;
+	public function __construct($stmt, $hydrator, $tableAliasMap) {
+		$this->_stmt = $stmt;
+		$this->_hydrator = $hydrator;
+		$this->_tableAliasMap = $tableAliasMap;
+		$this->_current = null;
+		$this->index = 0;
 
-        $this->_hydrateCurrent();
-    }
+		$this->_hydrateCurrent();
+	}
 
-    private function _hydrateCurrent()
-    {
-        $record = $this->_hydrator->hydrateResultSet($this->_stmt);
-        if ($record instanceof Doctrine_Collection) {
-            $this->_current = $record->getFirst();
-        } else if (is_array($record) && count($record) == 0) {
-            $this->_current = null;
-        } else if (is_array($record) && isset($record[0])) {
-            $this->_current = $record[0];
-        } else {
-            $this->_current = $record;
-        }
-    }
+	private function _hydrateCurrent() {
+		$record = $this->_hydrator->hydrateResultSet($this->_stmt);
+		if ($record instanceof Doctrine_Collection) {
+			$this->_current = $record->getFirst();
+		} else if (is_array($record) && count($record) == 0) {
+			$this->_current = null;
+		} else if (is_array($record) && isset($record[0])) {
+			$this->_current = $record[0];
+		} else {
+			$this->_current = $record;
+		}
+	}
 
-    public function rewind()
-    {
-        $this->index = 0;
-        $this->_stmt->closeCursor();
-        $this->_stmt->execute();
-        $this->_hydrator->onDemandReset();
-        $this->_hydrateCurrent();
-    }
+	public function rewind() {
+		$this->index = 0;
+		$this->_stmt->closeCursor();
+		$this->_stmt->execute();
+		$this->_hydrator->onDemandReset();
+		$this->_hydrateCurrent();
+	}
 
-    public function key()
-    {
-        return $this->index;
-    }
+	public function key() {
+		return $this->index;
+	}
 
-    public function current()
-    {
-        return $this->_current;
-    }
+	public function current() {
+		return $this->_current;
+	}
 
-    public function next()
-    {
-        $this->_current = null;
-        $this->index++;
-        $this->_hydrateCurrent();
-    }
+	public function next() {
+		$this->_current = null;
+		$this->index++;
+		$this->_hydrateCurrent();
+	}
 
-    public function valid()
-    {
-        if ( ! is_null($this->_current) && $this->_current !== false) {
-            return true;
-        }
-        return false;
-    }
+	public function valid() {
+		if (!is_null($this->_current) && $this->_current !== false) {
+			return true;
+		}
+		return false;
+	}
 }

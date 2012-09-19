@@ -31,6 +31,5 @@
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  * @author      Jonathan H. Wage <jonwage@gmail.com>
  */
-class Doctrine_Cache_Exception extends Doctrine_Exception
-{
+class Doctrine_Cache_Exception extends Doctrine_Exception {
 }

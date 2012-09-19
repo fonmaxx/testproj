@@ -30,8 +30,7 @@
  * @version    $Revision: 1262 $
  * @package    propel.validator
  */
-interface BasicValidator
-{
+interface BasicValidator {
 
 	/**
 	 * Determine whether a value meets the criteria specified

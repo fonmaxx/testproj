@@ -63,8 +63,8 @@ class XmlToAppData extends AbstractHandler {
 	private $encoding;
 
 	/** two-dimensional array,
-		first dimension is for schemas(key is the path to the schema file),
-		second is for tags within the schema */
+	    first dimension is for schemas(key is the path to the schema file),
+	    second is for tags within the schema */
 	private $schemasTagsStack = array();
 
 	public $parser;
@@ -76,8 +76,8 @@ class XmlToAppData extends AbstractHandler {
 	 * @param      string $defaultPackage the default PHP package used for the om
 	 * @param      string $encoding The database encoding.
 	 */
-	public function __construct(Platform $platform, $defaultPackage, $encoding = 'iso-8859-1')
-	{
+	public function __construct(Platform $platform, $defaultPackage,
+			$encoding = 'iso-8859-1') {
 		$this->app = new AppData($platform);
 		$this->platform = $platform;
 		$this->defaultPackage = $defaultPackage;
@@ -92,8 +92,7 @@ class XmlToAppData extends AbstractHandler {
 	 * @param      string $xmlFile The input file to parse.
 	 * @return     AppData populated by <code>xmlFile</code>.
 	 */
-	public function parseFile($xmlFile)
-	{
+	public function parseFile($xmlFile) {
 		// we don't want infinite recursion
 		if ($this->isAlreadyParsed($xmlFile)) {
 			return;
@@ -147,197 +146,211 @@ class XmlToAppData extends AbstractHandler {
 
 		try {
 
-	  $parentTag = $this->peekCurrentSchemaTag();
+			$parentTag = $this->peekCurrentSchemaTag();
 
-	  if ($parentTag === false) {
+			if ($parentTag === false) {
 
-				switch($name) {
-					case "database":
-						if ($this->isExternalSchema()) {
-							$this->currentPackage = @$attributes["package"];
-							if ($this->currentPackage === null) {
-								$this->currentPackage = $this->defaultPackage;
-							}
-						} else {
-							$this->currDB = $this->app->addDatabase($attributes);
+				switch ($name) {
+				case "database":
+					if ($this->isExternalSchema()) {
+						$this->currentPackage = @$attributes["package"];
+						if ($this->currentPackage === null) {
+							$this->currentPackage = $this->defaultPackage;
 						}
+					} else {
+						$this->currDB = $this->app->addDatabase($attributes);
+					}
 					break;
 
-					default:
-						$this->_throwInvalidTagException($name);
+				default:
+					$this->_throwInvalidTagException($name);
 				}
 
-			} elseif  ($parentTag == "database") {
+			} elseif ($parentTag == "database") {
 
-				switch($name) {
+				switch ($name) {
 
-					case "external-schema":
-						$xmlFile = @$attributes["filename"];
+				case "external-schema":
+					$xmlFile = @$attributes["filename"];
 
-						//"referenceOnly" attribute is valid in the main schema XML file only,
-						//and it's ingnored in the nested external-schemas
-						if (!$this->isExternalSchema()) {
-							$isForRefOnly = @$attributes["referenceOnly"];
-							$this->isForReferenceOnly = ($isForRefOnly !== null ? (strtolower($isForRefOnly) === "true") : true); // defaults to TRUE
-						}
+					//"referenceOnly" attribute is valid in the main schema XML file only,
+					//and it's ingnored in the nested external-schemas
+					if (!$this->isExternalSchema()) {
+						$isForRefOnly = @$attributes["referenceOnly"];
+						$this->isForReferenceOnly = ($isForRefOnly !== null ? (strtolower(
+										$isForRefOnly) === "true") : true); // defaults to TRUE
+					}
 
-						if ($xmlFile{0} != '/') {
-							$f = new PhingFile($this->currentXmlFile);
-							$xf = new PhingFile($f->getParent(), $xmlFile);
-							$xmlFile = $xf->getPath();
-						}
+					if ($xmlFile{0} != '/') {
+						$f = new PhingFile($this->currentXmlFile);
+						$xf = new PhingFile($f->getParent(), $xmlFile);
+						$xmlFile = $xf->getPath();
+					}
 
-						$this->parseFile($xmlFile);
+					$this->parseFile($xmlFile);
 					break;
 
-    		  case "domain":
-					  $this->currDB->addDomain($attributes);
-				  break;
-
-					case "table":
-						$this->currTable = $this->currDB->addTable($attributes);
-						if ($this->isExternalSchema()) {
-							$this->currTable->setForReferenceOnly($this->isForReferenceOnly);
-							$this->currTable->setPackage($this->currentPackage);
-						}
+				case "domain":
+					$this->currDB->addDomain($attributes);
 					break;
 
-					case "vendor":
-						$this->currVendorObject = $this->currDB->addVendorInfo($attributes);
+				case "table":
+					$this->currTable = $this->currDB->addTable($attributes);
+					if ($this->isExternalSchema()) {
+						$this->currTable
+								->setForReferenceOnly($this->isForReferenceOnly);
+						$this->currTable->setPackage($this->currentPackage);
+					}
 					break;
 
-					case "behavior":
-					  $this->currBehavior = $this->currDB->addBehavior($attributes);
+				case "vendor":
+					$this->currVendorObject = $this->currDB
+							->addVendorInfo($attributes);
 					break;
 
-					default:
-						$this->_throwInvalidTagException($name);
+				case "behavior":
+					$this->currBehavior = $this->currDB
+							->addBehavior($attributes);
+					break;
+
+				default:
+					$this->_throwInvalidTagException($name);
 				}
 
-			} elseif  ($parentTag == "table") {
+			} elseif ($parentTag == "table") {
 
-				switch($name) {
-					case "column":
-						$this->currColumn = $this->currTable->addColumn($attributes);
+				switch ($name) {
+				case "column":
+					$this->currColumn = $this->currTable
+							->addColumn($attributes);
 					break;
 
-					case "foreign-key":
-						$this->currFK = $this->currTable->addForeignKey($attributes);
+				case "foreign-key":
+					$this->currFK = $this->currTable
+							->addForeignKey($attributes);
 					break;
 
-					case "index":
-						$this->currIndex = $this->currTable->addIndex($attributes);
+				case "index":
+					$this->currIndex = $this->currTable->addIndex($attributes);
 					break;
 
-					case "unique":
-						$this->currUnique = $this->currTable->addUnique($attributes);
+				case "unique":
+					$this->currUnique = $this->currTable
+							->addUnique($attributes);
 					break;
 
-					case "vendor":
-						$this->currVendorObject = $this->currTable->addVendorInfo($attributes);
+				case "vendor":
+					$this->currVendorObject = $this->currTable
+							->addVendorInfo($attributes);
 					break;
 
-		  		case "validator":
-					  $this->currValidator = $this->currTable->addValidator($attributes);
-		  		break;
+				case "validator":
+					$this->currValidator = $this->currTable
+							->addValidator($attributes);
+					break;
 
-		  		case "id-method-parameter":
-						$this->currTable->addIdMethodParameter($attributes);
+				case "id-method-parameter":
+					$this->currTable->addIdMethodParameter($attributes);
 					break;
-          
-					case "behavior":
-					  $this->currBehavior = $this->currTable->addBehavior($attributes);
+
+				case "behavior":
+					$this->currBehavior = $this->currTable
+							->addBehavior($attributes);
 					break;
-					
-					default:
-						$this->_throwInvalidTagException($name);
+
+				default:
+					$this->_throwInvalidTagException($name);
 				}
 
-			} elseif  ($parentTag == "column") {
+			} elseif ($parentTag == "column") {
 
-				switch($name) {
-					case "inheritance":
-						$this->currColumn->addInheritance($attributes);
+				switch ($name) {
+				case "inheritance":
+					$this->currColumn->addInheritance($attributes);
 					break;
 
-					case "vendor":
-						$this->currVendorObject = $this->currColumn->addVendorInfo($attributes);
+				case "vendor":
+					$this->currVendorObject = $this->currColumn
+							->addVendorInfo($attributes);
 					break;
 
-					default:
-						$this->_throwInvalidTagException($name);
+				default:
+					$this->_throwInvalidTagException($name);
 				}
 
 			} elseif ($parentTag == "foreign-key") {
 
-				switch($name) {
-					case "reference":
-						$this->currFK->addReference($attributes);
+				switch ($name) {
+				case "reference":
+					$this->currFK->addReference($attributes);
 					break;
 
-					case "vendor":
-						$this->currVendorObject = $this->currUnique->addVendorInfo($attributes);
+				case "vendor":
+					$this->currVendorObject = $this->currUnique
+							->addVendorInfo($attributes);
 					break;
 
-					default:
-						$this->_throwInvalidTagException($name);
+				default:
+					$this->_throwInvalidTagException($name);
 				}
 
-			} elseif  ($parentTag == "index") {
+			} elseif ($parentTag == "index") {
 
-				switch($name) {
-					case "index-column":
-						$this->currIndex->addColumn($attributes);
+				switch ($name) {
+				case "index-column":
+					$this->currIndex->addColumn($attributes);
 					break;
 
-					case "vendor":
-						$this->currVendorObject = $this->currIndex->addVendorInfo($attributes);
+				case "vendor":
+					$this->currVendorObject = $this->currIndex
+							->addVendorInfo($attributes);
 					break;
 
-					default:
-						$this->_throwInvalidTagException($name);
+				default:
+					$this->_throwInvalidTagException($name);
 				}
 
 			} elseif ($parentTag == "unique") {
 
-				switch($name) {
-					case "unique-column":
-						$this->currUnique->addColumn($attributes);
+				switch ($name) {
+				case "unique-column":
+					$this->currUnique->addColumn($attributes);
 					break;
 
-					case "vendor":
-						$this->currVendorObject = $this->currUnique->addVendorInfo($attributes);
+				case "vendor":
+					$this->currVendorObject = $this->currUnique
+							->addVendorInfo($attributes);
 					break;
 
-					default:
-						$this->_throwInvalidTagException($name);
+				default:
+					$this->_throwInvalidTagException($name);
 				}
 			} elseif ($parentTag == "behavior") {
 
-				switch($name) {
-					case "parameter":
-						$this->currBehavior->addParameter($attributes);
+				switch ($name) {
+				case "parameter":
+					$this->currBehavior->addParameter($attributes);
 					break;
 
-					default:
-						$this->_throwInvalidTagException($name);
+				default:
+					$this->_throwInvalidTagException($name);
 				}
 			} elseif ($parentTag == "validator") {
-				switch($name) {
-					case "rule":
-						$this->currValidator->addRule($attributes);
+				switch ($name) {
+				case "rule":
+					$this->currValidator->addRule($attributes);
 					break;
-					default:
-						$this->_throwInvalidTagException($name);
+				default:
+					$this->_throwInvalidTagException($name);
 				}
 			} elseif ($parentTag == "vendor") {
 
-				switch($name) {
-					case "parameter":
-						$this->currVendorObject->addParameter($attributes);
+				switch ($name) {
+				case "parameter":
+					$this->currVendorObject->addParameter($attributes);
 					break;
-					default:
-						$this->_throwInvalidTagException($name);
+				default:
+					$this->_throwInvalidTagException($name);
 				}
 
 			} else {
@@ -356,9 +369,9 @@ class XmlToAppData extends AbstractHandler {
 		}
 	}
 
-	function _throwInvalidTagException($tag_name)
-	{
-		throw new BuildException("Unexpected tag <" . $tag_name . ">", $this->parser->getLocation());
+	function _throwInvalidTagException($tag_name) {
+		throw new BuildException("Unexpected tag <" . $tag_name . ">",
+				$this->parser->getLocation());
 	}
 
 	/**
@@ -370,8 +383,7 @@ class XmlToAppData extends AbstractHandler {
 	 * @param      rawName The qualified name (with prefix), or the empty string if
 	 *		 qualified names are not available.
 	 */
-	public function endElement($name)
-	{
+	public function endElement($name) {
 		if (self::DEBUG) {
 			print("endElement(" . $name . ") called\n");
 		}
@@ -379,31 +391,26 @@ class XmlToAppData extends AbstractHandler {
 		$this->popCurrentSchemaTag();
 	}
 
-	protected function peekCurrentSchemaTag()
-	{
-				$keys = array_keys($this->schemasTagsStack);
+	protected function peekCurrentSchemaTag() {
+		$keys = array_keys($this->schemasTagsStack);
 		return end($this->schemasTagsStack[end($keys)]);
 	}
 
-	protected function popCurrentSchemaTag()
-	{
-				$keys = array_keys($this->schemasTagsStack);
+	protected function popCurrentSchemaTag() {
+		$keys = array_keys($this->schemasTagsStack);
 		array_pop($this->schemasTagsStack[end($keys)]);
 	}
 
-	protected function pushCurrentSchemaTag($tag)
-	{
-				$keys = array_keys($this->schemasTagsStack);
+	protected function pushCurrentSchemaTag($tag) {
+		$keys = array_keys($this->schemasTagsStack);
 		$this->schemasTagsStack[end($keys)][] = $tag;
 	}
 
-	protected function isExternalSchema()
-	{
+	protected function isExternalSchema() {
 		return (sizeof($this->schemasTagsStack) > 1);
 	}
 
-	protected function isAlreadyParsed($filePath)
-	{
+	protected function isAlreadyParsed($filePath) {
 		return isset($this->schemasTagsStack[$filePath]);
 	}
 }

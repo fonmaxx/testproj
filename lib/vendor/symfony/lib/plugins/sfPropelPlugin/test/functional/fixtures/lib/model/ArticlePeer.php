@@ -7,6 +7,5 @@
  *
  * @package lib.model
  */ 
-class ArticlePeer extends BaseArticlePeer
-{
+class ArticlePeer extends BaseArticlePeer {
 }

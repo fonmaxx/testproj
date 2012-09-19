@@ -30,144 +30,144 @@
  * @version     $Revision$
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_IntegrityMapper 
-{
-    /**
-     * processDeleteIntegrity 
-     * 
-     * @param Doctrine_Record $record 
-     * @return void
-     */
-    public function processDeleteIntegrity(Doctrine_Record $record)
-    {
-        $coll = $this->buildIntegrityRelationQuery($record);
-        
-        $this->invokeIntegrityActions($record);
-    }
+class Doctrine_IntegrityMapper {
+	/**
+	 * processDeleteIntegrity 
+	 * 
+	 * @param Doctrine_Record $record 
+	 * @return void
+	 */
+	public function processDeleteIntegrity(Doctrine_Record $record) {
+		$coll = $this->buildIntegrityRelationQuery($record);
 
-    /**
-     * invokeIntegrityActions 
-     * 
-     * @param Doctrine_Record $record 
-     * @return void
-     */
-    public function invokeIntegrityActions(Doctrine_Record $record)
-    {
-        $deleteActions = Doctrine_Manager::getInstance()
-                         ->getDeleteActions($record->getTable()->getComponentName());
-                         
-        foreach ($record->getTable()->getRelations() as $relation) {
-            $componentName = $relation->getTable()->getComponentName();
-            
-            foreach($record->get($relation->getAlias()) as $coll) {
-                if ( ! ($coll instanceof Doctrine_Collection)) {
-                    $coll = array($coll);
-                }
-                foreach ($coll as $record) {
-                    $this->invokeIntegrityActions($record);
+		$this->invokeIntegrityActions($record);
+	}
 
-                    if (isset($deleteActions[$componentName])) {
-                        if ($deleteActions[$componentName] === 'SET NULL') {
-                            $record->set($relation->getForeign(), null);
-                        } elseif ($deleteActions[$componentName] === 'CASCADE') {
-                            $this->conn->transaction->addDelete($record);
-                        }
-                    }
+	/**
+	 * invokeIntegrityActions 
+	 * 
+	 * @param Doctrine_Record $record 
+	 * @return void
+	 */
+	public function invokeIntegrityActions(Doctrine_Record $record) {
+		$deleteActions = Doctrine_Manager::getInstance()
+				->getDeleteActions($record->getTable()->getComponentName());
 
-                }
-            }
-        }
-    }
+		foreach ($record->getTable()->getRelations() as $relation) {
+			$componentName = $relation->getTable()->getComponentName();
 
-    /**
-     * buildIntegrityRelationQuery 
-     * 
-     * @param Doctrine_Record $record 
-     * @return array The result
-     */
-    public function buildIntegrityRelationQuery(Doctrine_Record $record)
-    {
-        $q = $record->getTable()->createQuery();
-        
-        $aliases = array();
-        $indexes = array();
+			foreach ($record->get($relation->getAlias()) as $coll) {
+				if (!($coll instanceof Doctrine_Collection)) {
+					$coll = array($coll);
+				}
+				foreach ($coll as $record) {
+					$this->invokeIntegrityActions($record);
 
-        $root = $record->getTable()->getComponentName();
-        $rootAlias = strtolower(substr($root, 0, 1));
-        $aliases[$rootAlias] = $root;
+					if (isset($deleteActions[$componentName])) {
+						if ($deleteActions[$componentName] === 'SET NULL') {
+							$record->set($relation->getForeign(), null);
+						} elseif ($deleteActions[$componentName] === 'CASCADE') {
+							$this->conn->transaction->addDelete($record);
+						}
+					}
 
-        foreach ((array) $record->getTable()->getIdentifier() as $id) {
-            $field = $rootAlias . '.' . $id;
-            $cond[]   = $field . ' = ?';
-            $fields[] = $field;
-            $params   = $record->get($id);
-        }
-        $fields = implode(', ', $fields);
-        $components[] = $root;
-        $this->buildIntegrityRelations($record->getTable(), $aliases, $fields, $indexes, $components);
+				}
+			}
+		}
+	}
 
-        $q->select($fields)->from($root. ' ' . $rootAlias);
+	/**
+	 * buildIntegrityRelationQuery 
+	 * 
+	 * @param Doctrine_Record $record 
+	 * @return array The result
+	 */
+	public function buildIntegrityRelationQuery(Doctrine_Record $record) {
+		$q = $record->getTable()->createQuery();
 
-        foreach ($aliases as $alias => $name) {
-            $q->leftJoin($rootAlias . '.' . $name . ' ' . $alias);
-        }
-        $q->where(implode(' AND ', $cond));
+		$aliases = array();
+		$indexes = array();
 
-        return $q->execute(array($params));
-    }
+		$root = $record->getTable()->getComponentName();
+		$rootAlias = strtolower(substr($root, 0, 1));
+		$aliases[$rootAlias] = $root;
 
-    /**
-     * buildIntegrityRelations 
-     * 
-     * @param Doctrine_Table $table 
-     * @param mixed $aliases 
-     * @param mixed $fields 
-     * @param mixed $indexes 
-     * @param mixed $components 
-     * @return void
-     */
-    public function buildIntegrityRelations(Doctrine_Table $table, &$aliases, &$fields, &$indexes, &$components)
-    {
-        $deleteActions = Doctrine_Manager::getInstance()
-                         ->getDeleteActions($table->getComponentName());
+		foreach ((array) $record->getTable()->getIdentifier() as $id) {
+			$field = $rootAlias . '.' . $id;
+			$cond[] = $field . ' = ?';
+			$fields[] = $field;
+			$params = $record->get($id);
+		}
+		$fields = implode(', ', $fields);
+		$components[] = $root;
+		$this
+				->buildIntegrityRelations($record->getTable(), $aliases,
+						$fields, $indexes, $components);
 
-        foreach ($table->getRelations() as $relation) {
-            $componentName = $relation->getTable()->getComponentName();
-            if (in_array($componentName, $components)) {
-                continue;
-            }
-            $components[] = $componentName;
+		$q->select($fields)->from($root . ' ' . $rootAlias);
 
-            $alias = strtolower(substr($relation->getAlias(), 0, 1));
+		foreach ($aliases as $alias => $name) {
+			$q->leftJoin($rootAlias . '.' . $name . ' ' . $alias);
+		}
+		$q->where(implode(' AND ', $cond));
 
-            if ( ! isset($indexes[$alias])) {
-                $indexes[$alias] = 1;
-            }
+		return $q->execute(array($params));
+	}
 
-            if (isset($deleteActions[$componentName])) {
-                if (isset($aliases[$alias])) {
-                    $alias = $alias . ++$indexes[$alias];
-                }
-                $aliases[$alias] = $relation->getAlias();
+	/**
+	 * buildIntegrityRelations 
+	 * 
+	 * @param Doctrine_Table $table 
+	 * @param mixed $aliases 
+	 * @param mixed $fields 
+	 * @param mixed $indexes 
+	 * @param mixed $components 
+	 * @return void
+	 */
+	public function buildIntegrityRelations(Doctrine_Table $table, &$aliases,
+			&$fields, &$indexes, &$components) {
+		$deleteActions = Doctrine_Manager::getInstance()
+				->getDeleteActions($table->getComponentName());
 
-                if ($deleteActions[$componentName] === 'SET NULL') {
-                    if ($relation instanceof Doctrine_Relation_ForeignKey) {
-                        foreach ((array) $relation->getForeign() as $foreign) {
-                            $fields .= ', ' . $alias . '.' . $foreign;
-                        }
-                    } elseif ($relation instanceof Doctrine_Relation_LocalKey) {
-                        foreach ((array) $relation->getLocal() as $foreign) {
-                            $fields .= ', ' . $alias . '.' . $foreign;
-                        }
-                    }
-                }
-                foreach ((array) $relation->getTable()->getIdentifier() as $id) {
-                    $fields .= ', ' . $alias . '.' . $id;
-                }
-                if ($deleteActions[$componentName] === 'CASCADE') {
-                    $this->buildIntegrityRelations($relation->getTable(), $aliases, $fields, $indexes, $components);
-                }
-            }
-        }
-    }
+		foreach ($table->getRelations() as $relation) {
+			$componentName = $relation->getTable()->getComponentName();
+			if (in_array($componentName, $components)) {
+				continue;
+			}
+			$components[] = $componentName;
+
+			$alias = strtolower(substr($relation->getAlias(), 0, 1));
+
+			if (!isset($indexes[$alias])) {
+				$indexes[$alias] = 1;
+			}
+
+			if (isset($deleteActions[$componentName])) {
+				if (isset($aliases[$alias])) {
+					$alias = $alias . ++$indexes[$alias];
+				}
+				$aliases[$alias] = $relation->getAlias();
+
+				if ($deleteActions[$componentName] === 'SET NULL') {
+					if ($relation instanceof Doctrine_Relation_ForeignKey) {
+						foreach ((array) $relation->getForeign() as $foreign) {
+							$fields .= ', ' . $alias . '.' . $foreign;
+						}
+					} elseif ($relation instanceof Doctrine_Relation_LocalKey) {
+						foreach ((array) $relation->getLocal() as $foreign) {
+							$fields .= ', ' . $alias . '.' . $foreign;
+						}
+					}
+				}
+				foreach ((array) $relation->getTable()->getIdentifier() as $id) {
+					$fields .= ', ' . $alias . '.' . $id;
+				}
+				if ($deleteActions[$componentName] === 'CASCADE') {
+					$this
+							->buildIntegrityRelations($relation->getTable(),
+									$aliases, $fields, $indexes, $components);
+				}
+			}
+		}
+	}
 }

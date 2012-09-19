@@ -18,7 +18,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>.
  */
- 
+
 include_once 'phing/Task.php';
 
 /**
@@ -31,77 +31,76 @@ include_once 'phing/Task.php';
  */
 
 class EchoTask extends Task {
-	
-    protected $msg = "";
-    
-    protected $file = "";
-    
-    protected $append = false;
-    
-    protected $level = "info";
 
-    function main() {		
-		switch ($this->level)
-		{
-			case "error": $loglevel = Project::MSG_ERR; break;
-			case "warning": $loglevel = Project::MSG_WARN; break;
-			case "info": $loglevel = Project::MSG_INFO; break;
-			case "verbose": $loglevel = Project::MSG_VERBOSE; break;
-			case "debug": $loglevel = Project::MSG_DEBUG; break;
+	protected $msg = "";
+
+	protected $file = "";
+
+	protected $append = false;
+
+	protected $level = "info";
+
+	function main() {
+		switch ($this->level) {
+		case "error":
+			$loglevel = Project::MSG_ERR;
+			break;
+		case "warning":
+			$loglevel = Project::MSG_WARN;
+			break;
+		case "info":
+			$loglevel = Project::MSG_INFO;
+			break;
+		case "verbose":
+			$loglevel = Project::MSG_VERBOSE;
+			break;
+		case "debug":
+			$loglevel = Project::MSG_DEBUG;
+			break;
 		}
-		
-		if (empty($this->file))
-		{
-        	$this->log($this->msg, $loglevel);
-		}
-		else
-		{
-			if ($this->append)
-			{
+
+		if (empty($this->file)) {
+			$this->log($this->msg, $loglevel);
+		} else {
+			if ($this->append) {
 				$handle = fopen($this->file, "a");
-			}
-			else
-			{
+			} else {
 				$handle = fopen($this->file, "w");
 			}
-			
+
 			fwrite($handle, $this->msg);
-			
+
 			fclose($handle);
 		}
-    }
-    
-    /** setter for file */
-    function setFile($file)
-    {
+	}
+
+	/** setter for file */
+	function setFile($file) {
 		$this->file = (string) $file;
 	}
 
-    /** setter for level */
-    function setLevel($level)
-    {
+	/** setter for level */
+	function setLevel($level) {
 		$this->level = (string) $level;
 	}
 
-    /** setter for append */
-    function setAppend($append)
-    {
+	/** setter for append */
+	function setAppend($append) {
 		$this->append = $append;
 	}
 
-    /** setter for message */
-    function setMsg($msg) {
-        $this->setMessage($msg);
-    }
+	/** setter for message */
+	function setMsg($msg) {
+		$this->setMessage($msg);
+	}
 
-    /** alias setter */
-    function setMessage($msg) {
-        $this->msg = (string) $msg;
-    }
-    
-    /** Supporting the <echo>Message</echo> syntax. */
-    function addText($msg)
-    {
-        $this->msg = (string) $msg;
-    }
+	/** alias setter */
+	function setMessage($msg) {
+		$this->msg = (string) $msg;
+	}
+
+	/** Supporting the <echo>Message</echo> syntax. */
+	function addText($msg) {
+		$this->msg = (string) $msg;
+	}
 }

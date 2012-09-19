@@ -48,18 +48,16 @@
  * @version    $Revision: 1262 $
  * @package    propel.validator
  */
-class MatchValidator implements BasicValidator
-{
+class MatchValidator implements BasicValidator {
 	/**
 	 * Prepares the regular expression entered in the XML
 	 * for use with preg_match().
 	 * @param      string $exp
 	 * @return     string Prepared regular expession.
 	 */
-	private function prepareRegexp($exp)
-	{
+	private function prepareRegexp($exp) {
 		// remove surrounding '/' marks so that they don't get escaped in next step
-		if ($exp{0} !== '/' || $exp{strlen($exp)-1} !== '/' ) {
+		if ($exp{0} !== '/' || $exp{strlen($exp) - 1} !== '/') {
 			$exp = '/' . $exp . '/';
 		}
 
@@ -72,8 +70,7 @@ class MatchValidator implements BasicValidator
 	/**
 	 * Whether the passed string matches regular expression.
 	 */
-	public function isValid (ValidatorMap $map, $str)
-	{
+	public function isValid(ValidatorMap $map, $str) {
 		return (preg_match($this->prepareRegexp($map->getValue()), $str) != 0);
 	}
 }

@@ -34,198 +34,201 @@ include_once 'phing/system/io/PhingFile.php';
  */
 class PEAR_PackageFileManager_Fileset {
 
-    /**
-     * @access private
-     * @var PEAR_PackageFileManager
-     */
-    private $parent;
-    
-    /**
-     * Curent Phing Project.
-     * @var Project
-     */
-    private $project;
-    
-    /**
-     * FileSets to use.
-     * @var array FileSet[]
-     */
-    private $filesets = array();
+	/**
+	 * @access private
+	 * @var PEAR_PackageFileManager
+	 */
+	private $parent;
 
-    /**
-     * Set up the FileSet filelist generator
-     *
-     * 'project' and 'filesets' are the only options that this class uses.
-     * 
-     * @param PEAR_PackageFileManager
-     * @param array
-     */
-    function __construct($parent, $options)
-    {
-        $this->parent = $parent;
-        $this->project = $options['phing_project'];
-        $this->filesets = $options['phing_filesets'];
-    }
-    
-    /**
-     * Generate the <filelist></filelist> section
-     * of the package file.
-     *
-     * This function performs the backend generation of the array
-     * containing all files in this package
-     * @return array structure of all files to include
-     */
-    function getFileList() {    
+	/**
+	 * Curent Phing Project.
+	 * @var Project
+	 */
+	private $project;
 
-        $allfiles = array();        
-        
-        foreach($this->filesets as $fs) {
-            $ds = $fs->getDirectoryScanner($this->project);
-            
-            $files = $ds->getIncludedFiles();
-            
-            // We need to store these files keyed by the basedir from DirectoryScanner
-            // so that we can resolve the fullpath of the file later.
-            if (isset($allfiles[$ds->getBasedir()]))
-            {
-                $allfiles[$ds->getBasedir()] = array_merge($allfiles[$ds->getBasedir()], $files);
-            }
-            else
-            {
-                $allfiles[$ds->getBasedir()] = $files;
-            }
-        }
-        
-        $struc = array();
-        
-        foreach($allfiles as $basedir => $files) {
-        
-            foreach($files as $file) {
-                            
-                // paths are relative to $basedir above
-                $path = strtr(dirname($file), DIRECTORY_SEPARATOR, '/');
-    
-                if (!$path || $path == '.') {
-                    $path = '/'; // for array index
-                }
-                
+	/**
+	 * FileSets to use.
+	 * @var array FileSet[]
+	 */
+	private $filesets = array();
+
+	/**
+	 * Set up the FileSet filelist generator
+	 *
+	 * 'project' and 'filesets' are the only options that this class uses.
+	 * 
+	 * @param PEAR_PackageFileManager
+	 * @param array
+	 */
+	function __construct($parent, $options) {
+		$this->parent = $parent;
+		$this->project = $options['phing_project'];
+		$this->filesets = $options['phing_filesets'];
+	}
+
+	/**
+	 * Generate the <filelist></filelist> section
+	 * of the package file.
+	 *
+	 * This function performs the backend generation of the array
+	 * containing all files in this package
+	 * @return array structure of all files to include
+	 */
+	function getFileList() {
+
+		$allfiles = array();
+
+		foreach ($this->filesets as $fs) {
+			$ds = $fs->getDirectoryScanner($this->project);
+
+			$files = $ds->getIncludedFiles();
+
+			// We need to store these files keyed by the basedir from DirectoryScanner
+			// so that we can resolve the fullpath of the file later.
+			if (isset($allfiles[$ds->getBasedir()])) {
+				$allfiles[$ds->getBasedir()] = array_merge(
+						$allfiles[$ds->getBasedir()], $files);
+			} else {
+				$allfiles[$ds->getBasedir()] = $files;
+			}
+		}
+
+		$struc = array();
+
+		foreach ($allfiles as $basedir => $files) {
+
+			foreach ($files as $file) {
+
+				// paths are relative to $basedir above
+				$path = strtr(dirname($file), DIRECTORY_SEPARATOR, '/');
+
+				if (!$path || $path == '.') {
+					$path = '/'; // for array index
+				}
+
 				$parts = explode('.', basename($file));
-                $ext = array_pop($parts);
-                if (strlen($ext) == strlen($file)) {
-                    $ext = '';
-                }
-                
-                $f = new PhingFile($basedir, $file);
-                
-                $struc[$path][] = array('file' => basename($file),
-                                        'ext' => $ext,
-                                        'path' => (($path == '/') ? basename($file) : $path . '/' . basename($file)),
-                                        'fullpath' => $f->getAbsolutePath());        
-            }                                        
-        }
-                
-        uksort($struc,'strnatcasecmp');
-        foreach($struc as $key => $ind) {
-            usort($ind, array($this, 'sortfiles'));
-            $struc[$key] = $ind;
-        }
+				$ext = array_pop($parts);
+				if (strlen($ext) == strlen($file)) {
+					$ext = '';
+				}
 
-        $tempstruc = $struc;
-        $struc = array('/' => $tempstruc['/']);
-        $bv = 0;
-        foreach($tempstruc as $key => $ind) {
-            $save = $key;
-            if ($key != '/') {
-                $struc['/'] = $this->setupDirs($struc['/'], explode('/', $key), $tempstruc[$key]);
-            }
-        }
-        uksort($struc['/'], array($this, 'mystrucsort'));
+				$f = new PhingFile($basedir, $file);
 
-        return $struc;
-    }
+				$struc[$path][] = array('file' => basename($file),
+						'ext' => $ext,
+						'path' => (($path == '/') ? basename($file)
+								: $path . '/' . basename($file)),
+						'fullpath' => $f->getAbsolutePath());
+			}
+		}
 
-    /**
-     * Recursively move contents of $struc into associative array
-     *
-     * The contents of $struc have many indexes like 'dir/subdir/subdir2'.
-     * This function converts them to
-     * array('dir' => array('subdir' => array('subdir2')))
-     * @param array struc is array('dir' => array of files in dir,
-     *              'dir/subdir' => array of files in dir/subdir,...)
-     * @param array array form of 'dir/subdir/subdir2' array('dir','subdir','subdir2')
-     * @return array same as struc but with array('dir' =>
-     *              array(file1,file2,'subdir' => array(file1,...)))
-     */
-    private function setupDirs($struc, $dir, $contents) {
-    
-        if (!count($dir)) {
-            foreach($contents as $dir => $files) {
-                if (is_string($dir)) {
-                    if (strpos($dir, '/')) {
-                        $test = true;
-                        $a = $contents[$dir];
-                        unset($contents[$dir]);
-                        $b = explode('/', $dir);
-                        $c = array_shift($b);
-                        if (isset($contents[$c])) {
-                            $contents[$c] = $this->setDir($contents[$c], $this->setupDirs(array(), $b, $a));
-                        } else {
-                            $contents[$c] = $this->setupDirs(array(), $b, $a);
-                        }
-                    }
-                }
-            }
-            return $contents;
-        }
-        $me = array_shift($dir);
-        if (!isset($struc[$me])) {
-            $struc[$me] = array();
-        }
-        $struc[$me] = $this->setupDirs($struc[$me], $dir, $contents);
-        return $struc;
-    }
-    
-    /**
-     * Recursively add all the subdirectories of $contents to $dir without erasing anything in
-     * $dir
-     * @param array
-     * @param array
-     * @return array processed $dir
-     */
-    function setDir($dir, $contents)
-    {
-        while(list($one,$two) = each($contents)) {
-            if (isset($dir[$one])) {
-                $dir[$one] = $this->setDir($dir[$one], $contents[$one]);
-            } else {
-                $dir[$one] = $two;
-            }
-        }
-        return $dir;
-    }
-    
-    /**
-     * Sorting functions for the file list
-     * @param string
-     * @param string
-     * @access private
-     */
-    function sortfiles($a, $b)
-    {
-        return strnatcasecmp($a['file'],$b['file']);
-    }
-    
-    function mystrucsort($a, $b)
-    {
-        if (is_numeric($a) && is_string($b)) return 1;
-        if (is_numeric($b) && is_string($a)) return -1;
-        if (is_numeric($a) && is_numeric($b))
-        {
-            if ($a > $b) return 1;
-            if ($a < $b) return -1;
-            if ($a == $b) return 0;
-        }
-        return strnatcasecmp($a,$b);
-    }
+		uksort($struc, 'strnatcasecmp');
+		foreach ($struc as $key => $ind) {
+			usort($ind, array($this, 'sortfiles'));
+			$struc[$key] = $ind;
+		}
+
+		$tempstruc = $struc;
+		$struc = array('/' => $tempstruc['/']);
+		$bv = 0;
+		foreach ($tempstruc as $key => $ind) {
+			$save = $key;
+			if ($key != '/') {
+				$struc['/'] = $this
+						->setupDirs($struc['/'], explode('/', $key),
+								$tempstruc[$key]);
+			}
+		}
+		uksort($struc['/'], array($this, 'mystrucsort'));
+
+		return $struc;
+	}
+
+	/**
+	 * Recursively move contents of $struc into associative array
+	 *
+	 * The contents of $struc have many indexes like 'dir/subdir/subdir2'.
+	 * This function converts them to
+	 * array('dir' => array('subdir' => array('subdir2')))
+	 * @param array struc is array('dir' => array of files in dir,
+	 *              'dir/subdir' => array of files in dir/subdir,...)
+	 * @param array array form of 'dir/subdir/subdir2' array('dir','subdir','subdir2')
+	 * @return array same as struc but with array('dir' =>
+	 *              array(file1,file2,'subdir' => array(file1,...)))
+	 */
+	private function setupDirs($struc, $dir, $contents) {
+
+		if (!count($dir)) {
+			foreach ($contents as $dir => $files) {
+				if (is_string($dir)) {
+					if (strpos($dir, '/')) {
+						$test = true;
+						$a = $contents[$dir];
+						unset($contents[$dir]);
+						$b = explode('/', $dir);
+						$c = array_shift($b);
+						if (isset($contents[$c])) {
+							$contents[$c] = $this
+									->setDir($contents[$c],
+											$this->setupDirs(array(), $b, $a));
+						} else {
+							$contents[$c] = $this->setupDirs(array(), $b, $a);
+						}
+					}
+				}
+			}
+			return $contents;
+		}
+		$me = array_shift($dir);
+		if (!isset($struc[$me])) {
+			$struc[$me] = array();
+		}
+		$struc[$me] = $this->setupDirs($struc[$me], $dir, $contents);
+		return $struc;
+	}
+
+	/**
+	 * Recursively add all the subdirectories of $contents to $dir without erasing anything in
+	 * $dir
+	 * @param array
+	 * @param array
+	 * @return array processed $dir
+	 */
+	function setDir($dir, $contents) {
+		while (list($one, $two) = each($contents)) {
+			if (isset($dir[$one])) {
+				$dir[$one] = $this->setDir($dir[$one], $contents[$one]);
+			} else {
+				$dir[$one] = $two;
+			}
+		}
+		return $dir;
+	}
+
+	/**
+	 * Sorting functions for the file list
+	 * @param string
+	 * @param string
+	 * @access private
+	 */
+	function sortfiles($a, $b) {
+		return strnatcasecmp($a['file'], $b['file']);
+	}
+
+	function mystrucsort($a, $b) {
+		if (is_numeric($a) && is_string($b))
+			return 1;
+		if (is_numeric($b) && is_string($a))
+			return -1;
+		if (is_numeric($a) && is_numeric($b)) {
+			if ($a > $b)
+				return 1;
+			if ($a < $b)
+				return -1;
+			if ($a == $b)
+				return 0;
+		}
+		return strnatcasecmp($a, $b);
+	}
 }
 

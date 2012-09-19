@@ -32,36 +32,36 @@
  */
 interface Doctrine_Tree_Interface {
 
-    /**
-     * creates root node from given record or from a new record
-     *
-     * @param Doctrine_Record $record                    instance of Doctrine_Record
-     */
-    public function createRoot(Doctrine_Record $record = null);
+	/**
+	 * creates root node from given record or from a new record
+	 *
+	 * @param Doctrine_Record $record                    instance of Doctrine_Record
+	 */
+	public function createRoot(Doctrine_Record $record = null);
 
-    /**
-     * returns root node
-     *
-     * @return Doctrine_Record
-     */
-    public function fetchRoot($root_id = 1);
+	/**
+	 * returns root node
+	 *
+	 * @return Doctrine_Record
+	 */
+	public function fetchRoot($root_id = 1);
 
-    /**
-     * optimised method to returns iterator for traversal of the entire tree from root
-     *
-     * @param array $options                    options
-     * @param integer $fetchmode  One of the Doctrine_Core::HYDRATE_* constants.
-     * @return Iterator                 instance of Doctrine_Node_<Implementation>_PreOrderIterator
-     */
-    public function fetchTree($options = array(), $hydrationMode = null);
+	/**
+	 * optimised method to returns iterator for traversal of the entire tree from root
+	 *
+	 * @param array $options                    options
+	 * @param integer $fetchmode  One of the Doctrine_Core::HYDRATE_* constants.
+	 * @return Iterator                 instance of Doctrine_Node_<Implementation>_PreOrderIterator
+	 */
+	public function fetchTree($options = array(), $hydrationMode = null);
 
-    /**
-     * optimised method that returns iterator for traversal of the tree from the given record primary key
-     *
-     * @param mixed $pk                         primary key as used by table::find() to locate node to traverse tree from
-     * @param array $options                    options
-     * @param integer $fetchmode                One of the Doctrine_Core::HYDRATE_* constants.
-     * @return iterator                         instance of Doctrine_Node_<Implementation>_PreOrderIterator
-     */
-    public function fetchBranch($pk, $options = array(), $hydrationMode = null);
+	/**
+	 * optimised method that returns iterator for traversal of the tree from the given record primary key
+	 *
+	 * @param mixed $pk                         primary key as used by table::find() to locate node to traverse tree from
+	 * @param array $options                    options
+	 * @param integer $fetchmode                One of the Doctrine_Core::HYDRATE_* constants.
+	 * @return iterator                         instance of Doctrine_Node_<Implementation>_PreOrderIterator
+	 */
+	public function fetchBranch($pk, $options = array(), $hydrationMode = null);
 }

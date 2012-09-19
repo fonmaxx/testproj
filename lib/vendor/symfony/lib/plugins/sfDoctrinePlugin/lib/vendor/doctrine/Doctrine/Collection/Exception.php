@@ -30,5 +30,5 @@
  * @version     $Revision: 7490 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Collection_Exception extends Doctrine_Exception
-{ }
+class Doctrine_Collection_Exception extends Doctrine_Exception {
+}

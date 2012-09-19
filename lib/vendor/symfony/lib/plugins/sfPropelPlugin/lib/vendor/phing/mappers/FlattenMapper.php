@@ -30,26 +30,28 @@ require_once 'phing/mappers/FileNameMapper.php';
  */
 class FlattenMapper implements FileNameMapper {
 
-    /**
-     * The mapper implementation. Returns string with source filename
-     * but without leading directory information
-     *
-     * @param string $sourceFileName The data the mapper works on
-     * @return array The data after the mapper has been applied
-     */
-    function main($sourceFileName) {
-        $f = new PhingFile($sourceFileName);
-        return array($f->getName());
-    }
+	/**
+	 * The mapper implementation. Returns string with source filename
+	 * but without leading directory information
+	 *
+	 * @param string $sourceFileName The data the mapper works on
+	 * @return array The data after the mapper has been applied
+	 */
+	function main($sourceFileName) {
+		$f = new PhingFile($sourceFileName);
+		return array($f->getName());
+	}
 
-    /**
-     * Ignored here.
-     */
-    function setTo($to) {}
+	/**
+	 * Ignored here.
+	 */
+	function setTo($to) {
+	}
 
-    /**
-     * Ignored here.
-     */
-    function setFrom($from) {}
+	/**
+	 * Ignored here.
+	 */
+	function setFrom($from) {
+	}
 
 }

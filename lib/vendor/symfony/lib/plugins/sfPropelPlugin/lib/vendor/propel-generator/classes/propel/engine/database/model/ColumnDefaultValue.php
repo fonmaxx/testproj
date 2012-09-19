@@ -47,8 +47,7 @@ class ColumnDefaultValue {
 	 * @param      string $value The default value, as specified in the schema.
 	 * @param      string $type The type of default value (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR)
 	 */
-	public function __construct($value, $type = null)
-	{
+	public function __construct($value, $type = null) {
 		$this->setValue($value);
 		if ($type !== null) {
 			$this->setType($type);
@@ -58,16 +57,14 @@ class ColumnDefaultValue {
 	/**
 	 * @return     string The type of default value (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR)
 	 */
-	public function getType()
-	{
+	public function getType() {
 		return $this->type;
 	}
 
 	/**
 	 * @param      string $type The type of default value (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR)
 	 */
-	public function setType($type)
-	{
+	public function setType($type) {
 		$this->type = $type;
 	}
 
@@ -76,26 +73,22 @@ class ColumnDefaultValue {
 	 *
 	 * @return     boolean Whether value this object holds is an expression.
 	 */
-	public function isExpression()
-	{
+	public function isExpression() {
 		return ($this->type == self::TYPE_EXPR);
 	}
 
 	/**
 	 * @return     string The value, as specified in the schema.
 	 */
-	public function getValue()
-	{
+	public function getValue() {
 		return $this->value;
 	}
 
 	/**
 	 * @param      string $value The value, as specified in the schema.
 	 */
-	public function setValue($value)
-	{
+	public function setValue($value) {
 		$this->value = $value;
 	}
-
 
 }

@@ -30,28 +30,27 @@
  * @version     $Revision: 7490 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Connection_Common extends Doctrine_Connection
-{
-    /**
-     * Adds an driver-specific LIMIT clause to the query
-     *
-     * @param string $query
-     * @param mixed $limit
-     * @param mixed $offset
-     */
-    public function modifyLimitQuery($query, $limit = false,$offset = false,$isManip=false)
-    {
-        $limit = (int) $limit;
-        $offset = (int) $offset;
-        
-        if ($limit && $offset) {
-            $query .= ' LIMIT ' . $limit . ' OFFSET ' . $offset;
-        } elseif ($limit && ! $offset) {
-            $query .= ' LIMIT ' . $limit;
-        } elseif ( ! $limit && $offset) {
-            $query .= ' LIMIT 999999999999 OFFSET ' . $offset;
-        }
+class Doctrine_Connection_Common extends Doctrine_Connection {
+	/**
+	 * Adds an driver-specific LIMIT clause to the query
+	 *
+	 * @param string $query
+	 * @param mixed $limit
+	 * @param mixed $offset
+	 */
+	public function modifyLimitQuery($query, $limit = false, $offset = false,
+			$isManip = false) {
+		$limit = (int) $limit;
+		$offset = (int) $offset;
 
-        return $query;
-    }
+		if ($limit && $offset) {
+			$query .= ' LIMIT ' . $limit . ' OFFSET ' . $offset;
+		} elseif ($limit && !$offset) {
+			$query .= ' LIMIT ' . $limit;
+		} elseif (!$limit && $offset) {
+			$query .= ' LIMIT 999999999999 OFFSET ' . $offset;
+		}
+
+		return $query;
+	}
 }

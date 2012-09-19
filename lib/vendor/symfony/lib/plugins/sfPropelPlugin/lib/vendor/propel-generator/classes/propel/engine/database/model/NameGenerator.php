@@ -56,7 +56,7 @@ interface NameGenerator {
 	 * database schema will be converted to PHP source names. 
 	 */
 	const CONV_METHOD_CLEAN = "clean";
-	
+
 	/**
 	 * Similar to {@link #CONV_METHOD_UNDERSCORE} except nothing is
 	 * converted to lowercase.

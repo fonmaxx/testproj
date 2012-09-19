@@ -7,6 +7,5 @@
  *
  * @package lib.model
  */ 
-class MovieI18nPeer extends BaseMovieI18nPeer
-{
+class MovieI18nPeer extends BaseMovieI18nPeer {
 }

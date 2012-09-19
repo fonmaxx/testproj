@@ -30,54 +30,50 @@
  * @since       1.0
  * @version     $Revision$
  */
-class Doctrine_Query_Registry
-{
-    protected $_queries = array();
+class Doctrine_Query_Registry {
+	protected $_queries = array();
 
-    public function add($key, $query)
-    {
-        if ($query instanceof Doctrine_Query) {
-            $query = clone $query;
-        }
+	public function add($key, $query) {
+		if ($query instanceof Doctrine_Query) {
+			$query = clone $query;
+		}
 
-    	if (strpos($key, '/') === false) {
-            $this->_queries[$key] = $query;
-        } else {
-            // namespace found
-            
-            $e = explode('/', $key);
+		if (strpos($key, '/') === false) {
+			$this->_queries[$key] = $query;
+		} else {
+			// namespace found
 
-            $this->_queries[$e[0]][$e[1]] = $query;
-        }
-    }
-    
-    public function get($key, $namespace = null)
-    {
-        if (isset($namespace)) {
-            if ( ! isset($this->_queries[$namespace][$key])) {
-                throw new Doctrine_Query_Registry_Exception('A query with the name ' . $namespace . '/' . $key . ' does not exist.');
-            }
-            $query = $this->_queries[$namespace][$key];
-        } else {
-            if ( ! isset($this->_queries[$key])) {
-                throw new Doctrine_Query_Registry_Exception('A query with the name ' . $key . ' does not exist.');
-            }
-            $query = $this->_queries[$key];
-        }
-        
-        if ( ! ($query instanceof Doctrine_Query)) {
-            $query = Doctrine_Query::create()
-                ->parseDqlQuery($query);
-        }
-        
-        return clone $query;
-    }
-    
-    
-    public function has($key, $namespace = null)
-    {
-        return isset($namespace) 
-            ? isset($this->_queries[$namespace][$key])
-            : isset($this->_queries[$key]);
-    }
+			$e = explode('/', $key);
+
+			$this->_queries[$e[0]][$e[1]] = $query;
+		}
+	}
+
+	public function get($key, $namespace = null) {
+		if (isset($namespace)) {
+			if (!isset($this->_queries[$namespace][$key])) {
+				throw new Doctrine_Query_Registry_Exception(
+						'A query with the name ' . $namespace . '/' . $key
+								. ' does not exist.');
+			}
+			$query = $this->_queries[$namespace][$key];
+		} else {
+			if (!isset($this->_queries[$key])) {
+				throw new Doctrine_Query_Registry_Exception(
+						'A query with the name ' . $key . ' does not exist.');
+			}
+			$query = $this->_queries[$key];
+		}
+
+		if (!($query instanceof Doctrine_Query)) {
+			$query = Doctrine_Query::create()->parseDqlQuery($query);
+		}
+
+		return clone $query;
+	}
+
+	public function has($key, $namespace = null) {
+		return isset($namespace) ? isset($this->_queries[$namespace][$key])
+				: isset($this->_queries[$key]);
+	}
 }

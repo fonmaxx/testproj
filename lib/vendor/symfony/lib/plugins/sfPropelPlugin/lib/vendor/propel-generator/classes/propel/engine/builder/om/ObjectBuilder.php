@@ -60,14 +60,15 @@ abstract class ObjectBuilder extends OMBuilder {
 	 * in different langauges (e.g. PHP4 and PHP5).
 	 * @param      string &$script The script will be modified in this method.
 	 */
-	protected function addColumnAccessorMethods(&$script)
-	{
+	protected function addColumnAccessorMethods(&$script) {
 		$table = $this->getTable();
 
 		foreach ($table->getColumns() as $col) {
 
 			// if they're not using the DateTime class than we will generate "compatibility" accessor method
-			if ($col->getType() === PropelTypes::DATE || $col->getType() === PropelTypes::TIME || $col->getType() === PropelTypes::TIMESTAMP) {
+			if ($col->getType() === PropelTypes::DATE
+					|| $col->getType() === PropelTypes::TIME
+					|| $col->getType() === PropelTypes::TIMESTAMP) {
 				$this->addTemporalAccessor($script, $col);
 			} else {
 				$this->addDefaultAccessor($script, $col);
@@ -85,20 +86,20 @@ abstract class ObjectBuilder extends OMBuilder {
 	 * in different langauges (e.g. PHP4 and PHP5).
 	 * @param      string &$script The script will be modified in this method.
 	 */
-	protected function addColumnMutatorMethods(&$script)
-	{
+	protected function addColumnMutatorMethods(&$script) {
 		foreach ($this->getTable()->getColumns() as $col) {
 
 			if ($col->isLobType()) {
 				$this->addLobMutator($script, $col);
-			} elseif ($col->getType() === PropelTypes::DATE || $col->getType() === PropelTypes::TIME || $col->getType() === PropelTypes::TIMESTAMP) {
+			} elseif ($col->getType() === PropelTypes::DATE
+					|| $col->getType() === PropelTypes::TIME
+					|| $col->getType() === PropelTypes::TIMESTAMP) {
 				$this->addTemporalMutator($script, $col);
 			} else {
 				$this->addDefaultMutator($script, $col);
 			}
 		}
 	}
-
 
 	/**
 	 * Gets the baseClass path if specified for table/db.
@@ -131,10 +132,11 @@ abstract class ObjectBuilder extends OMBuilder {
 	 * This is based on the build property propel.addGenericMutators, and also whether the
 	 * table is read-only or an alias.
 	 */
-	protected function isAddGenericMutators()
-	{
+	protected function isAddGenericMutators() {
 		$table = $this->getTable();
-		return (!$table->isAlias() && $this->getBuildProperty('addGenericMutators') && !$table->isReadOnly());
+		return (!$table->isAlias()
+				&& $this->getBuildProperty('addGenericMutators')
+				&& !$table->isReadOnly());
 	}
 
 	/**
@@ -142,46 +144,44 @@ abstract class ObjectBuilder extends OMBuilder {
 	 * This is based on the build property propel.addGenericAccessors, and also whether the
 	 * table is an alias.
 	 */
-	protected function isAddGenericAccessors()
-	{
+	protected function isAddGenericAccessors() {
 		$table = $this->getTable();
-		return (!$table->isAlias() && $this->getBuildProperty('addGenericAccessors'));
+		return (!$table->isAlias()
+				&& $this->getBuildProperty('addGenericAccessors'));
 	}
 
 	/**
 	 * Whether to add the validate() method.
 	 * This is based on the build property propel.addValidateMethod
 	 */
-	protected function isAddValidateMethod()
-	{
+	protected function isAddValidateMethod() {
 		return $this->getBuildProperty('addValidateMethod');
 	}
-	
-	protected function hasDefaultValues()
-	{
+
+	protected function hasDefaultValues() {
 		foreach ($this->getTable()->getColumns() as $col) {
-			if($col->getDefaultValue() !== null) return true;
+			if ($col->getDefaultValue() !== null)
+				return true;
 		}
 		return false;
 	}
 
-  /**
-   * Checks whether any registered behavior on that table has a modifier for a hook
-   * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-   * @return boolean
-   */
-  public function hasBehaviorModifier($hookName)
-  {
-    return parent::hasBehaviorModifier($hookName, 'ObjectBuilderModifier');
-  }
+	/**
+	 * Checks whether any registered behavior on that table has a modifier for a hook
+	 * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+	 * @return boolean
+	 */
+	public function hasBehaviorModifier($hookName) {
+		return parent::hasBehaviorModifier($hookName, 'ObjectBuilderModifier');
+	}
 
-  /**
-   * Checks whether any registered behavior on that table has a modifier for a hook
-   * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+	/**
+	 * Checks whether any registered behavior on that table has a modifier for a hook
+	 * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
 	 * @param string &$script The script will be modified in this method.
-   */
-  public function applyBehaviorModifier($hookName, &$script, $tab = "		")
-  {
-    return parent::applyBehaviorModifier($hookName, 'ObjectBuilderModifier', $script, $tab);
-  }
+	 */
+	public function applyBehaviorModifier($hookName, &$script, $tab = "		") {
+		return parent::applyBehaviorModifier($hookName,
+				'ObjectBuilderModifier', $script, $tab);
+	}
 }

@@ -30,17 +30,15 @@
  * @version     $Revision: 7490 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Validator_Notblank extends Doctrine_Validator_Driver
-{
-    /**
-     * checks that value isn't blank
-     * a value is blank when its either null or contains only space characters
-     *
-     * @param mixed $value
-     * @return boolean
-     */
-    public function validate($value)
-    {
-        return (trim($value) !== '' && $value !== null);
-    }
+class Doctrine_Validator_Notblank extends Doctrine_Validator_Driver {
+	/**
+	 * checks that value isn't blank
+	 * a value is blank when its either null or contains only space characters
+	 *
+	 * @param mixed $value
+	 * @return boolean
+	 */
+	public function validate($value) {
+		return (trim($value) !== '' && $value !== null);
+	}
 }

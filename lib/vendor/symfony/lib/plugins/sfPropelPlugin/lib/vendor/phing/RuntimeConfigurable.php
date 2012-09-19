@@ -33,86 +33,88 @@
  */
 class RuntimeConfigurable {
 
-    private $elementTag = null;
-    private $children = array();
-    private $wrappedObject = null;
-    private $attributes = array();
-    private $characters = "";
+	private $elementTag = null;
+	private $children = array();
+	private $wrappedObject = null;
+	private $attributes = array();
+	private $characters = "";
 
+	/** @param proxy The element to wrap. */
+	function __construct($proxy, $elementTag) {
+		$this->wrappedObject = $proxy;
+		$this->elementTag = $elementTag;
+	}
 
-    /** @param proxy The element to wrap. */
-    function __construct($proxy, $elementTag) {
-        $this->wrappedObject = $proxy;
-        $this->elementTag = $elementTag;
-    }
+	function setProxy($proxy) {
+		$this->wrappedObject = $proxy;
+	}
 
-    function setProxy($proxy) {
-        $this->wrappedObject = $proxy;
-    }
+	/** Set's the attributes for the wrapped element. */
+	function setAttributes($attributes) {
+		$this->attributes = $attributes;
+	}
 
-    /** Set's the attributes for the wrapped element. */
-    function setAttributes($attributes) {
-        $this->attributes = $attributes;
-    }
+	/** Returns the AttributeList of the wrapped element. */
+	function getAttributes() {
+		return $this->attributes;
+	}
 
-    /** Returns the AttributeList of the wrapped element. */
-    function getAttributes() {
-        return $this->attributes;
-    }
+	/** Adds child elements to the wrapped element. */
+	function addChild(RuntimeConfigurable $child) {
+		$this->children[] = $child;
+	}
 
-    /** Adds child elements to the wrapped element. */
-    function addChild(RuntimeConfigurable $child) {
-        $this->children[] = $child;
-    }
+	/** Returns the child with index */
+	function getChild($index) {
+		return $this->children[(int) $index];
+	}
 
-    /** Returns the child with index */
-    function getChild($index) {
-        return $this->children[(int)$index];
-    }
+	/** Add characters from #PCDATA areas to the wrapped element. */
+	function addText($data) {
+		$this->characters .= (string) $data;
+	}
 
-    /** Add characters from #PCDATA areas to the wrapped element. */
-    function addText($data) {
-        $this->characters .= (string) $data;
-    }
+	function getElementTag() {
+		return $this->elementTag;
+	}
 
-    function getElementTag() {
-        return $this->elementTag;
-    }
+	/** Configure the wrapped element and all children. */
+	function maybeConfigure(Project $project) {
+		$id = null;
 
+		// DataType configured in ProjectConfigurator
+		//        if ( is_a($this->wrappedObject, "DataType") )
+		//            return;
 
-    /** Configure the wrapped element and all children. */
-    function maybeConfigure(Project $project) {
-        $id = null;
+		if ($this->attributes || $this->characters) {
+			ProjectConfigurator::configure($this->wrappedObject,
+					$this->attributes, $project);
 
-        // DataType configured in ProjectConfigurator
-        //        if ( is_a($this->wrappedObject, "DataType") )
-        //            return;
+			if (isset($this->attributes["id"])) {
+				$id = $this->attributes["id"];
+			}
 
-        if ($this->attributes || $this->characters) {
-            ProjectConfigurator::configure($this->wrappedObject, $this->attributes, $project);
+			$this->attributes = null;
 
-            if (isset($this->attributes["id"])) {
-                $id = $this->attributes["id"];
-            }
+			if ($this->characters) {
+				ProjectConfigurator::addText($project, $this->wrappedObject,
+						(string) $this->characters);
+				$this->characters = "";
+			}
+			if ($id !== null) {
+				$project->addReference($id, $this->wrappedObject);
+			}
+		}
 
-            $this->attributes = null;
-
-            if ($this->characters) {
-                ProjectConfigurator::addText($project, $this->wrappedObject, (string) $this->characters);
-                $this->characters="";
-            }
-            if ($id !== null) {
-                $project->addReference($id, $this->wrappedObject);
-            }
-        }
-
-        if ( is_array($this->children) && !empty($this->children) ) {
-            // Configure all child of this object ...
-            foreach($this->children as $child) {
-                $child->maybeConfigure($project);
-                ProjectConfigurator::storeChild($project, $this->wrappedObject, $child->wrappedObject, strtolower($child->getElementTag()));
-            }
-        }
-    }
+		if (is_array($this->children) && !empty($this->children)) {
+			// Configure all child of this object ...
+			foreach ($this->children as $child) {
+				$child->maybeConfigure($project);
+				ProjectConfigurator::storeChild($project, $this->wrappedObject,
+						$child->wrappedObject,
+						strtolower($child->getElementTag()));
+			}
+		}
+	}
 }
 

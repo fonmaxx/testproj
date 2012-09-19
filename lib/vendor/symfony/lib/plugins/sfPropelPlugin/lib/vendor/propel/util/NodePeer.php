@@ -52,7 +52,8 @@ interface NodePeer {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     void
 	 */
-	public static function insertAsFirstChildOf(NodeObject $child, NodeObject $parent, PropelPDO $con = null);
+	public static function insertAsFirstChildOf(NodeObject $child,
+			NodeObject $parent, PropelPDO $con = null);
 
 	/**
 	 * Inserts $child as last child of destination node $parent
@@ -62,7 +63,8 @@ interface NodePeer {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     void
 	 */
-	public static function insertAsLastChildOf(NodeObject $child, NodeObject $parent, PropelPDO $con = null);
+	public static function insertAsLastChildOf(NodeObject $child,
+			NodeObject $parent, PropelPDO $con = null);
 
 	/**
 	 * Inserts $sibling as previous sibling to destination node $node
@@ -72,7 +74,8 @@ interface NodePeer {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     void
 	 */
-	public static function insertAsPrevSiblingOf(NodeObject $node, NodeObject $sibling, PropelPDO $con = null);
+	public static function insertAsPrevSiblingOf(NodeObject $node,
+			NodeObject $sibling, PropelPDO $con = null);
 
 	/**
 	 * Inserts $sibling as next sibling to destination node $node
@@ -82,7 +85,8 @@ interface NodePeer {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     void
 	 */
-	public static function insertAsNextSiblingOf(NodeObject $node, NodeObject $sibling, PropelPDO $con = null);
+	public static function insertAsNextSiblingOf(NodeObject $node,
+			NodeObject $sibling, PropelPDO $con = null);
 
 	/**
 	 * Inserts $parent as parent of given $node.
@@ -93,7 +97,8 @@ interface NodePeer {
 	 * @return     void
 	 * @throws     Exception      When trying to insert node as parent of a root node
 	 */
-	public static function insertAsParentOf(NodeObject $parent, NodeObject $node, PropelPDO $con = null);
+	public static function insertAsParentOf(NodeObject $parent,
+			NodeObject $node, PropelPDO $con = null);
 
 	/**
 	 * Inserts $node as root node
@@ -130,7 +135,8 @@ interface NodePeer {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     void
 	 */
-	public static function moveToFirstChildOf(NodeObject $parent, NodeObject $child, PropelPDO $con = null);
+	public static function moveToFirstChildOf(NodeObject $parent,
+			NodeObject $child, PropelPDO $con = null);
 
 	/**
 	 * Moves $node to be last child of $dest
@@ -140,7 +146,8 @@ interface NodePeer {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     void
 	 */
-	public static function moveToLastChildOf(NodeObject $dest, NodeObject $node, PropelPDO $con = null);
+	public static function moveToLastChildOf(NodeObject $dest, NodeObject $node,
+			PropelPDO $con = null);
 
 	/**
 	 * Moves $node to be prev sibling to $dest
@@ -150,7 +157,8 @@ interface NodePeer {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     void
 	 */
-	public static function moveToPrevSiblingOf(NodeObject $dest, NodeObject $node, PropelPDO $con = null);
+	public static function moveToPrevSiblingOf(NodeObject $dest,
+			NodeObject $node, PropelPDO $con = null);
 
 	/**
 	 * Moves $node to be next sibling to $dest
@@ -160,7 +168,8 @@ interface NodePeer {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     void
 	 */
-	public static function moveToNextSiblingOf(NodeObject $dest, NodeObject $node, PropelPDO $con = null);
+	public static function moveToNextSiblingOf(NodeObject $dest,
+			NodeObject $node, PropelPDO $con = null);
 
 	/**
 	 * Gets first child for the given node if it exists
@@ -169,7 +178,8 @@ interface NodePeer {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	public static function retrieveFirstChild(NodeObject $node, PropelPDO $con = null);
+	public static function retrieveFirstChild(NodeObject $node,
+			PropelPDO $con = null);
 
 	/**
 	 * Gets last child for the given node if it exists
@@ -178,7 +188,8 @@ interface NodePeer {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	public static function retrieveLastChild(NodeObject $node, PropelPDO $con = null);
+	public static function retrieveLastChild(NodeObject $node,
+			PropelPDO $con = null);
 
 	/**
 	 * Gets prev sibling for the given node if it exists
@@ -187,7 +198,8 @@ interface NodePeer {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	public static function retrievePrevSibling(NodeObject $node, PropelPDO $con = null);
+	public static function retrievePrevSibling(NodeObject $node,
+			PropelPDO $con = null);
 
 	/**
 	 * Gets next sibling for the given node if it exists
@@ -196,7 +208,8 @@ interface NodePeer {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	public static function retrieveNextSibling(NodeObject $node, PropelPDO $con = null);
+	public static function retrieveNextSibling(NodeObject $node,
+			PropelPDO $con = null);
 
 	/**
 	 * Retrieves the entire tree from root
@@ -211,7 +224,8 @@ interface NodePeer {
 	 *
 	 * @param      PropelPDO $con	Connection to use.
 	 */
-	public static function retrieveBranch(NodeObject $node, PropelPDO $con = null);
+	public static function retrieveBranch(NodeObject $node,
+			PropelPDO $con = null);
 
 	/**
 	 * Gets direct children for the node
@@ -219,7 +233,8 @@ interface NodePeer {
 	 * @param      object $node	Propel object for parent node
 	 * @param      PropelPDO $con	Connection to use.
 	 */
-	public static function retrieveChildren(NodeObject $node, PropelPDO $con = null);
+	public static function retrieveChildren(NodeObject $node,
+			PropelPDO $con = null);
 
 	/**
 	 * Gets all descendants for the node
@@ -227,7 +242,8 @@ interface NodePeer {
 	 * @param      object $node	Propel object for parent node
 	 * @param      PropelPDO $con	Connection to use.
 	 */
-	public static function retrieveDescendants(NodeObject $node, PropelPDO $con = null);
+	public static function retrieveDescendants(NodeObject $node,
+			PropelPDO $con = null);
 
 	/**
 	 * Gets all siblings for the node
@@ -235,7 +251,8 @@ interface NodePeer {
 	 * @param      object $node	Propel object for src node
 	 * @param      PropelPDO $con	Connection to use.
 	 */
-	public static function retrieveSiblings(NodeObject $node, PropelPDO $con = null);
+	public static function retrieveSiblings(NodeObject $node,
+			PropelPDO $con = null);
 
 	/**
 	 * Gets ancestor for the given node if it exists
@@ -244,7 +261,8 @@ interface NodePeer {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	public static function retrieveParent(NodeObject $node, PropelPDO $con = null);
+	public static function retrieveParent(NodeObject $node,
+			PropelPDO $con = null);
 
 	/**
 	 * Gets level for the given node
@@ -262,7 +280,8 @@ interface NodePeer {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     int			Level for the given node
 	 */
-	public static function getNumberOfChildren(NodeObject $node, PropelPDO $con = null);
+	public static function getNumberOfChildren(NodeObject $node,
+			PropelPDO $con = null);
 
 	/**
 	 * Gets number of descendants for given node
@@ -271,9 +290,10 @@ interface NodePeer {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     int			Level for the given node
 	 */
-	public static function getNumberOfDescendants(NodeObject $node, PropelPDO $con = null);
+	public static function getNumberOfDescendants(NodeObject $node,
+			PropelPDO $con = null);
 
- 	/**
+	/**
 	 * Returns path to a specific node as an array, useful to create breadcrumbs
 	 *
 	 * @param      object $node	Propel object of node to create path to
@@ -340,7 +360,8 @@ interface NodePeer {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     bool
 	 */
-	public static function hasPrevSibling(NodeObject $node, PropelPDO $con = null);
+	public static function hasPrevSibling(NodeObject $node,
+			PropelPDO $con = null);
 
 	/**
 	 * Tests if $node has next sibling
@@ -349,7 +370,8 @@ interface NodePeer {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     bool
 	 */
-	public static function hasNextSibling(NodeObject $node, PropelPDO $con = null);
+	public static function hasNextSibling(NodeObject $node,
+			PropelPDO $con = null);
 
 	/**
 	 * Tests if $node has children
@@ -365,7 +387,8 @@ interface NodePeer {
 	 * @param      object $node	Propel object for source node
 	 * @param      PropelPDO $con	Connection to use.
 	 */
-	public static function deleteDescendants(NodeObject $node, PropelPDO $con = null);
+	public static function deleteDescendants(NodeObject $node,
+			PropelPDO $con = null);
 
 	/**
 	 * Returns a node given its primary key or the node itself

@@ -20,7 +20,6 @@
  * <http://phing.info>.
  */
 
-
 /**
  * This selector is here just to shake up your thinking a bit. Don't get
  * too caught up in boolean, there are other ways you can evaluate a
@@ -36,57 +35,56 @@
  */
 class MajoritySelector extends BaseSelectorContainer {
 
-    private $allowtie = true;
+	private $allowtie = true;
 
-    public function toString() {
-        $buf = "";
-        if ($this->hasSelectors()) {
-            $buf .= "{majorityselect: ";
-            $buf .= parent::toString();
-            $buf .= "}";
-        }
-        return $buf;
-    }
+	public function toString() {
+		$buf = "";
+		if ($this->hasSelectors()) {
+			$buf .= "{majorityselect: ";
+			$buf .= parent::toString();
+			$buf .= "}";
+		}
+		return $buf;
+	}
 
-    public function setAllowtie($tiebreaker) {
-        $this->allowtie = $tiebreaker;
-    }
+	public function setAllowtie($tiebreaker) {
+		$this->allowtie = $tiebreaker;
+	}
 
-    /**
-     * Returns true (the file is selected) if most of the other selectors
-     * agree. In case of a tie, go by the allowtie setting. That defaults
-     * to true, meaning in case of a tie, the file is selected.
-     *
-     * @param basedir the base directory the scan is being done from
-     * @param filename is the name of the file to check
-     * @param file is a PhingFile object for the filename that the selector
-     * can use
-     * @return whether the file should be selected or not
-     */
-    public function isSelected(PhingFile $basedir, $filename, PhingFile $file) {
-        
-        $this->validate();
-        
-        $yesvotes = 0;
-        $novotes = 0;
-        
-        $selectors = $this->selectorElements();
-        for($i=0,$size=count($selectors); $i < $size; $i++) {
-            $result = $selectors[$i]->isSelected($basedir,$filename,$file);
-            if ($result) {
-                $yesvotes = $yesvotes + 1;
-            } else {
-                $novotes = $novotes + 1;
-            }
-        }
-        if ($yesvotes > $novotes) {
-            return true;
-        }
-        else if ($novotes > $yesvotes) {
-            return false;
-        }
-        // At this point, we know we have a tie.
-        return $this->allowtie;
-    }
+	/**
+	 * Returns true (the file is selected) if most of the other selectors
+	 * agree. In case of a tie, go by the allowtie setting. That defaults
+	 * to true, meaning in case of a tie, the file is selected.
+	 *
+	 * @param basedir the base directory the scan is being done from
+	 * @param filename is the name of the file to check
+	 * @param file is a PhingFile object for the filename that the selector
+	 * can use
+	 * @return whether the file should be selected or not
+	 */
+	public function isSelected(PhingFile $basedir, $filename, PhingFile $file) {
+
+		$this->validate();
+
+		$yesvotes = 0;
+		$novotes = 0;
+
+		$selectors = $this->selectorElements();
+		for ($i = 0, $size = count($selectors); $i < $size; $i++) {
+			$result = $selectors[$i]->isSelected($basedir, $filename, $file);
+			if ($result) {
+				$yesvotes = $yesvotes + 1;
+			} else {
+				$novotes = $novotes + 1;
+			}
+		}
+		if ($yesvotes > $novotes) {
+			return true;
+		} else if ($novotes > $yesvotes) {
+			return false;
+		}
+		// At this point, we know we have a tie.
+		return $this->allowtie;
+	}
 }
 

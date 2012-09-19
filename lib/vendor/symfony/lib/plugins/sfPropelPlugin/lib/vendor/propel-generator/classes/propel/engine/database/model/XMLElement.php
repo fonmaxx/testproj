@@ -54,8 +54,7 @@ abstract class XMLElement {
 	 * It calls a setupObject() method that must be implemented by the child class.
 	 * @param      array $attributes The attributes for the XML tag.
 	 */
-	public function loadFromXML($attributes)
-	{
+	public function loadFromXML($attributes) {
 		$this->attributes = array_change_key_case($attributes, CASE_LOWER);
 		$this->setupObject();
 	}
@@ -65,8 +64,7 @@ abstract class XMLElement {
 	 * All attribute names (keys) are lowercase.
 	 * @return     array
 	 */
-	public function getAttributes()
-	{
+	public function getAttributes() {
 		return $this->attributes;
 	}
 
@@ -77,8 +75,7 @@ abstract class XMLElement {
 	 * @param      mixed $defaultValue The default value to use in case the attribute is not set.
 	 * @return     mixed The value of the attribute or $defaultValue if not set.
 	 */
-	public function getAttribute($name, $defaultValue = null)
-	{
+	public function getAttribute($name, $defaultValue = null) {
 		$name = strtolower($name);
 		if (isset($this->attributes[$name])) {
 			return $this->attributes[$name];
@@ -92,12 +89,12 @@ abstract class XMLElement {
 	 * This is to support the default value when used w/ a boolean column.
 	 * @return     value
 	 */
-	protected function booleanValue($val)
-	{
+	protected function booleanValue($val) {
 		if (is_numeric($val)) {
 			return (bool) $val;
 		} else {
-			return (in_array(strtolower($val), array('true', 't', 'y', 'yes'), true) ? true : false);
+			return (in_array(strtolower($val), array('true', 't', 'y', 'yes'),
+					true) ? true : false);
 		}
 	}
 
@@ -113,8 +110,7 @@ abstract class XMLElement {
 	 * @param      mixed $data VendorInfo object or XML attrib data (array)
 	 * @return     VendorInfo
 	 */
-	public function addVendorInfo($data)
-	{
+	public function addVendorInfo($data) {
 		if ($data instanceof VendorInfo) {
 			$vi = $data;
 			$this->vendorInfos[$vi->getType()] = $vi;
@@ -130,8 +126,7 @@ abstract class XMLElement {
 	 * Gets the any associated VendorInfo object.
 	 * @return     VendorInfo
 	 */
-	public function getVendorInfoForType($type)
-	{
+	public function getVendorInfoForType($type) {
 		if (isset($this->vendorInfos[$type])) {
 			return $this->vendorInfos[$type];
 		} else {
@@ -140,30 +135,33 @@ abstract class XMLElement {
 		}
 	}
 
-  /**
-   * Find the best class name for a given behavior
-   * Looks in build.properties for path like propel.behavior.[bname].class
-   * If not found, tries to autoload [Bname]Behavior
-   * If no success, returns 'Behavior'
-   * 
-   * @param  string $bname behavior name, e.g. 'timestampable'
-   * @return string        behavior class name, e.g. 'TimestampableBehavior'
-   */
-  public function getConfiguredBehavior($bname)
-  {
-    if ($config = $this->getGeneratorConfig()) {
-      if ($class = $config->getConfiguredBehavior($bname)) {
-        return $class;
-      }
-    }
-    // first fallback: maybe the behavior is loaded or autoloaded
-    $gen = new PhpNameGenerator();
-    if(class_exists($class = $gen->generateName($bname, PhpNameGenerator::CONV_METHOD_PHPNAME) . 'Behavior')) {
-      return $class;
-    }
-    // second fallback: use parent behavior class (mostly for unit tests)
-    return 'Behavior';
-  }
+	/**
+	 * Find the best class name for a given behavior
+	 * Looks in build.properties for path like propel.behavior.[bname].class
+	 * If not found, tries to autoload [Bname]Behavior
+	 * If no success, returns 'Behavior'
+	 * 
+	 * @param  string $bname behavior name, e.g. 'timestampable'
+	 * @return string        behavior class name, e.g. 'TimestampableBehavior'
+	 */
+	public function getConfiguredBehavior($bname) {
+		if ($config = $this->getGeneratorConfig()) {
+			if ($class = $config->getConfiguredBehavior($bname)) {
+				return $class;
+			}
+		}
+		// first fallback: maybe the behavior is loaded or autoloaded
+		$gen = new PhpNameGenerator();
+		if (class_exists(
+				$class = $gen
+						->generateName($bname,
+								PhpNameGenerator::CONV_METHOD_PHPNAME)
+						. 'Behavior')) {
+			return $class;
+		}
+		// second fallback: use parent behavior class (mostly for unit tests)
+		return 'Behavior';
+	}
 
 	/**
 	 * String representation of the current object.
@@ -172,21 +170,19 @@ abstract class XMLElement {
 	 *
 	 * @see        appendXml()
 	 */
-	public function toString()
-	{
+	public function toString() {
 		$doc = new DOMDocument('1.0');
 		$doc->formatOutput = true;
 		$this->appendXml($doc);
 		$xmlstr = $doc->saveXML();
 		return trim(preg_replace('/<\?xml.*?\?>/', '', $xmlstr));
 	}
-	
+
 	/**
 	 * Magic string method
 	 * @see toString()
 	 */
-	public function __toString()
-	{
-	  return $this->toString();
+	public function __toString() {
+		return $this->toString();
 	}
 }

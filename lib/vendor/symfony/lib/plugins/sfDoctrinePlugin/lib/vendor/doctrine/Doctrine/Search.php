@@ -30,313 +30,314 @@
  * @link        www.doctrine-project.org
  * @since       1.0
  */
-class Doctrine_Search extends Doctrine_Record_Generator
-{
-    const INDEX_FILES = 0;
+class Doctrine_Search extends Doctrine_Record_Generator {
+	const INDEX_FILES = 0;
 
-    const INDEX_TABLES = 1;
+	const INDEX_TABLES = 1;
 
-    protected $_options = array('generateFiles'    => false,
-                                'analyzer'         => 'Doctrine_Search_Analyzer_Standard',
-                                'analyzer_options' => array(),
-                                'type'             => self::INDEX_TABLES,
-                                'className'        => '%CLASS%Index',
-                                'generatePath'     => false,
-                                'table'            => null,
-                                'batchUpdates'     => false,
-                                'pluginTable'      => false,
-                                'fields'           => array(),
-                                'connection'       => null,
-                                'children'         => array(),
-                                'cascadeDelete'    => true,
-                                'appLevelDelete'   => false);
-    /**
-     * __construct 
-     * 
-     * @param array $options 
-     * @return void
-     */
-    public function __construct(array $options)
-    {
-        $this->_options = Doctrine_Lib::arrayDeepMerge($this->_options, $options);
-        
-        if ( ! isset($this->_options['analyzer'])) {
-            $this->_options['analyzer'] = 'Doctrine_Search_Analyzer_Standard';
-        }
+	protected $_options = array('generateFiles' => false,
+			'analyzer' => 'Doctrine_Search_Analyzer_Standard',
+			'analyzer_options' => array(),
+			'type' => self::INDEX_TABLES, 'className' => '%CLASS%Index',
+			'generatePath' => false, 'table' => null,
+			'batchUpdates' => false, 'pluginTable' => false,
+			'fields' => array(), 'connection' => null,
+			'children' => array(), 'cascadeDelete' => true,
+			'appLevelDelete' => false);
+	/**
+	 * __construct 
+	 * 
+	 * @param array $options 
+	 * @return void
+	 */
+	public function __construct(array $options) {
+		$this->_options = Doctrine_Lib::arrayDeepMerge($this->_options,
+				$options);
 
-        if ( ! isset($this->_options['analyzer_options'])) {
-            $this->_options['analyzer_options'] = array();
-        }
+		if (!isset($this->_options['analyzer'])) {
+			$this->_options['analyzer'] = 'Doctrine_Search_Analyzer_Standard';
+		}
 
-        $this->_options['analyzer'] = new $this->_options['analyzer']($this->_options['analyzer_options']);
-    }
+		if (!isset($this->_options['analyzer_options'])) {
+			$this->_options['analyzer_options'] = array();
+		}
 
-    public function buildTable()
-    {
-        $result = parent::buildTable();
+		$this->_options['analyzer'] = new $this->_options['analyzer'](
+				$this->_options['analyzer_options']);
+	}
 
-        if ( ! isset($this->_options['connection'])) {
-            $manager = Doctrine_Manager::getInstance();
-            $this->_options['connection'] = $manager->getConnectionForComponent($this->_options['table']->getComponentName());
-            $manager->bindComponent($this->_options['className'], $this->_options['connection']->getName());
-        }
+	public function buildTable() {
+		$result = parent::buildTable();
 
-        return $result;
-    }
+		if (!isset($this->_options['connection'])) {
+			$manager = Doctrine_Manager::getInstance();
+			$this->_options['connection'] = $manager
+					->getConnectionForComponent(
+							$this->_options['table']->getComponentName());
+			$manager
+					->bindComponent($this->_options['className'],
+							$this->_options['connection']->getName());
+		}
 
-    /**
-     * Searchable keyword search
-     * 
-     * @param string $string Keyword string to search for
-     * @param Doctrine_Query $query Query object to alter. Adds where condition to limit the results using the search index
-     * @return array    ids and relevancy
-     */
-    public function search($string, $query = null)
-    {
-        $q = new Doctrine_Search_Query($this->_table);
+		return $result;
+	}
 
-        if ($query instanceof Doctrine_Query) {
-            $q->query($string, false);
+	/**
+	 * Searchable keyword search
+	 * 
+	 * @param string $string Keyword string to search for
+	 * @param Doctrine_Query $query Query object to alter. Adds where condition to limit the results using the search index
+	 * @return array    ids and relevancy
+	 */
+	public function search($string, $query = null) {
+		$q = new Doctrine_Search_Query($this->_table);
 
-            $newQuery = $query->copy();
-            $query->getSqlQuery();
-            $key = (array) $this->getOption('table')->getIdentifier();
-            $newQuery->addWhere($query->getRootAlias() . '.'.current($key).' IN (SQL:' . $q->getSqlQuery() . ')', $q->getParams());
+		if ($query instanceof Doctrine_Query) {
+			$q->query($string, false);
 
-            return $newQuery;
-        } else {
-            if ( ! isset($this->_options['connection'])) {
-                $this->_options['connection'] = $this->_table->getConnection();
-            }
-            $q->query($string);
-            return $this->_options['connection']->fetchAll($q->getSqlQuery(), $q->getParams());
-        }
-    }
-    
-    /**
-     * analyze a text in the encoding format
-     * 
-     * @param string $text 
-     * @param string $encoding
-     * @return void
-     */
-    public function analyze($text, $encoding = null)
-    {
-        return $this->_options['analyzer']->analyze($text, $encoding);
-    }
+			$newQuery = $query->copy();
+			$query->getSqlQuery();
+			$key = (array) $this->getOption('table')->getIdentifier();
+			$newQuery
+					->addWhere(
+							$query->getRootAlias() . '.' . current($key)
+									. ' IN (SQL:' . $q->getSqlQuery() . ')',
+							$q->getParams());
 
-    /**
-     * updateIndex
-     * updates the index
-     *
-     * @param Doctrine_Record $record
-     * @return integer
-     */
-    public function updateIndex(array $data, $encoding = null)
-    {
-        $this->initialize($this->_options['table']);
+			return $newQuery;
+		} else {
+			if (!isset($this->_options['connection'])) {
+				$this->_options['connection'] = $this->_table->getConnection();
+			}
+			$q->query($string);
+			return $this->_options['connection']
+					->fetchAll($q->getSqlQuery(), $q->getParams());
+		}
+	}
 
-        $fields = $this->getOption('fields');
-        $class  = $this->getOption('className');
-        $name   = $this->getOption('table')->getComponentName();
-        $conn   = $this->getOption('table')->getConnection();
-        $identifier = $this->_options['table']->getIdentifier();
+	/**
+	 * analyze a text in the encoding format
+	 * 
+	 * @param string $text 
+	 * @param string $encoding
+	 * @return void
+	 */
+	public function analyze($text, $encoding = null) {
+		return $this->_options['analyzer']->analyze($text, $encoding);
+	}
 
-        $q = Doctrine_Core::getTable($class)
-            ->createQuery()
-            ->delete();
-        foreach ((array) $identifier as $id) {
-            $q->addWhere($id . ' = ?', array($data[$id]));
-        }
-        $q->execute();
+	/**
+	 * updateIndex
+	 * updates the index
+	 *
+	 * @param Doctrine_Record $record
+	 * @return integer
+	 */
+	public function updateIndex(array $data, $encoding = null) {
+		$this->initialize($this->_options['table']);
 
-        if ($this->_options['batchUpdates'] === true) {
-            $index = new $class(); 
+		$fields = $this->getOption('fields');
+		$class = $this->getOption('className');
+		$name = $this->getOption('table')->getComponentName();
+		$conn = $this->getOption('table')->getConnection();
+		$identifier = $this->_options['table']->getIdentifier();
 
-            foreach ((array) $this->_options['table']->getIdentifier() as $id) {
-                $index->$id = $data[$id];
-            }
+		$q = Doctrine_Core::getTable($class)->createQuery()->delete();
+		foreach ((array) $identifier as $id) {
+			$q->addWhere($id . ' = ?', array($data[$id]));
+		}
+		$q->execute();
 
-            $index->save();
-        } else {
-            foreach ($fields as $field) {
+		if ($this->_options['batchUpdates'] === true) {
+			$index = new $class();
 
-                $value = isset($data[$field]) ? $data[$field] : null;
+			foreach ((array) $this->_options['table']->getIdentifier() as $id) {
+				$index->$id = $data[$id];
+			}
 
-                $terms = $this->analyze($value, $encoding);
+			$index->save();
+		} else {
+			foreach ($fields as $field) {
 
-                foreach ($terms as $pos => $term) {
-                    $index = new $class();
+				$value = isset($data[$field]) ? $data[$field] : null;
 
-                    $index->keyword = $term;
-                    $index->position = $pos;
-                    $index->field = $field;
-                    foreach ((array) $this->_options['table']->getIdentifier() as $id) {
-                        $index->$id = $data[$id];
-                    }
+				$terms = $this->analyze($value, $encoding);
 
-                    $index->save();
-                    $index->free(true);
-                }
-            }
-        }
-    }
+				foreach ($terms as $pos => $term) {
+					$index = new $class();
 
-    /**
-     * readTableData 
-     * 
-     * @param mixed $limit 
-     * @param mixed $offset 
-     * @return Doctrine_Collection The collection of results
-     */
-    public function readTableData($limit = null, $offset = null)
-    {
-        $this->initialize($this->_options['table']);
+					$index->keyword = $term;
+					$index->position = $pos;
+					$index->field = $field;
+					foreach ((array) $this->_options['table']->getIdentifier() as $id) {
+						$index->$id = $data[$id];
+					}
 
-        $conn      = $this->_options['table']->getConnection();
-        $tableName = $this->_options['table']->getTableName();
-        $id        = current($this->_options['table']->getIdentifierColumnNames());
-        $tableId   = current($this->_table->getIdentifierColumnNames());
+					$index->save();
+					$index->free(true);
+				}
+			}
+		}
+	}
 
-        $query = 'SELECT * FROM ' . $conn->quoteIdentifier($tableName)
-               . ' WHERE ' . $conn->quoteIdentifier($id)
-               . ' IN (SELECT ' . $conn->quoteIdentifier($tableId)
-               . ' FROM ' . $conn->quoteIdentifier($this->_table->getTableName())
-               . ' WHERE keyword = \'\') OR ' . $conn->quoteIdentifier($id)
-               . ' NOT IN (SELECT ' . $conn->quoteIdentifier($tableId)
-               . ' FROM ' . $conn->quoteIdentifier($this->_table->getTableName()) . ')';
+	/**
+	 * readTableData 
+	 * 
+	 * @param mixed $limit 
+	 * @param mixed $offset 
+	 * @return Doctrine_Collection The collection of results
+	 */
+	public function readTableData($limit = null, $offset = null) {
+		$this->initialize($this->_options['table']);
 
-        $query = $conn->modifyLimitQuery($query, $limit, $offset);
+		$conn = $this->_options['table']->getConnection();
+		$tableName = $this->_options['table']->getTableName();
+		$id = current($this->_options['table']->getIdentifierColumnNames());
+		$tableId = current($this->_table->getIdentifierColumnNames());
 
-        return $conn->fetchAll($query);
-    }
+		$query = 'SELECT * FROM ' . $conn->quoteIdentifier($tableName)
+				. ' WHERE ' . $conn->quoteIdentifier($id) . ' IN (SELECT '
+				. $conn->quoteIdentifier($tableId) . ' FROM '
+				. $conn->quoteIdentifier($this->_table->getTableName())
+				. ' WHERE keyword = \'\') OR ' . $conn->quoteIdentifier($id)
+				. ' NOT IN (SELECT ' . $conn->quoteIdentifier($tableId)
+				. ' FROM '
+				. $conn->quoteIdentifier($this->_table->getTableName()) . ')';
 
-    /**
-     * batchUpdateIndex 
-     * 
-     * @param mixed $limit 
-     * @param mixed $offset 
-     * @return void
-     */
-    public function batchUpdateIndex($limit = null, $offset = null, $encoding = null)
-    {
-        $table = $this->_options['table'];
+		$query = $conn->modifyLimitQuery($query, $limit, $offset);
 
-        $this->initialize($table);
+		return $conn->fetchAll($query);
+	}
 
-        $id        = $table->getIdentifierColumnNames();
-        $class     = $this->_options['className'];
-        $fields    = $this->_options['fields'];
-        $conn      = $this->_options['table']->getConnection();
-        
-        for ($i = 0; $i < count($fields); $i++) {
-            $fields[$i] = $table->getColumnName($fields[$i], $fields[$i]);
-        }
+	/**
+	 * batchUpdateIndex 
+	 * 
+	 * @param mixed $limit 
+	 * @param mixed $offset 
+	 * @return void
+	 */
+	public function batchUpdateIndex($limit = null, $offset = null,
+			$encoding = null) {
+		$table = $this->_options['table'];
 
-        $rows = $this->readTableData($limit, $offset);
+		$this->initialize($table);
 
-        $ids = array();
-        foreach ($rows as $row) {
-            foreach ($id as $idcol) {
-                $ids[] = $row[$idcol];
-            }
-        }
+		$id = $table->getIdentifierColumnNames();
+		$class = $this->_options['className'];
+		$fields = $this->_options['fields'];
+		$conn = $this->_options['table']->getConnection();
 
-        if (count($ids) > 0)
-        {
-            $sql = 'DELETE FROM ' . $conn->quoteIdentifier($this->_table->getTableName());
+		for ($i = 0; $i < count($fields); $i++) {
+			$fields[$i] = $table->getColumnName($fields[$i], $fields[$i]);
+		}
 
-            if (count($id) == 1) {
-                $placeholders = str_repeat('?, ', count($ids));
-                $placeholders = substr($placeholders, 0, strlen($placeholders) - 2);
-                $sql .= ' WHERE ' . $conn->quoteIdentifier($table->getIdentifier()) . ' IN (' . substr($placeholders, 0) . ')';
-            } else {
-                // composite primary key
-                $placeholders = '';
-                foreach ($table->getIdentifier() as $id) {
-                    $placeholders .= $conn->quoteIdentifier($id) . ' = ? AND ';
-                }
-                $placeholders = '(' . substr($placeholders, 0, strlen($placeholders) - 5) . ') OR ';
-                $placeholders = str_repeat($placeholders, count($rows));
-                $placeholders = substr($placeholders, 0, strlen($placeholders) - 4);
-                $sql .= ' WHERE ' . $placeholders;
-            }
+		$rows = $this->readTableData($limit, $offset);
 
-            $conn->exec($sql, $ids);
-        }
+		$ids = array();
+		foreach ($rows as $row) {
+			foreach ($id as $idcol) {
+				$ids[] = $row[$idcol];
+			}
+		}
 
-        foreach ($rows as $row) {
-            $conn->beginTransaction();
-            try {
-                foreach ($fields as $field) {
-                    $data  = $row[$field];
-        
-                    $terms = $this->analyze($data, $encoding);
-        
-                    foreach ($terms as $pos => $term) {
-                        $index = new $class();
-        
-                        $index->keyword = $term;
-                        $index->position = $pos;
-                        $index->field = $field;
-                        
-                        foreach ((array) $table->getIdentifier() as $identifier) {
-                            $index->$identifier = $row[$table->getColumnName($identifier, $identifier)];
-                        }
-    
-                        $index->save();
-                        $index->free(true);
-                    }
-                }
-                $conn->commit();
-            } catch (Doctrine_Exception $e) {
-                $conn->rollback();
-                throw $e;
-            }
-        }
-    }
+		if (count($ids) > 0) {
+			$sql = 'DELETE FROM '
+					. $conn->quoteIdentifier($this->_table->getTableName());
 
-    /**
-     * buildDefinition 
-     * 
-     * @return void
-     */
-    public function setTableDefinition()
-    {
-    	if ( ! isset($this->_options['table'])) {
-    	    throw new Doctrine_Record_Exception("Unknown option 'table'.");
-    	}
+			if (count($id) == 1) {
+				$placeholders = str_repeat('?, ', count($ids));
+				$placeholders = substr($placeholders, 0,
+						strlen($placeholders) - 2);
+				$sql .= ' WHERE '
+						. $conn->quoteIdentifier($table->getIdentifier())
+						. ' IN (' . substr($placeholders, 0) . ')';
+			} else {
+				// composite primary key
+				$placeholders = '';
+				foreach ($table->getIdentifier() as $id) {
+					$placeholders .= $conn->quoteIdentifier($id) . ' = ? AND ';
+				}
+				$placeholders = '('
+						. substr($placeholders, 0, strlen($placeholders) - 5)
+						. ') OR ';
+				$placeholders = str_repeat($placeholders, count($rows));
+				$placeholders = substr($placeholders, 0,
+						strlen($placeholders) - 4);
+				$sql .= ' WHERE ' . $placeholders;
+			}
 
-        $componentName = $this->_options['table']->getComponentName();
+			$conn->exec($sql, $ids);
+		}
 
-        $className = $this->getOption('className');
+		foreach ($rows as $row) {
+			$conn->beginTransaction();
+			try {
+				foreach ($fields as $field) {
+					$data = $row[$field];
 
-        $autoLoad = (bool) ($this->_options['generateFiles']);
-        if (class_exists($className, $autoLoad)) {
-            return false;
-        }
+					$terms = $this->analyze($data, $encoding);
 
-        // move any columns currently in the primary key to the end
-        // So that 'keyword' is the first field in the table
-        $previousIdentifier = array();
-        foreach ($this->_table->getIdentifier() as $name) {
-            $previousIdentifier[$name] = $this->_table->getColumnDefinition($name);
-            $this->_table->removeColumn($name);
-        }
+					foreach ($terms as $pos => $term) {
+						$index = new $class();
 
-        $columns = array('keyword'  => array('type'    => 'string',
-                                             'length'  => 200,
-                                             'primary' => true,
-                                             ),
-                         'field'    => array('type'    => 'string',
-                                             'length'  => 50,
-                                             'primary' => true),
-                         'position' => array('type'    => 'integer',
-                                             'length'  => 8,
-                                             'primary' => true,
-                                             ));
+						$index->keyword = $term;
+						$index->position = $pos;
+						$index->field = $field;
 
-        $this->hasColumns($columns);
-        $this->hasColumns($previousIdentifier);
-    }
+						foreach ((array) $table->getIdentifier() as $identifier) {
+							$index->$identifier = $row[$table
+									->getColumnName($identifier, $identifier)];
+						}
+
+						$index->save();
+						$index->free(true);
+					}
+				}
+				$conn->commit();
+			} catch (Doctrine_Exception $e) {
+				$conn->rollback();
+				throw $e;
+			}
+		}
+	}
+
+	/**
+	 * buildDefinition 
+	 * 
+	 * @return void
+	 */
+	public function setTableDefinition() {
+		if (!isset($this->_options['table'])) {
+			throw new Doctrine_Record_Exception("Unknown option 'table'.");
+		}
+
+		$componentName = $this->_options['table']->getComponentName();
+
+		$className = $this->getOption('className');
+
+		$autoLoad = (bool) ($this->_options['generateFiles']);
+		if (class_exists($className, $autoLoad)) {
+			return false;
+		}
+
+		// move any columns currently in the primary key to the end
+		// So that 'keyword' is the first field in the table
+		$previousIdentifier = array();
+		foreach ($this->_table->getIdentifier() as $name) {
+			$previousIdentifier[$name] = $this->_table
+					->getColumnDefinition($name);
+			$this->_table->removeColumn($name);
+		}
+
+		$columns = array(
+				'keyword' => array('type' => 'string', 'length' => 200,
+						'primary' => true,),
+				'field' => array('type' => 'string', 'length' => 50,
+						'primary' => true),
+				'position' => array('type' => 'integer', 'length' => 8,
+						'primary' => true,));
+
+		$this->hasColumns($columns);
+		$this->hasColumns($previousIdentifier);
+	}
 }

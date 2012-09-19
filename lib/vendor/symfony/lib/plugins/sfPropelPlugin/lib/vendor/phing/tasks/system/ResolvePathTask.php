@@ -44,79 +44,87 @@ require_once 'phing/Task.php';
  */
 class ResolvePathTask extends Task {
 
-    /** Name of property to set. */
-    private $propertyName;
-    
-    /** The [possibly] relative file/path that needs to be resolved. */
-    private $file;
-    
-    /** Base directory used for resolution. */
-    private $dir;
-    
-    /**
-     * Set the name of the property to set.
-     * @param string $v Property name
-     * @return void
-     */
-    public function setPropertyName($v) {
-        $this->propertyName = $v;
-    }
-    
-    /**
-     * Sets a base dir to use for resolution.
-     * @param PhingFile $d
-     */
-    function setDir(PhingFile $d) {
-        $this->dir = $d;
-    }
-    
-    /**
-     * Sets a path (file or directory) that we want to resolve.
-     * This is the same as setFile() -- just more generic name so that it's
-     * clear that you can also use it to set directory.
-     * @param string $f
-     * @see setFile()
-     */
-    function setPath($f) {
-        $this->file = $f;
-    }
-    
-    /**
-     * Sets a file that we want to resolve.
-     * @param string $f
-     */
-    function setFile($f) {
-        $this->file = $f;
-    }
+	/** Name of property to set. */
+	private $propertyName;
 
-    /**
-     * Perform the resolution & set property.
-     */
-    public function main() {        
-        
-        if (!$this->propertyName) {
-            throw new BuildException("You must specify the propertyName attribute", $this->getLocation());
-        }
-        
-        // Currently only files are supported
-        if ($this->file === null) {
-            throw new BuildException("You must specify a path to resolve", $this->getLocation());
-        }
-        
+	/** The [possibly] relative file/path that needs to be resolved. */
+	private $file;
+
+	/** Base directory used for resolution. */
+	private $dir;
+
+	/**
+	 * Set the name of the property to set.
+	 * @param string $v Property name
+	 * @return void
+	 */
+	public function setPropertyName($v) {
+		$this->propertyName = $v;
+	}
+
+	/**
+	 * Sets a base dir to use for resolution.
+	 * @param PhingFile $d
+	 */
+	function setDir(PhingFile $d) {
+		$this->dir = $d;
+	}
+
+	/**
+	 * Sets a path (file or directory) that we want to resolve.
+	 * This is the same as setFile() -- just more generic name so that it's
+	 * clear that you can also use it to set directory.
+	 * @param string $f
+	 * @see setFile()
+	 */
+	function setPath($f) {
+		$this->file = $f;
+	}
+
+	/**
+	 * Sets a file that we want to resolve.
+	 * @param string $f
+	 */
+	function setFile($f) {
+		$this->file = $f;
+	}
+
+	/**
+	 * Perform the resolution & set property.
+	 */
+	public function main() {
+
+		if (!$this->propertyName) {
+			throw new BuildException(
+					"You must specify the propertyName attribute",
+					$this->getLocation());
+		}
+
+		// Currently only files are supported
+		if ($this->file === null) {
+			throw new BuildException("You must specify a path to resolve",
+					$this->getLocation());
+		}
+
 		$fs = FileSystem::getFileSystem();
-		
-        // if dir attribute was specified then we should
-        // use that as basedir to which file was relative.
+
+		// if dir attribute was specified then we should
+		// use that as basedir to which file was relative.
 		// -- unless the file specified is an absolute path
-        if ($this->dir !== null && !$fs->isAbsolute(new PhingFile($this->file))) {
-            $resolved = new PhingFile($this->dir->getPath(), $this->file);
-        } else {
-            // otherwise just resolve it relative to project basedir
-            $resolved = $this->project->resolveFile($this->file);
-        }
-        
-        $this->log("Resolved " . $this->file . " to " . $resolved->getAbsolutePath(), Project::MSG_INFO);
-        $this->project->setProperty($this->propertyName, $resolved->getAbsolutePath());
-    }
+		if ($this->dir !== null && !$fs->isAbsolute(new PhingFile($this->file))) {
+			$resolved = new PhingFile($this->dir->getPath(), $this->file);
+		} else {
+			// otherwise just resolve it relative to project basedir
+			$resolved = $this->project->resolveFile($this->file);
+		}
+
+		$this
+				->log(
+						"Resolved " . $this->file . " to "
+								. $resolved->getAbsolutePath(),
+						Project::MSG_INFO);
+		$this->project
+				->setProperty($this->propertyName, $resolved->getAbsolutePath());
+	}
 
 }

@@ -39,54 +39,42 @@ class MysqlSchemaParser extends BaseSchemaParser {
 	 * Map MySQL native types to Propel types.
 	 * @var        array
 	 */
-	private static $mysqlTypeMap = array(
-		'tinyint' => PropelTypes::TINYINT,
-		'smallint' => PropelTypes::SMALLINT,
-		'mediumint' => PropelTypes::SMALLINT,
-		'int' => PropelTypes::INTEGER,
-		'integer' => PropelTypes::INTEGER,
-		'bigint' => PropelTypes::BIGINT,
-		'int24' => PropelTypes::BIGINT,
-		'real' => PropelTypes::REAL,
-		'float' => PropelTypes::FLOAT,
-		'decimal' => PropelTypes::DECIMAL,
-		'numeric' => PropelTypes::NUMERIC,
-		'double' => PropelTypes::DOUBLE,
-		'char' => PropelTypes::CHAR,
-		'varchar' => PropelTypes::VARCHAR,
-		'date' => PropelTypes::DATE,
-		'time' => PropelTypes::TIME,
-		'year' => PropelTypes::INTEGER,
-		'datetime' => PropelTypes::TIMESTAMP,
-		'timestamp' => PropelTypes::TIMESTAMP,
-		'tinyblob' => PropelTypes::BINARY,
-		'blob' => PropelTypes::BLOB,
-		'mediumblob' => PropelTypes::BLOB,
-		'longblob' => PropelTypes::BLOB,
-		'longtext' => PropelTypes::CLOB,
-		'tinytext' => PropelTypes::VARCHAR,
-		'mediumtext' => PropelTypes::LONGVARCHAR,
-		'text' => PropelTypes::LONGVARCHAR,
-		'enum' => PropelTypes::CHAR,
-		'set' => PropelTypes::CHAR,
-	);
+	private static $mysqlTypeMap = array('tinyint' => PropelTypes::TINYINT,
+			'smallint' => PropelTypes::SMALLINT,
+			'mediumint' => PropelTypes::SMALLINT,
+			'int' => PropelTypes::INTEGER, 'integer' => PropelTypes::INTEGER,
+			'bigint' => PropelTypes::BIGINT, 'int24' => PropelTypes::BIGINT,
+			'real' => PropelTypes::REAL, 'float' => PropelTypes::FLOAT,
+			'decimal' => PropelTypes::DECIMAL,
+			'numeric' => PropelTypes::NUMERIC, 'double' => PropelTypes::DOUBLE,
+			'char' => PropelTypes::CHAR, 'varchar' => PropelTypes::VARCHAR,
+			'date' => PropelTypes::DATE, 'time' => PropelTypes::TIME,
+			'year' => PropelTypes::INTEGER,
+			'datetime' => PropelTypes::TIMESTAMP,
+			'timestamp' => PropelTypes::TIMESTAMP,
+			'tinyblob' => PropelTypes::BINARY, 'blob' => PropelTypes::BLOB,
+			'mediumblob' => PropelTypes::BLOB, 'longblob' => PropelTypes::BLOB,
+			'longtext' => PropelTypes::CLOB,
+			'tinytext' => PropelTypes::VARCHAR,
+			'mediumtext' => PropelTypes::LONGVARCHAR,
+			'text' => PropelTypes::LONGVARCHAR, 'enum' => PropelTypes::CHAR,
+			'set' => PropelTypes::CHAR,);
 
 	/**
 	 * Gets a type mapping from native types to Propel types
 	 *
 	 * @return     array
 	 */
-	protected function getTypeMapping()
-	{
+	protected function getTypeMapping() {
 		return self::$mysqlTypeMap;
 	}
 
 	/**
 	 *
 	 */
-	public function parse(Database $database)
-	{
-		$this->addVendorInfo = $this->getGeneratorConfig()->getBuildProperty('addVendorInfo');
+	public function parse(Database $database) {
+		$this->addVendorInfo = $this->getGeneratorConfig()
+				->getBuildProperty('addVendorInfo');
 
 		$stmt = $this->dbh->query("SHOW TABLES");
 
@@ -115,15 +103,14 @@ class MysqlSchemaParser extends BaseSchemaParser {
 		}
 	}
 
-
 	/**
 	 * Adds Columns to the specified table.
 	 *
 	 * @param      Table $table The Table model class to add columns to.
 	 */
-	protected function addColumns(Table $table)
-	{
-		$stmt = $this->dbh->query("SHOW COLUMNS FROM `" . $table->getName() . "`");
+	protected function addColumns(Table $table) {
+		$stmt = $this->dbh
+				->query("SHOW COLUMNS FROM `" . $table->getName() . "`");
 
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
@@ -134,11 +121,12 @@ class MysqlSchemaParser extends BaseSchemaParser {
 			$precision = null;
 			$scale = null;
 
-			if (preg_match('/^(\w+)[\(]?([\d,]*)[\)]?( |$)/', $row['Type'], $matches)) {
+			if (preg_match('/^(\w+)[\(]?([\d,]*)[\)]?( |$)/', $row['Type'],
+					$matches)) {
 				//            colname[1]   size/precision[2]
 				$nativeType = $matches[1];
 				if ($matches[2]) {
-					if ( ($cpos = strpos($matches[2], ',')) !== false) {
+					if (($cpos = strpos($matches[2], ',')) !== false) {
 						$size = (int) substr($matches[2], 0, $cpos);
 						$precision = $size;
 						$scale = (int) substr($matches[2], $cpos + 1);
@@ -153,12 +141,17 @@ class MysqlSchemaParser extends BaseSchemaParser {
 			}
 
 			//BLOBs can't have any default values in MySQL
-			$default = preg_match('~blob|text~', $nativeType) ? null : $row['Default'];
+			$default = preg_match('~blob|text~', $nativeType) ? null
+					: $row['Default'];
 
 			$propelType = $this->getMappedPropelType($nativeType);
 			if (!$propelType) {
 				$propelType = Column::DEFAULT_TYPE;
-				$this->warn("Column [" . $table->getName() . "." . $name. "] has a column type (".$nativeType.") that Propel does not support.");
+				$this
+						->warn(
+								"Column [" . $table->getName() . "." . $name
+										. "] has a column type (" . $nativeType
+										. ") that Propel does not support.");
 			}
 
 			$column = new Column($name);
@@ -169,7 +162,10 @@ class MysqlSchemaParser extends BaseSchemaParser {
 			$column->getDomain()->replaceSize($size);
 			$column->getDomain()->replaceScale($scale);
 			if ($default !== null) {
-				$column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, ColumnDefaultValue::TYPE_VALUE));
+				$column->getDomain()
+						->setDefaultValue(
+								new ColumnDefaultValue($default,
+										ColumnDefaultValue::TYPE_VALUE));
 			}
 			$column->setAutoIncrement($autoincrement);
 			$column->setNotNull(!$is_nullable);
@@ -182,24 +178,23 @@ class MysqlSchemaParser extends BaseSchemaParser {
 			$table->addColumn($column);
 		}
 
-
 	} // addColumn()
 
 	/**
 	 * Load foreign keys for this table.
 	 */
-	protected function addForeignKeys(Table $table)
-	{
+	protected function addForeignKeys(Table $table) {
 		$database = $table->getDatabase();
 
-		$stmt = $this->dbh->query("SHOW CREATE TABLE `" . $table->getName(). "`");
+		$stmt = $this->dbh
+				->query("SHOW CREATE TABLE `" . $table->getName() . "`");
 		$row = $stmt->fetch(PDO::FETCH_NUM);
 
 		$foreignKeys = array(); // local store to avoid duplicates
 
 		// Get the information on all the foreign keys
 		$regEx = '/CONSTRAINT `([^`]+)` FOREIGN KEY \((.+)\) REFERENCES `([^`]*)` \((.+)\)(.*)/';
-		if (preg_match_all($regEx,$row[1],$matches)) {
+		if (preg_match_all($regEx, $row[1], $matches)) {
 			$tmpArray = array_keys($matches[0]);
 			foreach ($tmpArray as $curKey) {
 				$name = $matches[1][$curKey];
@@ -207,43 +202,44 @@ class MysqlSchemaParser extends BaseSchemaParser {
 				$ftbl = $matches[3][$curKey];
 				$rawfcol = $matches[4][$curKey];
 				$fkey = $matches[5][$curKey];
-				
+
 				$lcols = array();
-				foreach(preg_split('/`, `/', $rawlcol) as $piece) {
+				foreach (preg_split('/`, `/', $rawlcol) as $piece) {
 					$lcols[] = trim($piece, '` ');
 				}
-				
+
 				$fcols = array();
-				foreach(preg_split('/`, `/', $rawfcol) as $piece) {
+				foreach (preg_split('/`, `/', $rawfcol) as $piece) {
 					$fcols[] = trim($piece, '` ');
 				}
-				
+
 				//typical for mysql is RESTRICT
-				$fkactions = array(
-					'ON DELETE'	=> ForeignKey::RESTRICT,
-					'ON UPDATE'	=> ForeignKey::RESTRICT,
-				);
+				$fkactions = array('ON DELETE' => ForeignKey::RESTRICT,
+						'ON UPDATE' => ForeignKey::RESTRICT,);
 
 				if ($fkey) {
 					//split foreign key information -> search for ON DELETE and afterwords for ON UPDATE action
 					foreach (array_keys($fkactions) as $fkaction) {
 						$result = NULL;
-						preg_match('/' . $fkaction . ' (' . ForeignKey::CASCADE . '|' . ForeignKey::SETNULL . ')/', $fkey, $result);
+						preg_match(
+								'/' . $fkaction . ' (' . ForeignKey::CASCADE
+										. '|' . ForeignKey::SETNULL . ')/',
+								$fkey, $result);
 						if ($result && is_array($result) && isset($result[1])) {
 							$fkactions[$fkaction] = $result[1];
 						}
 					}
 				}
-				
+
 				$localColumns = array();
 				$foreignColumns = array();
-				
+
 				$foreignTable = $database->getTable($ftbl);
-				
-				foreach($fcols as $fcol) {
+
+				foreach ($fcols as $fcol) {
 					$foreignColumns[] = $foreignTable->getColumn($fcol);
 				}
-				foreach($lcols as $lcol) {
+				foreach ($lcols as $lcol) {
 					$localColumns[] = $table->getColumn($lcol);
 				}
 
@@ -255,11 +251,13 @@ class MysqlSchemaParser extends BaseSchemaParser {
 					$table->addForeignKey($fk);
 					$foreignKeys[$name] = $fk;
 				}
-				
-				for($i=0; $i < count($localColumns); $i++) {
-					$foreignKeys[$name]->addReference($localColumns[$i], $foreignColumns[$i]);
+
+				for ($i = 0; $i < count($localColumns); $i++) {
+					$foreignKeys[$name]
+							->addReference($localColumns[$i],
+									$foreignColumns[$i]);
 				}
-				
+
 			}
 
 		}
@@ -269,9 +267,9 @@ class MysqlSchemaParser extends BaseSchemaParser {
 	/**
 	 * Load indexes for this table
 	 */
-	protected function addIndexes(Table $table)
-	{
-		$stmt = $this->dbh->query("SHOW INDEX FROM `" . $table->getName() . "`");
+	protected function addIndexes(Table $table) {
+		$stmt = $this->dbh
+				->query("SHOW INDEX FROM `" . $table->getName() . "`");
 
 		// Loop through the returned results, grouping the same key_name together
 		// adding each column for that key.
@@ -306,8 +304,7 @@ class MysqlSchemaParser extends BaseSchemaParser {
 	/**
 	 * Loads the primary key for this table.
 	 */
-	protected function addPrimaryKey(Table $table)
-	{
+	protected function addPrimaryKey(Table $table) {
 		$stmt = $this->dbh->query("SHOW KEYS FROM `" . $table->getName() . "`");
 
 		// Loop through the returned results, grouping the same key_name together
@@ -327,9 +324,9 @@ class MysqlSchemaParser extends BaseSchemaParser {
 	 *
 	 * @param      Table $table
 	 */
-	protected function addTableVendorInfo(Table $table)
-	{
-		$stmt = $this->dbh->query("SHOW TABLE STATUS LIKE '" . $table->getName() . "'");
+	protected function addTableVendorInfo(Table $table) {
+		$stmt = $this->dbh
+				->query("SHOW TABLE STATUS LIKE '" . $table->getName() . "'");
 		$row = $stmt->fetch(PDO::FETCH_ASSOC);
 		$vi = $this->getNewVendorInfoObject($row);
 		$table->addVendorInfo($vi);

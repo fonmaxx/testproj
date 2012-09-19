@@ -29,19 +29,19 @@
  */
 interface FileSelector {
 
-    /**
-     * Method that each selector will implement to create their
-     * selection behaviour. If there is a problem with the setup
-     * of a selector, it can throw a BuildException to indicate
-     * the problem.
-     *
-     * @param basedir A PhingFile object for the base directory
-     * @param filename The name of the file to check
-     * @param file A PhingFile object for this filename
-     * @return whether the file should be selected or not
-     * @throws BuildException if the selector was not configured correctly
-     */
-    public function isSelected(PhingFile $basedir, $filename, PhingFile $file);
+	/**
+	 * Method that each selector will implement to create their
+	 * selection behaviour. If there is a problem with the setup
+	 * of a selector, it can throw a BuildException to indicate
+	 * the problem.
+	 *
+	 * @param basedir A PhingFile object for the base directory
+	 * @param filename The name of the file to check
+	 * @param file A PhingFile object for this filename
+	 * @return whether the file should be selected or not
+	 * @throws BuildException if the selector was not configured correctly
+	 */
+	public function isSelected(PhingFile $basedir, $filename, PhingFile $file);
 
 }
 

@@ -30,154 +30,156 @@
  * @version     $Revision: 7490 $
  * @author      Joe Simms <joe.simms@websites4.com>
  */
-class Doctrine_Node_NestedSet_PreOrderIterator implements Iterator
-{
-    /**
-     * @var Doctrine_Collection $collection
-     */
-    protected $collection;
+class Doctrine_Node_NestedSet_PreOrderIterator implements Iterator {
+	/**
+	 * @var Doctrine_Collection $collection
+	 */
+	protected $collection;
 
-    /**
-     * @var array $keys
-     */
-    protected $keys;
+	/**
+	 * @var array $keys
+	 */
+	protected $keys;
 
-    /**
-     * @var mixed $key
-     */
-    protected $key;
+	/**
+	 * @var mixed $key
+	 */
+	protected $key;
 
-    /**
-     * @var integer $index
-     */
-    protected $index;
+	/**
+	 * @var integer $index
+	 */
+	protected $index;
 
-    /**
-     * @var integer $index
-     */
-    protected $prevIndex;
+	/**
+	 * @var integer $index
+	 */
+	protected $prevIndex;
 
-    /**
-     * @var integer $index
-     */
-    protected $traverseLevel;
+	/**
+	 * @var integer $index
+	 */
+	protected $traverseLevel;
 
-    /**
-     * @var integer $count
-     */
-    protected $count;
+	/**
+	 * @var integer $count
+	 */
+	protected $count;
 
-    public function __construct($record, $opts)
-    {
-        $componentName = $record->getTable()->getComponentName();
+	public function __construct($record, $opts) {
+		$componentName = $record->getTable()->getComponentName();
 
-        $q = $record->getTable()->createQuery();
+		$q = $record->getTable()->createQuery();
 
-        $params = array($record->get('lft'), $record->get('rgt'));
-        if (isset($opts['include_record']) && $opts['include_record']) {
-            $query = $q->where("$componentName.lft >= ? AND $componentName.rgt <= ?", $params)->orderBy("$componentName.lft asc");
-        } else {
-            $query = $q->where("$componentName.lft > ? AND $componentName.rgt < ?", $params)->orderBy("$componentName.lft asc");
-        }
-        
-        $query = $record->getTable()->getTree()->returnQueryWithRootId($query, $record->getNode()->getRootValue());
+		$params = array($record->get('lft'), $record->get('rgt'));
+		if (isset($opts['include_record']) && $opts['include_record']) {
+			$query = $q
+					->where(
+							"$componentName.lft >= ? AND $componentName.rgt <= ?",
+							$params)->orderBy("$componentName.lft asc");
+		} else {
+			$query = $q
+					->where(
+							"$componentName.lft > ? AND $componentName.rgt < ?",
+							$params)->orderBy("$componentName.lft asc");
+		}
 
-        $this->maxLevel   = isset($opts['depth']) ? ($opts['depth'] + $record->getNode()->getLevel()) : 0;
-        $this->options    = $opts;
-        $this->collection = isset($opts['collection']) ? $opts['collection'] : $query->execute();
-        $this->keys       = $this->collection->getKeys();
-        $this->count      = $this->collection->count();
-        $this->index      = -1;
-        $this->level      = $record->getNode()->getLevel();
-        $this->prevLeft   = $record->getNode()->getLeftValue();
+		$query = $record->getTable()->getTree()
+				->returnQueryWithRootId($query,
+						$record->getNode()->getRootValue());
 
-        // clear the table identity cache
-        $record->getTable()->clear();
-    }
+		$this->maxLevel = isset($opts['depth']) ? ($opts['depth']
+						+ $record->getNode()->getLevel()) : 0;
+		$this->options = $opts;
+		$this->collection = isset($opts['collection']) ? $opts['collection']
+				: $query->execute();
+		$this->keys = $this->collection->getKeys();
+		$this->count = $this->collection->count();
+		$this->index = -1;
+		$this->level = $record->getNode()->getLevel();
+		$this->prevLeft = $record->getNode()->getLeftValue();
 
-    /**
-     * rewinds the iterator
-     *
-     * @return void
-     */
-    public function rewind()
-    {
-        $this->index = -1;
-        $this->key = null;
-    }
+		// clear the table identity cache
+		$record->getTable()->clear();
+	}
 
-    /**
-     * returns the current key
-     *
-     * @return integer
-     */
-    public function key()
-    {
-        return $this->key;
-    }
+	/**
+	 * rewinds the iterator
+	 *
+	 * @return void
+	 */
+	public function rewind() {
+		$this->index = -1;
+		$this->key = null;
+	}
 
-    /**
-     * returns the current record
-     *
-     * @return Doctrine_Record
-     */
-    public function current()
-    {
-        $record = $this->collection->get($this->key);
-        $record->getNode()->setLevel($this->level);
-        return $record;
-    }
+	/**
+	 * returns the current key
+	 *
+	 * @return integer
+	 */
+	public function key() {
+		return $this->key;
+	}
 
-    /**
-     * advances the internal pointer
-     *
-     * @return void
-     */
-    public function next()
-    {
-        while ($current = $this->advanceIndex()) {
-            if ($this->maxLevel && ($this->level > $this->maxLevel)) {
-                continue;
-            }
+	/**
+	 * returns the current record
+	 *
+	 * @return Doctrine_Record
+	 */
+	public function current() {
+		$record = $this->collection->get($this->key);
+		$record->getNode()->setLevel($this->level);
+		return $record;
+	}
 
-            return $current;
-        }
+	/**
+	 * advances the internal pointer
+	 *
+	 * @return void
+	 */
+	public function next() {
+		while ($current = $this->advanceIndex()) {
+			if ($this->maxLevel && ($this->level > $this->maxLevel)) {
+				continue;
+			}
 
-        return false;
-    }
+			return $current;
+		}
 
-    /**
-     * @return boolean                          whether or not the iteration will continue
-     */
-    public function valid()
-    {
-        return ($this->index < $this->count);
-    }
+		return false;
+	}
 
-    public function count()
-    {
-        return $this->count;
-    }
+	/**
+	 * @return boolean                          whether or not the iteration will continue
+	 */
+	public function valid() {
+		return ($this->index < $this->count);
+	}
 
-    private function updateLevel()
-    {
-        if ( ! (isset($this->options['include_record']) && $this->options['include_record'] && $this->index == 0)) {
-            $left = $this->collection->get($this->key)->getNode()->getLeftValue();
-            $this->level += $this->prevLeft - $left + 2;
-            $this->prevLeft = $left;
-        }
-    }
+	public function count() {
+		return $this->count;
+	}
 
-    private function advanceIndex()
-    {
-        $this->index++;
-        $i = $this->index;
-        if (isset($this->keys[$i])) {
-            $this->key   = $this->keys[$i];
-            $this->updateLevel();
-            return $this->current();
-        }
+	private function updateLevel() {
+		if (!(isset($this->options['include_record'])
+				&& $this->options['include_record'] && $this->index == 0)) {
+			$left = $this->collection->get($this->key)->getNode()
+					->getLeftValue();
+			$this->level += $this->prevLeft - $left + 2;
+			$this->prevLeft = $left;
+		}
+	}
 
-        return false;
-    }
+	private function advanceIndex() {
+		$this->index++;
+		$i = $this->index;
+		if (isset($this->keys[$i])) {
+			$this->key = $this->keys[$i];
+			$this->updateLevel();
+			return $this->current();
+		}
+
+		return false;
+	}
 }

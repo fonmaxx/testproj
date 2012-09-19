@@ -34,19 +34,30 @@ class PgsqlPlatform extends DefaultPlatform {
 	/**
 	 * Initializes db specific domain mapping.
 	 */
-	protected function initialize()
-	{
+	protected function initialize() {
 		parent::initialize();
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, "BOOLEAN"));
+		$this
+				->setSchemaDomainMapping(
+						new Domain(PropelTypes::BOOLEAN, "BOOLEAN"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::TINYINT, "INT2"));
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::SMALLINT, "INT2"));
+		$this
+				->setSchemaDomainMapping(
+						new Domain(PropelTypes::SMALLINT, "INT2"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::BIGINT, "INT8"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, "FLOAT"));
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::DOUBLE, "DOUBLE PRECISION"));
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, "TEXT"));
+		$this
+				->setSchemaDomainMapping(
+						new Domain(PropelTypes::DOUBLE, "DOUBLE PRECISION"));
+		$this
+				->setSchemaDomainMapping(
+						new Domain(PropelTypes::LONGVARCHAR, "TEXT"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, "BYTEA"));
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "BYTEA"));
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "BYTEA"));
+		$this
+				->setSchemaDomainMapping(
+						new Domain(PropelTypes::VARBINARY, "BYTEA"));
+		$this
+				->setSchemaDomainMapping(
+						new Domain(PropelTypes::LONGVARBINARY, "BYTEA"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, "BYTEA"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, "TEXT"));
 	}
@@ -54,24 +65,21 @@ class PgsqlPlatform extends DefaultPlatform {
 	/**
 	 * @see        Platform#getNativeIdMethod()
 	 */
-	public function getNativeIdMethod()
-	{
+	public function getNativeIdMethod() {
 		return Platform::SERIAL;
 	}
 
 	/**
 	 * @see        Platform#getAutoIncrement()
 	 */
-	public function getAutoIncrement()
-	{
+	public function getAutoIncrement() {
 		return "";
 	}
 
 	/**
 	 * @see        Platform#getMaxColumnNameLength()
 	 */
-	public function getMaxColumnNameLength()
-	{
+	public function getMaxColumnNameLength() {
 		return 32;
 	}
 
@@ -80,8 +88,7 @@ class PgsqlPlatform extends DefaultPlatform {
 	 * @param      string $text
 	 * @return     string
 	 */
-	public function disconnectedEscapeText($text)
-	{
+	public function disconnectedEscapeText($text) {
 		if (function_exists('pg_escape_string')) {
 			return pg_escape_string($text);
 		} else {
@@ -92,8 +99,7 @@ class PgsqlPlatform extends DefaultPlatform {
 	/**
 	 * @see        Platform::getBooleanString()
 	 */
-	public function getBooleanString($b)
-	{
+	public function getBooleanString($b) {
 		// parent method does the checking for allowes tring
 		// representations & returns integer
 		$b = parent::getBooleanString($b);
@@ -103,8 +109,7 @@ class PgsqlPlatform extends DefaultPlatform {
 	/**
 	 * @see        Platform::supportsNativeDeleteTrigger()
 	 */
-	public function supportsNativeDeleteTrigger()
-	{
+	public function supportsNativeDeleteTrigger() {
 		return true;
 	}
 
@@ -112,8 +117,7 @@ class PgsqlPlatform extends DefaultPlatform {
 	 * @see        Platform::hasSize(String)
 	 * TODO collect info for all platforms
 	 */
-	public function hasSize($sqlType)
-	{
+	public function hasSize($sqlType) {
 		return !("BYTEA" == $sqlType || "TEXT" == $sqlType);
 	}
 
@@ -121,8 +125,7 @@ class PgsqlPlatform extends DefaultPlatform {
 	 * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
 	 * @return     boolean
 	 */
-	public function hasStreamBlobImpl()
-	{
+	public function hasStreamBlobImpl() {
 		return true;
 	}
 }

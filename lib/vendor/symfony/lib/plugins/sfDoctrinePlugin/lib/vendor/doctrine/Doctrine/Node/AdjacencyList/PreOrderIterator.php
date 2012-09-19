@@ -30,5 +30,5 @@
  * @version     $Revision: 7490 $
  * @author      Joe Simms <joe.simms@websites4.com>
  */
-abstract class Doctrine_Node_AdjacencyList_PreOrderIterator implements Iterator
-{ }
+abstract class Doctrine_Node_AdjacencyList_PreOrderIterator implements Iterator {
+}

@@ -17,7 +17,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>.
-*/
+ */
 
 // include_once 'phing/system/io/Reader.php'; // really this is unrelated to Reader
 include_once 'phing/system/io/IOException.php';
@@ -32,35 +32,34 @@ include_once 'phing/filters/ReplaceTokens.php'; // For class Token
  */
 abstract class TokenReader {
 
-    /**
-     * Reference to the Project the TokenReader is used in.
-     * @var Project 
-     */
-    protected $project;
+	/**
+	 * Reference to the Project the TokenReader is used in.
+	 * @var Project 
+	 */
+	protected $project;
 
-    /**
-     * Constructor
-     * @param   object  Reference to the project the TokenReader is used in.
-     */
-    function __construct(Project $project) {
-        $this->project = $project;
-    }
+	/**
+	 * Constructor
+	 * @param   object  Reference to the project the TokenReader is used in.
+	 */
+	function __construct(Project $project) {
+		$this->project = $project;
+	}
 
-    /**
-     * Utility function for logging
-     */
-    function log($level, $msg) {
-        $this->project->log($level, $msg);
-    }
+	/**
+	 * Utility function for logging
+	 */
+	function log($level, $msg) {
+		$this->project->log($level, $msg);
+	}
 
-    /**
-     * Reads the next token from the Reader
-     *
-     * @throws IOException - On error
-     * @return string
-     */
-    abstract public function readToken();
-    
+	/**
+	 * Reads the next token from the Reader
+	 *
+	 * @throws IOException - On error
+	 * @return string
+	 */
+	abstract public function readToken();
+
 }
-
 

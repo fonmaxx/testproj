@@ -36,182 +36,191 @@ include_once 'phing/types/Reference.php';
  */
 abstract class PDOTask extends Task {
 
-    private $caching = true;
+	private $caching = true;
 
-    /**
-     * Autocommit flag. Default value is false
-     */
-    private $autocommit = false;
-    
-    /**
-     * DB url.
-     */
-    private $url;
+	/**
+	 * Autocommit flag. Default value is false
+	 */
+	private $autocommit = false;
 
-    /**
-     * User name.
-     */
-    private $userId;
+	/**
+	 * DB url.
+	 */
+	private $url;
 
-    /**
-     * Password
-     */
-    private $password;
+	/**
+	 * User name.
+	 */
+	private $userId;
 
-    /**
-     * RDBMS Product needed for this SQL.
-     **/
-    private $rdbms;
-   
-      /**
-     * Initialize CreoleTask.
-     * This method includes any necessary Creole libraries and triggers
-     * appropriate error if they cannot be found.  This is not done in header
-     * because we may want this class to be loaded w/o triggering an error.
-     */
-    function init() {
-        if (!class_exists('PDO')) {
-            throw new Exception("PDOTask depends on PDO feature being included in PHP.");
-        }
-    }
+	/**
+	 * Password
+	 */
+	private $password;
 
-    /**
-     * Caching loaders / driver. This is to avoid
-     * getting an OutOfMemoryError when calling this task
-     * multiple times in a row; default: true
-     * @param $enable
-     */
-    public function setCaching($enable) {
-        $this->caching = $enable;
-    }
+	/**
+	 * RDBMS Product needed for this SQL.
+	 **/
+	private $rdbms;
 
-    /**
-     * Sets the database connection URL; required.
-     * @param url The url to set
-     */
-    public function setUrl($url) {
-        $this->url = $url;
-    }
-        
-    /**
-     * Sets the password; required.
-     * @param password The password to set
-     */
-    public function setPassword($password) {
-        $this->password = $password;
-    }
+	/**
+	 * Initialize CreoleTask.
+	 * This method includes any necessary Creole libraries and triggers
+	 * appropriate error if they cannot be found.  This is not done in header
+	 * because we may want this class to be loaded w/o triggering an error.
+	 */
+	function init() {
+		if (!class_exists('PDO')) {
+			throw new Exception(
+					"PDOTask depends on PDO feature being included in PHP.");
+		}
+	}
 
-    /**
-     * Auto commit flag for database connection;
-     * optional, default false.
-     * @param autocommit The autocommit to set
-     */
-    public function setAutocommit($autocommit) {
-        $this->autocommit = $autocommit;
-    }
+	/**
+	 * Caching loaders / driver. This is to avoid
+	 * getting an OutOfMemoryError when calling this task
+	 * multiple times in a row; default: true
+	 * @param $enable
+	 */
+	public function setCaching($enable) {
+		$this->caching = $enable;
+	}
 
-    /**
-     * Sets the version string, execute task only if 
-     * rdbms version match; optional.
-     * @param version The version to set
-     */
-    public function setVersion($version) {
-        $this->version = $version;
-    }
-       
-    protected function getLoaderMap() {
-        return self::$loaderMap;
-    }
+	/**
+	 * Sets the database connection URL; required.
+	 * @param url The url to set
+	 */
+	public function setUrl($url) {
+		$this->url = $url;
+	}
 
+	/**
+	 * Sets the password; required.
+	 * @param password The password to set
+	 */
+	public function setPassword($password) {
+		$this->password = $password;
+	}
 
-    /**
-     * Creates a new Connection as using the driver, url, userid and password specified.
-     * The calling method is responsible for closing the connection.
-     * @return Connection the newly created connection.
-     * @throws BuildException if the UserId/Password/Url is not set or there is no suitable driver or the driver fails to load.
-     */
-    protected function getConnection() {
-            
-        if ($this->url === null) {
-            throw new BuildException("Url attribute must be set!", $this->location);
-        }
-                
-        try {
+	/**
+	 * Auto commit flag for database connection;
+	 * optional, default false.
+	 * @param autocommit The autocommit to set
+	 */
+	public function setAutocommit($autocommit) {
+		$this->autocommit = $autocommit;
+	}
 
-            $this->log("Connecting to " . $this->getUrl(), Project::MSG_VERBOSE);
-            
-            $user = null;
-            $pass = null;
-				
-            if ($this->userId) {
-            	$user = $this->getUserId();
-            }
-            
-            if ($this->password) {
-                $pass = $this->getPassword();
-            }            
-            
-            $conn = new PDO($this->getUrl(), $user, $pass);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            
-            if ($this->autocommit) {
-            	try {
-					$conn->setAttribute(PDO::ATTR_AUTOCOMMIT, $this->autocommit);
+	/**
+	 * Sets the version string, execute task only if 
+	 * rdbms version match; optional.
+	 * @param version The version to set
+	 */
+	public function setVersion($version) {
+		$this->version = $version;
+	}
+
+	protected function getLoaderMap() {
+		return self::$loaderMap;
+	}
+
+	/**
+	 * Creates a new Connection as using the driver, url, userid and password specified.
+	 * The calling method is responsible for closing the connection.
+	 * @return Connection the newly created connection.
+	 * @throws BuildException if the UserId/Password/Url is not set or there is no suitable driver or the driver fails to load.
+	 */
+	protected function getConnection() {
+
+		if ($this->url === null) {
+			throw new BuildException("Url attribute must be set!",
+					$this->location);
+		}
+
+		try {
+
+			$this
+					->log("Connecting to " . $this->getUrl(),
+							Project::MSG_VERBOSE);
+
+			$user = null;
+			$pass = null;
+
+			if ($this->userId) {
+				$user = $this->getUserId();
+			}
+
+			if ($this->password) {
+				$pass = $this->getPassword();
+			}
+
+			$conn = new PDO($this->getUrl(), $user, $pass);
+			$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+			if ($this->autocommit) {
+				try {
+					$conn
+							->setAttribute(PDO::ATTR_AUTOCOMMIT,
+									$this->autocommit);
 				} catch (PDOException $pe) {
-					$this->log("Unable to enable auto-commit for this database: " . $pe->getMessage(), Project::MSG_WARN);
+					$this
+							->log(
+									"Unable to enable auto-commit for this database: "
+											. $pe->getMessage(),
+									Project::MSG_WARN);
 				}
 			}
-            
-            return $conn;
-            
-        } catch (SQLException $e) {
-            throw new BuildException($e->getMessage(), $this->location);
-        }
 
-    }
+			return $conn;
 
-    public function isCaching($value) {
-        $this->caching = $value;
-    }
+		} catch (SQLException $e) {
+			throw new BuildException($e->getMessage(), $this->location);
+		}
 
-    /**
-     * Gets the autocommit.
-     * @return Returns a boolean
-     */
-    public function isAutocommit() {
-        return $this->autocommit;
-    }
+	}
 
-    /**
-     * Gets the url.
-     * @return Returns a String
-     */
-    public function getUrl() {
-        return $this->url;
-    }
+	public function isCaching($value) {
+		$this->caching = $value;
+	}
 
-    /**
-     * Gets the userId.
-     * @return Returns a String
-     */
-    public function getUserId() {
-        return $this->userId;
-    }
+	/**
+	 * Gets the autocommit.
+	 * @return Returns a boolean
+	 */
+	public function isAutocommit() {
+		return $this->autocommit;
+	}
 
-    /**
-     * Set the user name for the connection; required.
-     * @param userId The userId to set
-     */
-    public function setUserid($userId) {
-        $this->userId = $userId;
-    }
+	/**
+	 * Gets the url.
+	 * @return Returns a String
+	 */
+	public function getUrl() {
+		return $this->url;
+	}
 
-    /**
-     * Gets the password.
-     * @return Returns a String
-     */
-    public function getPassword() {
-        return $this->password;
-    }
+	/**
+	 * Gets the userId.
+	 * @return Returns a String
+	 */
+	public function getUserId() {
+		return $this->userId;
+	}
+
+	/**
+	 * Set the user name for the connection; required.
+	 * @param userId The userId to set
+	 */
+	public function setUserid($userId) {
+		$this->userId = $userId;
+	}
+
+	/**
+	 * Gets the password.
+	 * @return Returns a String
+	 */
+	public function getPassword() {
+		return $this->password;
+	}
 
 }

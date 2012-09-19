@@ -63,8 +63,7 @@ abstract class BaseObject {
 	 *
 	 * @return     boolean True if the object has been modified.
 	 */
-	public function isModified()
-	{
+	public function isModified() {
 		return !empty($this->modifiedColumns);
 	}
 
@@ -74,8 +73,7 @@ abstract class BaseObject {
 	 * @param      string $col
 	 * @return     boolean True if $col has been modified.
 	 */
-	public function isColumnModified($col)
-	{
+	public function isColumnModified($col) {
 		return in_array($col, $this->modifiedColumns);
 	}
 
@@ -83,8 +81,7 @@ abstract class BaseObject {
 	 * Get the columns that have been modified in this object.
 	 * @return     array A unique list of the modified column names for this object.
 	 */
-	public function getModifiedColumns()
-	{
+	public function getModifiedColumns() {
 		return array_unique($this->modifiedColumns);
 	}
 
@@ -95,8 +92,7 @@ abstract class BaseObject {
 	 *
 	 * @return     true, if the object has never been persisted.
 	 */
-	public function isNew()
-	{
+	public function isNew() {
 		return $this->_new;
 	}
 
@@ -106,8 +102,7 @@ abstract class BaseObject {
 	 *
 	 * @param      boolean $b the state of the object.
 	 */
-	public function setNew($b)
-	{
+	public function setNew($b) {
 		$this->_new = (boolean) $b;
 	}
 
@@ -115,8 +110,7 @@ abstract class BaseObject {
 	 * Whether this object has been deleted.
 	 * @return     boolean The deleted state of this object.
 	 */
-	public function isDeleted()
-	{
+	public function isDeleted() {
 		return $this->_deleted;
 	}
 
@@ -125,8 +119,7 @@ abstract class BaseObject {
 	 * @param      boolean $b The deleted state of this object.
 	 * @return     void
 	 */
-	public function setDeleted($b)
-	{
+	public function setDeleted($b) {
 		$this->_deleted = (boolean) $b;
 	}
 
@@ -135,8 +128,7 @@ abstract class BaseObject {
 	 * @param PropelPDO $con
 	 * @return bloolean
 	 */
-	public function preSave(PropelPDO $con = null)
-	{
+	public function preSave(PropelPDO $con = null) {
 		return true;
 	}
 
@@ -144,31 +136,31 @@ abstract class BaseObject {
 	 * Code to be run after persisting the object
 	 * @param PropelPDO $con
 	 */
-	public function postSave(PropelPDO $con = null) { }
+	public function postSave(PropelPDO $con = null) {
+	}
 
 	/**
 	 * Code to be run before inserting to database
 	 * @param PropelPDO $con
 	 * @return boolean
 	 */
-	public function preInsert(PropelPDO $con = null)
-	{
+	public function preInsert(PropelPDO $con = null) {
 		return true;
 	}
-	
+
 	/**
 	 * Code to be run after inserting to database
 	 * @param PropelPDO $con 
 	 */
-	public function postInsert(PropelPDO $con = null) { }
+	public function postInsert(PropelPDO $con = null) {
+	}
 
 	/**
 	 * Code to be run before updating the object in database
 	 * @param PropelPDO $con
 	 * @return boolean
 	 */
-	public function preUpdate(PropelPDO $con = null)
-	{
+	public function preUpdate(PropelPDO $con = null) {
 		return true;
 	}
 
@@ -176,15 +168,15 @@ abstract class BaseObject {
 	 * Code to be run after updating the object in database
 	 * @param PropelPDO $con
 	 */
-	public function postUpdate(PropelPDO $con = null) { }
+	public function postUpdate(PropelPDO $con = null) {
+	}
 
 	/**
 	 * Code to be run before deleting the object in database
 	 * @param PropelPDO $con
 	 * @return boolean
 	 */
-	public function preDelete(PropelPDO $con = null)
-	{
+	public function preDelete(PropelPDO $con = null) {
 		return true;
 	}
 
@@ -192,22 +184,20 @@ abstract class BaseObject {
 	 * Code to be run after deleting the object in database
 	 * @param PropelPDO $con
 	 */
-	public function postDelete(PropelPDO $con = null) { }
-	
+	public function postDelete(PropelPDO $con = null) {
+	}
+
 	/**
 	 * Sets the modified state for the object to be false.
 	 * @param      string $col If supplied, only the specified column is reset.
 	 * @return     void
 	 */
-	public function resetModified($col = null)
-	{
-		if ($col !== null)
-		{
-			while (($offset = array_search($col, $this->modifiedColumns)) !== false)
+	public function resetModified($col = null) {
+		if ($col !== null) {
+			while (($offset = array_search($col, $this->modifiedColumns))
+					!== false)
 				array_splice($this->modifiedColumns, $offset, 1);
-		}
-		else
-		{
+		} else {
 			$this->modifiedColumns = array();
 		}
 	}
@@ -220,13 +210,13 @@ abstract class BaseObject {
 	 * @param      obj The object to compare to.
 	 * @return     Whether equal to the object specified.
 	 */
-	public function equals($obj)
-	{
+	public function equals($obj) {
 		$thisclazz = get_class($this);
 		if (is_object($obj) && $obj instanceof $thisclazz) {
 			if ($this === $obj) {
 				return true;
-			} elseif ($this->getPrimaryKey() === null || $obj->getPrimaryKey() === null)  {
+			} elseif ($this->getPrimaryKey() === null
+					|| $obj->getPrimaryKey() === null) {
 				return false;
 			} else {
 				return ($this->getPrimaryKey() === $obj->getPrimaryKey());
@@ -242,8 +232,7 @@ abstract class BaseObject {
 	 *
 	 * @return     int Hashcode
 	 */
-	public function hashCode()
-	{
+	public function hashCode() {
 		$ok = $this->getPrimaryKey();
 		if ($ok === null) {
 			return crc32(serialize($this));
@@ -258,8 +247,7 @@ abstract class BaseObject {
 	 * @param      int $priority One of the Propel::LOG_* logging levels
 	 * @return     boolean
 	 */
-	protected function log($msg, $priority = Propel::LOG_INFO)
-	{
+	protected function log($msg, $priority = Propel::LOG_INFO) {
 		return Propel::log(get_class($this) . ': ' . $msg, $priority);
 	}
 

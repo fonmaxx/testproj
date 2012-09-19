@@ -8,39 +8,37 @@
  * file that was distributed with this source code.
  */
 
-include(dirname(__FILE__).'/../bootstrap/unit.php');
+include(dirname(__FILE__) . '/../bootstrap/unit.php');
 
 $t = new lime_test(23);
 
 $conn = Doctrine_Manager::connection(new Doctrine_Adapter_Mock('mysql'));
 
-class Test extends sfDoctrineRecord
-{
-  public function setTableDefinition()
-  {
-    $this->hasColumn('name', 'string', 255, array('notblank' => true));
-    $this->hasColumn('test as TEST', 'string', 255);
-    $this->hasColumn('email', 'string', 255, array('email' => true, 'notnull' => true));
-  }
+class Test extends sfDoctrineRecord {
+	public function setTableDefinition() {
+		$this->hasColumn('name', 'string', 255, array('notblank' => true));
+		$this->hasColumn('test as TEST', 'string', 255);
+		$this
+				->hasColumn('email', 'string', 255,
+						array('email' => true, 'notnull' => true));
+	}
 
-  public function setUp()
-  {
-    $this->hasMany('TestRelation as TestRelations', array('local' => 'id', 'foreign' => 'test_id'));
-  }
+	public function setUp() {
+		$this
+				->hasMany('TestRelation as TestRelations',
+						array('local' => 'id', 'foreign' => 'test_id'));
+	}
 }
 
-class TestRelation extends sfDoctrineRecord
-{
-  public function setTableDefinition()
-  {
-    $this->hasColumn('name', 'string', 255);
-    $this->hasColumn('test_id', 'integer');
-  }
+class TestRelation extends sfDoctrineRecord {
+	public function setTableDefinition() {
+		$this->hasColumn('name', 'string', 255);
+		$this->hasColumn('test_id', 'integer');
+	}
 
-  public function setUp()
-  {
-    $this->hasOne('Test', array('local' => 'test_id', 'foreign' => 'id'));
-  }
+	public function setUp() {
+		$this->hasOne('Test', array('local' => 'test_id', 'foreign' => 'id'));
+	}
 }
 
 $column = new sfDoctrineColumn('name', Doctrine_Core::getTable('Test'));
@@ -73,7 +71,8 @@ $column = new sfDoctrineColumn('id', Doctrine_Core::getTable('Test'));
 $t->is($column->isPrimaryKey(), true);
 
 // Relation/foreign key functions
-$column = new sfDoctrineColumn('test_id', Doctrine_Core::getTable('TestRelation'));
+$column = new sfDoctrineColumn('test_id',
+		Doctrine_Core::getTable('TestRelation'));
 $t->is($column->isForeignKey(), true);
 $t->is($column->getForeignClassName(), 'Test');
 $t->is($column->getForeignTable()->getOption('name'), 'Test');

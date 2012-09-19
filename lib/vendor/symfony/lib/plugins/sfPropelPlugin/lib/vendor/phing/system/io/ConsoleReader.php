@@ -18,7 +18,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>. 
  */
- 
+
 include_once 'phing/system/io/Reader.php';
 
 /**
@@ -30,55 +30,54 @@ include_once 'phing/system/io/Reader.php';
  * @package phing.system.io
  */
 class ConsoleReader extends Reader {
-    
-    function readLine() {
-        
-        $out = fgets(STDIN); // note: default maxlen is 1kb
-        $out = rtrim($out);
 
-        return $out;
-    }
-    
-    /**
-     * 
-     * @param int $len Num chars to read.
-     * @return string chars read or -1 if eof.
-     */
-    function read($len = null) {
-        
-        $out = fread(STDIN, $len);
-        
-        
-        return $out;
-        // FIXME
-        // read by chars doesn't work (yet?) with PHP stdin.  Maybe
-        // this is just a language feature, maybe there's a way to get
-        // ability to read chars w/o <enter> ?
-        
-    }   
-        
-    function close() {
+	function readLine() {
+
+		$out = fgets(STDIN); // note: default maxlen is 1kb
+		$out = rtrim($out);
+
+		return $out;
+	}
+
+	/**
+	 * 
+	 * @param int $len Num chars to read.
+	 * @return string chars read or -1 if eof.
+	 */
+	function read($len = null) {
+
+		$out = fread(STDIN, $len);
+
+		return $out;
+		// FIXME
+		// read by chars doesn't work (yet?) with PHP stdin.  Maybe
+		// this is just a language feature, maybe there's a way to get
+		// ability to read chars w/o <enter> ?
+
+	}
+
+	function close() {
 		// STDIN is always open
-    }
+	}
 
-    function open() {
+	function open() {
 		// STDIN is always open
-    }
+	}
 
-    /**
-     * Whether eof has been reached with stream.
-     * @return boolean
-     */
-    function eof() {
-        return feof(STDIN);
-    }        
-    
-    /**
-     * Returns path to file we are reading.
-     * @return string
-     */
-    function getResource() {
-        return "console";
-    }
+	/**
+	 * Whether eof has been reached with stream.
+	 * @return boolean
+	 */
+	function eof() {
+		return feof(STDIN);
+	}
+
+	/**
+	 * Returns path to file we are reading.
+	 * @return string
+	 */
+	function getResource() {
+		return "console";
+	}
 }
 

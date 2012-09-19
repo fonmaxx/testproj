@@ -19,6 +19,5 @@
  * @author     Sean Kerr <sean@code-box.org>
  * @version    SVN: $Id: sfFilterException.class.php 23810 2009-11-12 11:07:44Z Kris.Wallsmith $
  */
-class sfFilterException extends sfException
-{
+class sfFilterException extends sfException {
 }

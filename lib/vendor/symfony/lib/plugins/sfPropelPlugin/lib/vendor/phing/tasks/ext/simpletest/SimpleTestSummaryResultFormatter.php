@@ -29,23 +29,19 @@ require_once 'phing/tasks/ext/simpletest/SimpleTestResultFormatter.php';
  * @package phing.tasks.ext.simpletest
  * @since 2.2.0
  */
-class SimpleTestSummaryResultFormatter extends SimpleTestResultFormatter
-{
-	function paintCaseEnd($test_name)
-	{
+class SimpleTestSummaryResultFormatter extends SimpleTestResultFormatter {
+	function paintCaseEnd($test_name) {
 		parent::paintCaseEnd($test_name);
-		
-		/* Only count suites where more than one test was run */
-		if ($this->getRunCount())
-		{
-			$sb.= "Tests run: " . $this->getRunCount();
-			$sb.= ", Failures: " . $this->getFailureCount();
-			$sb.= ", Errors: " . $this->getErrorCount();
-			$sb.= ", Time elapsed: " . $this->getElapsedTime();
-			$sb.= " sec\n";
 
-			if ($this->out != NULL)
-			{
+		/* Only count suites where more than one test was run */
+		if ($this->getRunCount()) {
+			$sb .= "Tests run: " . $this->getRunCount();
+			$sb .= ", Failures: " . $this->getFailureCount();
+			$sb .= ", Errors: " . $this->getErrorCount();
+			$sb .= ", Time elapsed: " . $this->getElapsedTime();
+			$sb .= " sec\n";
+
+			if ($this->out != NULL) {
 				$this->out->write($sb);
 			}
 		}

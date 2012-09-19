@@ -47,92 +47,95 @@ include_once 'phing/tasks/system/PhingTask.php';
  * @package   phing.tasks.system
  */
 class ForeachTask extends Task {
-    
-    /** Delimter-separated list of values to process. */
-    private $list;
-    
-    /** Name of parameter to pass to callee */
-    private $param;
-    
-    /** Delimter that separates items in $list */
-    private $delimiter = ',';
-    
-    /**
-     * PhingCallTask that will be invoked w/ calleeTarget.
-     * @var PhingCallTask
-     */
-    private $callee;
-    
-    /**
-     * Target to execute.
-     * @var string
-     */
-    private $calleeTarget;
 
-    function init() {
-        $this->callee = $this->project->createTask("phingcall");
-        $this->callee->setOwningTarget($this->getOwningTarget());
-        $this->callee->setTaskName($this->getTaskName());
-        $this->callee->setLocation($this->getLocation());
-        $this->callee->init();
-    }
+	/** Delimter-separated list of values to process. */
+	private $list;
 
-    /**
-     * This method does the work.
-     * @return void
-     */   
-    function main() {
-        if ($this->list === null) {
-            throw new BuildException("Missing list to iterate through");
-        }
-        if (trim($this->list) === '') {
-            return;
-        }
-        if ($this->param === null) {
-            throw new BuildException("You must supply a property name to set on each iteration in param");
-        }
-        if ($this->calleeTarget === null) {
-            throw new BuildException("You must supply a target to perform");
-        }
+	/** Name of parameter to pass to callee */
+	private $param;
 
-        $callee = $this->callee;
-        $callee->setTarget($this->calleeTarget);
-        $callee->setInheritAll(true);
-        $callee->setInheritRefs(true);
-        
-        $arr = explode($this->delimiter, $this->list);
-        
-        foreach ($arr as $value) {
-            $this->log("Setting param '$this->param' to value '$value'", Project::MSG_VERBOSE);
-            $prop = $callee->createProperty();
-            $prop->setOverride(true);
-            $prop->setName($this->param);
-            $prop->setValue($value);
-            $callee->main();
-        }
-    }
+	/** Delimter that separates items in $list */
+	private $delimiter = ',';
 
-    function setList($list) {
-        $this->list = (string) $list;
-    }
+	/**
+	 * PhingCallTask that will be invoked w/ calleeTarget.
+	 * @var PhingCallTask
+	 */
+	private $callee;
 
-    function setTarget($target) {
-        $this->calleeTarget = (string) $target;
-    }
+	/**
+	 * Target to execute.
+	 * @var string
+	 */
+	private $calleeTarget;
 
-    function setParam($param) {
-        $this->param = (string) $param;
-    }
+	function init() {
+		$this->callee = $this->project->createTask("phingcall");
+		$this->callee->setOwningTarget($this->getOwningTarget());
+		$this->callee->setTaskName($this->getTaskName());
+		$this->callee->setLocation($this->getLocation());
+		$this->callee->init();
+	}
 
-    function setDelimiter($delimiter) {
-        $this->delimiter = (string) $delimiter;
-    }
+	/**
+	 * This method does the work.
+	 * @return void
+	 */ 
+	function main() {
+		if ($this->list === null) {
+			throw new BuildException("Missing list to iterate through");
+		}
+		if (trim($this->list) === '') {
+			return;
+		}
+		if ($this->param === null) {
+			throw new BuildException(
+					"You must supply a property name to set on each iteration in param");
+		}
+		if ($this->calleeTarget === null) {
+			throw new BuildException("You must supply a target to perform");
+		}
 
-    /**
-     * @return Property
-     */
-    function createProperty() {
-        return $this->callee->createProperty();
-    }
+		$callee = $this->callee;
+		$callee->setTarget($this->calleeTarget);
+		$callee->setInheritAll(true);
+		$callee->setInheritRefs(true);
+
+		$arr = explode($this->delimiter, $this->list);
+
+		foreach ($arr as $value) {
+			$this
+					->log("Setting param '$this->param' to value '$value'",
+							Project::MSG_VERBOSE);
+			$prop = $callee->createProperty();
+			$prop->setOverride(true);
+			$prop->setName($this->param);
+			$prop->setValue($value);
+			$callee->main();
+		}
+	}
+
+	function setList($list) {
+		$this->list = (string) $list;
+	}
+
+	function setTarget($target) {
+		$this->calleeTarget = (string) $target;
+	}
+
+	function setParam($param) {
+		$this->param = (string) $param;
+	}
+
+	function setDelimiter($delimiter) {
+		$this->delimiter = (string) $delimiter;
+	}
+
+	/**
+	 * @return Property
+	 */
+	function createProperty() {
+		return $this->callee->createProperty();
+	}
 
 }

@@ -31,5 +31,5 @@
  * @version     $Revision$
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Expression_Mock extends Doctrine_Expression_Driver
-{ }
+class Doctrine_Expression_Mock extends Doctrine_Expression_Driver {
+}

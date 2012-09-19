@@ -19,7 +19,6 @@
  * <http://propel.phpdb.org>.
  */
 
-
 /**
  * Simple class that serves as a container for any information about a failed validation.
  *
@@ -51,8 +50,7 @@ class ValidationFailed {
 	 * @param      string $message Message to display to user.
 	 * @param      object $validator The Validator that caused this column to fail.
 	 */
-	public function __construct($colname, $message, $validator = null)
-	{
+	public function __construct($colname, $message, $validator = null) {
 		$this->colname = $colname;
 		$this->message = $message;
 		$this->validator = $validator;
@@ -62,8 +60,7 @@ class ValidationFailed {
 	 * Set the column name.
 	 * @param      string $v
 	 */
-	public function setColumn($v)
-	{
+	public function setColumn($v) {
 		$this->colname = $v;
 	}
 
@@ -71,8 +68,7 @@ class ValidationFailed {
 	 * Gets the column name.
 	 * @return     string Qualified column name (tablename.COLUMN_NAME)
 	 */
-	public function getColumn()
-	{
+	public function getColumn() {
 		return $this->colname;
 	}
 
@@ -80,8 +76,7 @@ class ValidationFailed {
 	 * Set the message for the validation failure.
 	 * @param      string $v
 	 */
-	public function setMessage($v)
-	{
+	public function setMessage($v) {
 		$this->message = $v;
 	}
 
@@ -89,8 +84,7 @@ class ValidationFailed {
 	 * Gets the message for the validation failure.
 	 * @return     string
 	 */
-	public function getMessage()
-	{
+	public function getMessage() {
 		return $this->message;
 	}
 
@@ -98,8 +92,7 @@ class ValidationFailed {
 	 * Set the validator object that caused this to fail.
 	 * @param      object $v
 	 */
-	public function setValidator($v)
-	{
+	public function setValidator($v) {
 		$this->validator = $v;
 	}
 
@@ -107,8 +100,7 @@ class ValidationFailed {
 	 * Gets the validator object that caused this to fail.
 	 * @return     object
 	 */
-	public function getValidator()
-	{
+	public function getValidator() {
 		return $this->validator;
 	}
 
@@ -118,8 +110,7 @@ class ValidationFailed {
 	 * on (string) cast.  Until then it's pretty useless.
 	 * @return     string
 	 */
-	public function __toString()
-	{
+	public function __toString() {
 		return $this->getMessage();
 	}
 

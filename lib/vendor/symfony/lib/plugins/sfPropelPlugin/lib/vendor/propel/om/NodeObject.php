@@ -98,7 +98,7 @@ interface NodeObject extends IteratorAggregate {
 	 * Gets the descendants for the node
 	 *
 	 * @param      PropelPDO $con	Connection to use.
- 	 * @return     array
+	 * @return     array
 	 */
 	public function getDescendants(PropelPDO $con = null);
 
@@ -242,7 +242,8 @@ interface NodeObject extends IteratorAggregate {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     object The current object (for fluent API support)
 	 */
-	public function insertAsFirstChildOf(NodeObject $parent, PropelPDO $con = null);
+	public function insertAsFirstChildOf(NodeObject $parent,
+			PropelPDO $con = null);
 
 	/**
 	 * Inserts as last child of destination node $parent
@@ -251,7 +252,8 @@ interface NodeObject extends IteratorAggregate {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     object The current object (for fluent API support)
 	 */
-	public function insertAsLastChildOf(NodeObject $parent, PropelPDO $con = null);
+	public function insertAsLastChildOf(NodeObject $parent,
+			PropelPDO $con = null);
 
 	/**
 	 * Inserts node as previous sibling to destination node $dest
@@ -260,7 +262,8 @@ interface NodeObject extends IteratorAggregate {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     object The current object (for fluent API support)
 	 */
-	public function insertAsPrevSiblingOf(NodeObject $dest, PropelPDO $con = null);
+	public function insertAsPrevSiblingOf(NodeObject $dest,
+			PropelPDO $con = null);
 
 	/**
 	 * Inserts node as next sibling to destination node $dest
@@ -269,7 +272,8 @@ interface NodeObject extends IteratorAggregate {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     object The current object (for fluent API support)
 	 */
-	public function insertAsNextSiblingOf(NodeObject $dest, PropelPDO $con = null);
+	public function insertAsNextSiblingOf(NodeObject $dest,
+			PropelPDO $con = null);
 
 	/**
 	 * Moves node to be first child of $parent
@@ -278,7 +282,8 @@ interface NodeObject extends IteratorAggregate {
 	 * @param      PropelPDO $con Connection to use.
 	 * @return     void
 	 */
-	public function moveToFirstChildOf(NodeObject $parent, PropelPDO $con = null);
+	public function moveToFirstChildOf(NodeObject $parent,
+			PropelPDO $con = null);
 
 	/**
 	 * Moves node to be last child of $parent

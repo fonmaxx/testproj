@@ -34,11 +34,9 @@
  * @version    $Revision: 1262 $
  * @package    propel.validator
  */
-class TypeValidator implements BasicValidator
-{
+class TypeValidator implements BasicValidator {
 
-	public function isValid(ValidatorMap $map, $value)
-	{
+	public function isValid(ValidatorMap $map, $value) {
 		return (gettype($value) == $map->getValue());
 	}
 }

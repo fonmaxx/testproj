@@ -31,37 +31,37 @@ require_once 'phing/types/selectors/BaseSelectorContainer.php';
  */
 class AndSelector extends BaseSelectorContainer {
 
-    public function toString() {
-        $buf = "";
-        if ($this->hasSelectors()) {
-            $buf .= "{andselect: ";
-            $buf .= parent::toString();
-            $buf .= "}";
-        }
-        return $buf;
-    }
+	public function toString() {
+		$buf = "";
+		if ($this->hasSelectors()) {
+			$buf .= "{andselect: ";
+			$buf .= parent::toString();
+			$buf .= "}";
+		}
+		return $buf;
+	}
 
-    /**
-     * Returns true (the file is selected) only if all other selectors
-     * agree that the file should be selected.
-     *
-     * @param basedir the base directory the scan is being done from
-     * @param filename the name of the file to check
-     * @param file a PhingFile object for the filename that the selector
-     * can use
-     * @return whether the file should be selected or not
-     */
-    public function isSelected(PhingFile $basedir, $filename, PhingFile $file) {
-        $this->validate();
-        $selectors = $this->selectorElements();       
-           for($i=0,$size=count($selectors); $i < $size; $i++) {
-            $result = $selectors[$i]->isSelected($basedir, $filename, $file);
-            if (!$result) {
-                return false;
-            }
-        }
-        return true;
-    }
+	/**
+	 * Returns true (the file is selected) only if all other selectors
+	 * agree that the file should be selected.
+	 *
+	 * @param basedir the base directory the scan is being done from
+	 * @param filename the name of the file to check
+	 * @param file a PhingFile object for the filename that the selector
+	 * can use
+	 * @return whether the file should be selected or not
+	 */
+	public function isSelected(PhingFile $basedir, $filename, PhingFile $file) {
+		$this->validate();
+		$selectors = $this->selectorElements();
+		for ($i = 0, $size = count($selectors); $i < $size; $i++) {
+			$result = $selectors[$i]->isSelected($basedir, $filename, $file);
+			if (!$result) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 }
 

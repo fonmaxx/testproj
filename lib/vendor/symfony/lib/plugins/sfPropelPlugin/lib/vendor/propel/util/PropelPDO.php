@@ -19,7 +19,6 @@
  * <http://propel.phpdb.org>.
  */
 
-
 /**
  * PDO connection subclass that provides the basic fixes to PDO that are required by Propel.
  *
@@ -65,7 +64,7 @@ class PropelPDO extends PDO {
 	 * @var        boolean
 	 */
 	protected $cachePreparedStatements = false;
-	
+
 	/**
 	 * Whether the final commit is possible
 	 * Is false if a nested transaction is rolled back
@@ -76,8 +75,7 @@ class PropelPDO extends PDO {
 	 * Gets the current transaction depth.
 	 * @return     int
 	 */
-	public function getNestedTransactionCount()
-	{
+	public function getNestedTransactionCount() {
 		return $this->nestedTransactionCount;
 	}
 
@@ -85,24 +83,21 @@ class PropelPDO extends PDO {
 	 * Set the current transaction depth.
 	 * @param      int $v The new depth.
 	 */
-	protected function setNestedTransactionCount($v)
-	{
+	protected function setNestedTransactionCount($v) {
 		$this->nestedTransactionCount = $v;
 	}
 
 	/**
 	 * Decrements the current transaction depth by one.
 	 */
-	protected function decrementNestedTransactionCount()
-	{
+	protected function decrementNestedTransactionCount() {
 		$this->nestedTransactionCount--;
 	}
 
 	/**
 	 * Increments the current transaction depth by one.
 	 */
-	protected function incrementNestedTransactionCount()
-	{
+	protected function incrementNestedTransactionCount() {
 		$this->nestedTransactionCount++;
 	}
 
@@ -112,19 +107,17 @@ class PropelPDO extends PDO {
 	 * is greater than 0.
 	 * @return     boolean
 	 */
-	public function isInTransaction()
-	{
+	public function isInTransaction() {
 		return ($this->getNestedTransactionCount() > 0);
 	}
-	
+
 	/**
 	 * Overrides PDO::beginTransaction() to prevent errors due to already-in-progress transaction.
 	 */
-	public function beginTransaction()
-	{
+	public function beginTransaction() {
 		$return = true;
 		$opcount = $this->getNestedTransactionCount();
-		if ( $opcount === 0 ) {
+		if ($opcount === 0) {
 			$return = parent::beginTransaction();
 			$this->isUncommitable = false;
 		}
@@ -136,14 +129,14 @@ class PropelPDO extends PDO {
 	 * Overrides PDO::commit() to only commit the transaction if we are in the outermost
 	 * transaction nesting level.
 	 */
-	public function commit()
-	{
+	public function commit() {
 		$return = true;
 		$opcount = $this->getNestedTransactionCount();
 		if ($opcount > 0) {
 			if ($opcount === 1) {
 				if ($this->isUncommitable) {
-					throw new PropelException('Cannot commit because a nested transaction was rolled back');
+					throw new PropelException(
+							'Cannot commit because a nested transaction was rolled back');
 				} else {
 					$return = parent::commit();
 				}
@@ -158,42 +151,40 @@ class PropelPDO extends PDO {
 	 * transaction nesting level
 	 * @return     boolean Whether operation was successful.
 	 */
-	public function rollBack()
-	{
+	public function rollBack() {
 		$return = true;
 		$opcount = $this->getNestedTransactionCount();
 		if ($opcount > 0) {
-			if ($opcount === 1) { 
-				$return = parent::rollBack(); 
+			if ($opcount === 1) {
+				$return = parent::rollBack();
 			} else {
 				$this->isUncommitable = true;
 			}
-			$this->decrementNestedTransactionCount(); 
+			$this->decrementNestedTransactionCount();
 		}
 		return $return;
 	}
 
 	/**
-	* Rollback the whole transaction, even if this is a nested rollback
-	* and reset the nested transaction count to 0.
-	* @return     boolean Whether operation was successful.
-	*/
-	public function forceRollBack()
-	{
+	 * Rollback the whole transaction, even if this is a nested rollback
+	 * and reset the nested transaction count to 0.
+	 * @return     boolean Whether operation was successful.
+	 */
+	public function forceRollBack() {
 		$return = true;
 		$opcount = $this->getNestedTransactionCount();
 		if ($opcount > 0) {
 			// If we're in a transaction, always roll it back
 			// regardless of nesting level.
 			$return = parent::rollBack();
-			
+
 			// reset nested transaction count to 0 so that we don't
 			// try to commit (or rollback) the transaction outside this scope.
 			$this->nestedTransactionCount = 0;
 		}
 		return $return;
 	}
-  
+
 	/**
 	 * Sets a connection attribute.
 	 *
@@ -203,14 +194,13 @@ class PropelPDO extends PDO {
 	 * @param      int $attribute The attribute to set (e.g. PropelPDO::PROPEL_ATTR_CACHE_PREPARES).
 	 * @param      mixed $value The attribute value.
 	 */
-	public function setAttribute($attribute, $value)
-	{
-		switch($attribute) {
-			case self::PROPEL_ATTR_CACHE_PREPARES:
-				$this->cachePreparedStatements = $value;
-				break;
-			default:
-				parent::setAttribute($attribute, $value);
+	public function setAttribute($attribute, $value) {
+		switch ($attribute) {
+		case self::PROPEL_ATTR_CACHE_PREPARES:
+			$this->cachePreparedStatements = $value;
+			break;
+		default:
+			parent::setAttribute($attribute, $value);
 		}
 	}
 
@@ -222,14 +212,13 @@ class PropelPDO extends PDO {
 	 *
 	 * @param      int $attribute The attribute to get (e.g. PropelPDO::PROPEL_ATTR_CACHE_PREPARES).
 	 */
-	public function getAttribute($attribute)
-	{
-		switch($attribute) {
-			case self::PROPEL_ATTR_CACHE_PREPARES:
-				return $this->cachePreparedStatements;
-				break;
-			default:
-				return parent::getAttribute($attribute);
+	public function getAttribute($attribute) {
+		switch ($attribute) {
+		case self::PROPEL_ATTR_CACHE_PREPARES:
+			return $this->cachePreparedStatements;
+			break;
+		default:
+			return parent::getAttribute($attribute);
 		}
 	}
 
@@ -241,8 +230,7 @@ class PropelPDO extends PDO {
 	 * @param      array
 	 * @return     PDOStatement
 	 */
-	public function prepare($sql, $driver_options = array())
-	{
+	public function prepare($sql, $driver_options = array()) {
 		if ($this->cachePreparedStatements) {
 			$key = $sql;
 			if (!isset($this->preparedStatements[$key])) {
@@ -260,8 +248,7 @@ class PropelPDO extends PDO {
 	/**
 	 * Clears any stored prepared statements for this connection.
 	 */
-	public function clearStatementCache()
-	{
+	public function clearStatementCache() {
 		$this->preparedStatements = array();
 	}
 

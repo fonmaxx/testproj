@@ -34,14 +34,12 @@
  * @version    $Revision: 1262 $
  * @package    propel.validator
  */
-class MinLengthValidator implements BasicValidator
-{
+class MinLengthValidator implements BasicValidator {
 
 	/**
 	 * @see        BasicValidator::isValid()
 	 */
-	public function isValid (ValidatorMap $map, $str)
-	{
+	public function isValid(ValidatorMap $map, $str) {
 		return strlen($str) >= intval($map->getValue());
 	}
 }

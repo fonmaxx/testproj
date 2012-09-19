@@ -32,30 +32,20 @@ require_once 'phing/tasks/ext/phpunit/FormatterElement.php';
  * @package phing.tasks.ext.simpletest
  * @since 2.2.0
  */
-class SimpleTestFormatterElement extends FormatterElement
-{
-	function setType($type)
-	{
+class SimpleTestFormatterElement extends FormatterElement {
+	function setType($type) {
 		$this->type = $type;
 
-		if ($this->type == "xml")
-		{
+		if ($this->type == "xml") {
 			$destFile = new PhingFile($this->toDir, 'testsuites.xml');
 			//$this->formatter = new SimpleTestXmlResultFormatter();
-		}
-		else
-		if ($this->type == "plain")
-		{
+		} else if ($this->type == "plain") {
 			$this->formatter = new SimpleTestPlainResultFormatter();
-		}
-		else
-		if ($this->type == "summary")
-		{
+		} else if ($this->type == "summary") {
 			$this->formatter = new SimpleTestSummaryResultFormatter();
-		}
-		else
-		{
-			throw new BuildException("Formatter '" . $this->type . "' not implemented");
+		} else {
+			throw new BuildException(
+					"Formatter '" . $this->type . "' not implemented");
 		}
 	}
 }

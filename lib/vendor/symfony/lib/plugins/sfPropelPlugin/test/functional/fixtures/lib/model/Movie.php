@@ -7,6 +7,5 @@
  *
  * @package lib.model
  */ 
-class Movie extends BaseMovie
-{
+class Movie extends BaseMovie {
 }

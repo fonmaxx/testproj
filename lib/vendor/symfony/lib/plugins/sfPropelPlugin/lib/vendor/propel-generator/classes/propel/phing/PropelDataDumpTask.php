@@ -94,8 +94,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	 * @param      PhingFile $sqldbmap the db map
 	 * @return     void
 	 */
-	public function setDataDbMap(PhingFile $datadbmap)
-	{
+	public function setDataDbMap(PhingFile $datadbmap) {
 		$this->datadbmap = $datadbmap;
 	}
 
@@ -104,8 +103,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	 *
 	 * @return     PhingFile $datadbmap.
 	 */
-	public function getDataDbMap()
-	{
+	public function getDataDbMap() {
 		return $this->datadbmap;
 	}
 
@@ -114,8 +112,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	 *
 	 * @return     The DatabaseName value
 	 */
-	public function getDatabaseName()
-	{
+	public function getDatabaseName() {
 		return $this->databaseName;
 	}
 
@@ -124,8 +121,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	 *
 	 * @param      v The new DatabaseName value
 	 */
-	public function setDatabaseName($v)
-	{
+	public function setDatabaseName($v) {
 		$this->databaseName = $v;
 	}
 
@@ -134,8 +130,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	 *
 	 * @return     The DatabaseUrl value
 	 */
-	public function getDatabaseUrl()
-	{
+	public function getDatabaseUrl() {
 		return $this->databaseUrl;
 	}
 
@@ -144,8 +139,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	 *
 	 * @param      string $v The PEAR-compatible database DSN URL.
 	 */
-	public function setDatabaseUrl($v)
-	{
+	public function setDatabaseUrl($v) {
 		$this->databaseUrl = $v;
 	}
 
@@ -155,8 +149,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	 * @return     string database user
 	 * @deprecated
 	 */
-	public function getDatabaseUser()
-	{
+	public function getDatabaseUser() {
 		return $this->databaseUser;
 	}
 
@@ -166,8 +159,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	 * @param      string $v The new DatabaseUser value
 	 * @deprecated Specify user in DSN URL.
 	 */
-	public function setDatabaseUser($v)
-	{
+	public function setDatabaseUser($v) {
 		$this->databaseUser = $v;
 	}
 
@@ -176,8 +168,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	 *
 	 * @return     string database password
 	 */
-	public function getDatabasePassword()
-	{
+	public function getDatabasePassword() {
 		return $this->databasePassword;
 	}
 
@@ -187,8 +178,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	 * @param      string $v The new DatabasePassword value
 	 * @deprecated Specify database password in DSN URL.
 	 */
-	public function setDatabasePassword($v)
-	{
+	public function setDatabasePassword($v) {
 		$this->databasePassword = $v;
 	}
 
@@ -197,8 +187,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	 *
 	 * @return     string database driver name
 	 */
-	public function getDatabaseDriver()
-	{
+	public function getDatabaseDriver() {
 		return $this->databaseDriver;
 	}
 
@@ -207,8 +196,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	 *
 	 * @param      string $v The new DatabaseDriver value
 	 */
-	public function setDatabaseDriver($v)
-	{
+	public function setDatabaseDriver($v) {
 		$this->databaseDriver = $v;
 	}
 
@@ -221,8 +209,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	 *
 	 * @throws     IOException - if unable to store properties
 	 */
-	private function createDataDbMap()
-	{
+	private function createDataDbMap() {
 		if ($this->getDataDbMap() === null) {
 			return;
 		}
@@ -235,21 +222,28 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 			$datadbmap->load($this->getDataDbMap());
 		}
 
-		foreach ($this->getDataModels() as $dataModel) {            // there is really one 1 db per datamodel
+		foreach ($this->getDataModels() as $dataModel) { // there is really one 1 db per datamodel
 			foreach ($dataModel->getDatabases() as $database) {
 
 				// if database name is specified, then we only want to dump that one db.
-				if (empty($this->databaseName) || ($this->databaseName && $database->getName() == $this->databaseName)) {
+				if (empty($this->databaseName)
+						|| ($this->databaseName
+								&& $database->getName() == $this->databaseName)) {
 					$outFile = $this->getMappedFile($dataModel->getName());
-					$datadbmap->setProperty($outFile->getName(), $database->getName());
+					$datadbmap
+							->setProperty($outFile->getName(),
+									$database->getName());
 				}
 			}
 		}
 
 		try {
-			$datadbmap->store($this->getDataDbMap(), "Data XML file -> Database map");
+			$datadbmap
+					->store($this->getDataDbMap(),
+							"Data XML file -> Database map");
 		} catch (IOException $e) {
-			throw new IOException("Unable to store properties: ". $e->getMessage());
+			throw new IOException(
+					"Unable to store properties: " . $e->getMessage());
 		}
 	}
 
@@ -259,15 +253,16 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	 * @return     void
 	 * @throws     BuildException
 	 */
-	public function main()
-	{
+	public function main() {
 		$this->validate();
 
-		$buf = "Database settings:\n"
-			. " driver: " . ($this->databaseDriver ? $this->databaseDriver : "(default)" ). "\n"
-			. " URL: " . $this->databaseUrl . "\n"
-			. ($this->databaseUser ? " user: " . $this->databaseUser . "\n" : "")
-			. ($this->databasePassword ? " password: " . $this->databasePassword . "\n" : "");
+		$buf = "Database settings:\n" . " driver: "
+				. ($this->databaseDriver ? $this->databaseDriver : "(default)")
+				. "\n" . " URL: " . $this->databaseUrl . "\n"
+				. ($this->databaseUser ? " user: " . $this->databaseUser . "\n"
+						: "")
+				. ($this->databasePassword ? " password: "
+								. $this->databasePassword . "\n" : "");
 
 		$this->log($buf, Project::MSG_VERBOSE);
 
@@ -275,37 +270,54 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 		$this->createDataDbMap();
 
 		// 2) Now go create the XML files from teh database(s)
-		foreach ($this->getDataModels() as $dataModel) {            // there is really one 1 db per datamodel
+		foreach ($this->getDataModels() as $dataModel) { // there is really one 1 db per datamodel
 			foreach ($dataModel->getDatabases() as $database) {
 
 				// if database name is specified, then we only want to dump that one db.
-				if (empty($this->databaseName) || ($this->databaseName && $database->getName() == $this->databaseName)) {
+				if (empty($this->databaseName)
+						|| ($this->databaseName
+								&& $database->getName() == $this->databaseName)) {
 
 					$outFile = $this->getMappedFile($dataModel->getName());
 
-					$this->log("Dumping data to XML for database: " . $database->getName());
+					$this
+							->log(
+									"Dumping data to XML for database: "
+											. $database->getName());
 					$this->log("Writing to XML file: " . $outFile->getName());
 
 					try {
 
-						$url = str_replace("@DB@", $database->getName(), $this->databaseUrl);
+						$url = str_replace("@DB@", $database->getName(),
+								$this->databaseUrl);
 
 						if ($url !== $this->databaseUrl) {
-							$this->log("New (resolved) URL: " . $url, Project::MSG_VERBOSE);
+							$this
+									->log("New (resolved) URL: " . $url,
+											Project::MSG_VERBOSE);
 						}
 
 						if (empty($url)) {
-							throw new BuildException("Unable to connect to database; no PDO connection URL specified.", $this->getLocation());
+							throw new BuildException(
+									"Unable to connect to database; no PDO connection URL specified.",
+									$this->getLocation());
 						}
 
-						$this->conn = new PDO($url, $this->databaseUser, $this->databasePassword);
-						$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+						$this->conn = new PDO($url, $this->databaseUser,
+								$this->databasePassword);
+						$this->conn
+								->setAttribute(PDO::ATTR_ERRMODE,
+										PDO::ERRMODE_EXCEPTION);
 
 						$doc = $this->createXMLDoc($database);
 						$doc->save($outFile->getAbsolutePath());
 
 					} catch (SQLException $se) {
-						$this->log("SQLException while connecting to DB: ". $se->getMessage(), Project::MSG_ERR);
+						$this
+								->log(
+										"SQLException while connecting to DB: "
+												. $se->getMessage(),
+										Project::MSG_ERR);
 						throw new BuildException($se);
 					}
 				} // if databaseName && database->getName == databaseName
@@ -319,9 +331,11 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	 * @param      Platform $platform
 	 * @return     PDOStatement
 	 */
-	private function getTableDataStmt($tableName, Platform $platform)
-	{
-		return $this->conn->query("SELECT * FROM " . $platform->quoteIdentifier( $tableName ) );
+	private function getTableDataStmt($tableName, Platform $platform) {
+		return $this->conn
+				->query(
+						"SELECT * FROM "
+								. $platform->quoteIdentifier($tableName));
 	}
 
 	/**
@@ -329,17 +343,21 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	 * @param      Database $database
 	 * @return     DOMDocument
 	 */
-	private function createXMLDoc(Database $database)
-	{
+	private function createXMLDoc(Database $database) {
 		$doc = new DOMDocument('1.0', 'utf-8');
 		$doc->formatOutput = true; // pretty printing
-		$doc->appendChild($doc->createComment("Created by data/dump/Control.tpl template."));
+		$doc
+				->appendChild(
+						$doc
+								->createComment(
+										"Created by data/dump/Control.tpl template."));
 
 		$dsNode = $doc->createElement("dataset");
 		$dsNode->setAttribute("name", "all");
 		$doc->appendChild($dsNode);
 
-		$platform = $this->getGeneratorConfig()->getConfiguredPlatform($this->conn);
+		$platform = $this->getGeneratorConfig()
+				->getConfiguredPlatform($this->conn);
 
 		$this->log("Building DOM tree containing data from tables:");
 
@@ -351,7 +369,9 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 				foreach ($tbl->getColumns() as $col) {
 					$cval = $row[$col->getName()];
 					if ($cval !== null) {
-						$rowNode->setAttribute($col->getPhpName(), iconv($this->dbEncoding, 'utf-8', $cval));
+						$rowNode
+								->setAttribute($col->getPhpName(),
+										iconv($this->dbEncoding, 'utf-8', $cval));
 					}
 				}
 				$dsNode->appendChild($rowNode);

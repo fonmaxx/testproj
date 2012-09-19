@@ -30,29 +30,28 @@
  * @version     $Revision: 2761 $
  * @author      Jonathan H. Wage <jwage@mac.com>
  */
-class Doctrine_Task_BuildAllLoad extends Doctrine_Task
-{
-    public $description          =   'Calls build-all, and load-data',
-           $requiredArguments    =   array(),
-           $optionalArguments    =   array();
-    
-    public function __construct($dispatcher = null)
-    {
-        parent::__construct($dispatcher);
+class Doctrine_Task_BuildAllLoad extends Doctrine_Task {
+	public $description = 'Calls build-all, and load-data', $requiredArguments = array(), $optionalArguments = array();
 
-        $this->buildAll = new Doctrine_Task_BuildAll($this->dispatcher);
-        $this->loadData = new Doctrine_Task_LoadData($this->dispatcher);
-        
-        $this->requiredArguments = array_merge($this->requiredArguments, $this->buildAll->requiredArguments, $this->loadData->requiredArguments);
-        $this->optionalArguments = array_merge($this->optionalArguments, $this->buildAll->optionalArguments, $this->loadData->optionalArguments);
-    }
-    
-    public function execute()
-    {
-        $this->buildAll->setArguments($this->getArguments());
-        $this->buildAll->execute();
-        
-        $this->loadData->setArguments($this->getArguments());
-        $this->loadData->execute();
-    }
+	public function __construct($dispatcher = null) {
+		parent::__construct($dispatcher);
+
+		$this->buildAll = new Doctrine_Task_BuildAll($this->dispatcher);
+		$this->loadData = new Doctrine_Task_LoadData($this->dispatcher);
+
+		$this->requiredArguments = array_merge($this->requiredArguments,
+				$this->buildAll->requiredArguments,
+				$this->loadData->requiredArguments);
+		$this->optionalArguments = array_merge($this->optionalArguments,
+				$this->buildAll->optionalArguments,
+				$this->loadData->optionalArguments);
+	}
+
+	public function execute() {
+		$this->buildAll->setArguments($this->getArguments());
+		$this->buildAll->execute();
+
+		$this->loadData->setArguments($this->getArguments());
+		$this->loadData->execute();
+	}
 }

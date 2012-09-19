@@ -30,87 +30,82 @@
  * @since       1.0
  * @version     $Revision: 7490 $
  */
-class Doctrine_Transaction_Mysql extends Doctrine_Transaction
-{
-    /**
-     * createSavepoint
-     * creates a new savepoint
-     *
-     * @param string $savepoint     name of a savepoint to set
-     * @return void
-     */
-    protected function createSavePoint($savepoint)
-    {
-        $query = 'SAVEPOINT ' . $savepoint;
+class Doctrine_Transaction_Mysql extends Doctrine_Transaction {
+	/**
+	 * createSavepoint
+	 * creates a new savepoint
+	 *
+	 * @param string $savepoint     name of a savepoint to set
+	 * @return void
+	 */
+	protected function createSavePoint($savepoint) {
+		$query = 'SAVEPOINT ' . $savepoint;
 
-        return $this->conn->execute($query);
-    }
+		return $this->conn->execute($query);
+	}
 
-    /**
-     * releaseSavePoint
-     * releases given savepoint
-     *
-     * @param string $savepoint     name of a savepoint to release
-     * @return void
-     */
-    protected function releaseSavePoint($savepoint)
-    {
-        $query = 'RELEASE SAVEPOINT ' . $savepoint;
+	/**
+	 * releaseSavePoint
+	 * releases given savepoint
+	 *
+	 * @param string $savepoint     name of a savepoint to release
+	 * @return void
+	 */
+	protected function releaseSavePoint($savepoint) {
+		$query = 'RELEASE SAVEPOINT ' . $savepoint;
 
-        return $this->conn->execute($query);
-    }
+		return $this->conn->execute($query);
+	}
 
-    /**
-     * rollbackSavePoint
-     * releases given savepoint
-     *
-     * @param string $savepoint     name of a savepoint to rollback to
-     * @return void
-     */
-    protected function rollbackSavePoint($savepoint)
-    {
-        $query = 'ROLLBACK TO SAVEPOINT ' . $savepoint;
+	/**
+	 * rollbackSavePoint
+	 * releases given savepoint
+	 *
+	 * @param string $savepoint     name of a savepoint to rollback to
+	 * @return void
+	 */
+	protected function rollbackSavePoint($savepoint) {
+		$query = 'ROLLBACK TO SAVEPOINT ' . $savepoint;
 
-        return $this->conn->execute($query);
-    }
+		return $this->conn->execute($query);
+	}
 
-    /**
-     * Set the transacton isolation level.
-     *
-     * @param   string  standard isolation level
-     *                  READ UNCOMMITTED (allows dirty reads)
-     *                  READ COMMITTED (prevents dirty reads)
-     *                  REPEATABLE READ (prevents nonrepeatable reads)
-     *                  SERIALIZABLE (prevents phantom reads)
-     *
-     * @throws Doctrine_Transaction_Exception           if using unknown isolation level
-     * @throws PDOException                             if something fails at the PDO level
-     * @return void
-     */
-    public function setIsolation($isolation)
-    {
-        switch ($isolation) {
-            case 'READ UNCOMMITTED':
-            case 'READ COMMITTED':
-            case 'REPEATABLE READ':
-            case 'SERIALIZABLE':
-                break;
-            default:
-                throw new Doctrine_Transaction_Exception('Isolation level ' . $isolation . ' is not supported.');
-        }
+	/**
+	 * Set the transacton isolation level.
+	 *
+	 * @param   string  standard isolation level
+	 *                  READ UNCOMMITTED (allows dirty reads)
+	 *                  READ COMMITTED (prevents dirty reads)
+	 *                  REPEATABLE READ (prevents nonrepeatable reads)
+	 *                  SERIALIZABLE (prevents phantom reads)
+	 *
+	 * @throws Doctrine_Transaction_Exception           if using unknown isolation level
+	 * @throws PDOException                             if something fails at the PDO level
+	 * @return void
+	 */
+	public function setIsolation($isolation) {
+		switch ($isolation) {
+		case 'READ UNCOMMITTED':
+		case 'READ COMMITTED':
+		case 'REPEATABLE READ':
+		case 'SERIALIZABLE':
+			break;
+		default:
+			throw new Doctrine_Transaction_Exception(
+					'Isolation level ' . $isolation . ' is not supported.');
+		}
 
-        $query = 'SET SESSION TRANSACTION ISOLATION LEVEL ' . $isolation;
+		$query = 'SET SESSION TRANSACTION ISOLATION LEVEL ' . $isolation;
 
-        return $this->conn->execute($query);
-    }
+		return $this->conn->execute($query);
+	}
 
-    /**
-     * getTransactionIsolation
-     *
-     * @return string               returns the current session transaction isolation level
-     */
-    public function getIsolation()
-    {
-        return $this->conn->fetchOne('SELECT @@tx_isolation');
-    }
+	/**
+	 * getTransactionIsolation
+	 *
+	 * @return string               returns the current session transaction isolation level
+	 */
+	public function getIsolation() {
+		return $this->conn->fetchOne('SELECT @@tx_isolation');
+	}
 }

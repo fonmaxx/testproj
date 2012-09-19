@@ -30,26 +30,24 @@
  * @version     $Revision: 7490 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Validator_Date extends Doctrine_Validator_Driver
-{
-    /**
-     * checks if given value is a valid date
-     *
-     * @param mixed $value
-     * @return boolean
-     */
-    public function validate($value)
-    {
-        if (is_null($value)) {
-            return true;
-        }
-        $e = explode('-', $value);
+class Doctrine_Validator_Date extends Doctrine_Validator_Driver {
+	/**
+	 * checks if given value is a valid date
+	 *
+	 * @param mixed $value
+	 * @return boolean
+	 */
+	public function validate($value) {
+		if (is_null($value)) {
+			return true;
+		}
+		$e = explode('-', $value);
 
-        if (count($e) !== 3) {
-            return false;
-        }
-        $e2 = explode(' ', $e[2]);
-        $e[2] = $e2[0];
-        return checkdate($e[1], $e[2], $e[0]);
-    }
+		if (count($e) !== 3) {
+			return false;
+		}
+		$e2 = explode(' ', $e[2]);
+		$e[2] = $e2[0];
+		return checkdate($e[1], $e[2], $e[0]);
+	}
 }

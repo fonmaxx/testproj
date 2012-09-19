@@ -30,124 +30,120 @@
  * @version     $Revision: 1080 $
  * @author      Jonathan H. Wage <jwage@mac.com>
  */
-abstract class Doctrine_Parser
-{
-    /**
-     * loadData
-     *
-     * Override in the parser driver
-     *
-     * @param string $array 
-     * @return void
-     * @author Jonathan H. Wage
-     */
-    abstract public function loadData($array);
+abstract class Doctrine_Parser {
+	/**
+	 * loadData
+	 *
+	 * Override in the parser driver
+	 *
+	 * @param string $array 
+	 * @return void
+	 * @author Jonathan H. Wage
+	 */
+	abstract public function loadData($array);
 
-    /**
-     * dumpData
-     *
-     * Override in the parser driver
-     *
-     * @param string $array 
-     * @param string $path 
-     * @param string $charset The charset of the data being dumped
-     * @return void
-     * @author Jonathan H. Wage
-     */
-    abstract public function dumpData($array, $path = null, $charset = null);
+	/**
+	 * dumpData
+	 *
+	 * Override in the parser driver
+	 *
+	 * @param string $array 
+	 * @param string $path 
+	 * @param string $charset The charset of the data being dumped
+	 * @return void
+	 * @author Jonathan H. Wage
+	 */
+	abstract public function dumpData($array, $path = null, $charset = null);
 
-    /**
-     * getParser
-     *
-     * Get instance of the specified parser
-     *
-     * @param string $type 
-     * @return void
-     * @author Jonathan H. Wage
-     */
-    static public function getParser($type)
-    {
-        $class = 'Doctrine_Parser_'.ucfirst($type);
+	/**
+	 * getParser
+	 *
+	 * Get instance of the specified parser
+	 *
+	 * @param string $type 
+	 * @return void
+	 * @author Jonathan H. Wage
+	 */
+	static public function getParser($type) {
+		$class = 'Doctrine_Parser_' . ucfirst($type);
 
-        return new $class;
-    }
+		return new $class;
+	}
 
-    /**
-     * load
-     *
-     * Interface for loading and parsing data from a file
-     *
-     * @param string $path 
-     * @param string $type 
-     * @return void
-     * @author Jonathan H. Wage
-     */
-    static public function load($path, $type = 'xml')
-    {
-        $parser = self::getParser($type);
+	/**
+	 * load
+	 *
+	 * Interface for loading and parsing data from a file
+	 *
+	 * @param string $path 
+	 * @param string $type 
+	 * @return void
+	 * @author Jonathan H. Wage
+	 */
+	static public function load($path, $type = 'xml') {
+		$parser = self::getParser($type);
 
-        return (array) $parser->loadData($path);
-    }
+		return (array) $parser->loadData($path);
+	}
 
-    /**
-     * dump
-     *
-     * Interface for pulling and dumping data to a file
-     *
-     * @param string $array 
-     * @param string $path 
-     * @param string $type 
-     * @param string $charset The charset of the data being dumped
-     * @return void
-     * @author Jonathan H. Wage
-     */
-    static public function dump($array, $type = 'xml', $path = null, $charset = null)
-    {
-        $parser = self::getParser($type);
+	/**
+	 * dump
+	 *
+	 * Interface for pulling and dumping data to a file
+	 *
+	 * @param string $array 
+	 * @param string $path 
+	 * @param string $type 
+	 * @param string $charset The charset of the data being dumped
+	 * @return void
+	 * @author Jonathan H. Wage
+	 */
+	static public function dump($array, $type = 'xml', $path = null,
+			$charset = null) {
+		$parser = self::getParser($type);
 
-        return $parser->dumpData($array, $path, $charset);
-    }
+		return $parser->dumpData($array, $path, $charset);
+	}
 
-    /**
-     * doLoad
-     *
-     * Get contents whether it is the path to a file file or a string of txt.
-     * Either should allow php code in it.
-     *
-     * @param string $path 
-     * @return void
-     */
-    public function doLoad($path)
-    {
-        ob_start();
-        if ( ! file_exists($path)) {
-            $contents = $path;
-            $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'dparser_' . microtime();
+	/**
+	 * doLoad
+	 *
+	 * Get contents whether it is the path to a file file or a string of txt.
+	 * Either should allow php code in it.
+	 *
+	 * @param string $path 
+	 * @return void
+	 */
+	public function doLoad($path) {
+		ob_start();
+		if (!file_exists($path)) {
+			$contents = $path;
+			$path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'dparser_'
+					. microtime();
 
-            file_put_contents($path, $contents);
-        }
+			file_put_contents($path, $contents);
+		}
 
-        include($path);
-        
-        // Fix #1569. Need to check if it's still all valid
-        $contents = ob_get_clean(); //iconv("UTF-8", "UTF-8", ob_get_clean());
+		include($path);
 
-        return $contents;
-    }
+		// Fix #1569. Need to check if it's still all valid
+		$contents = ob_get_clean(); //iconv("UTF-8", "UTF-8", ob_get_clean());
 
-    /**
-     * doDump
-     *
-     * @param string $data 
-     * @param string $path 
-     * @return void
-     */
-    public function doDump($data, $path = null)
-    {
-      if ($path !== null) {
-            return file_put_contents($path, $data);
-        } else {
-            return $data;
-        }
-    }
+		return $contents;
+	}
+
+	/**
+	 * doDump
+	 *
+	 * @param string $data 
+	 * @param string $path 
+	 * @return void
+	 */
+	public function doDump($data, $path = null) {
+		if ($path !== null) {
+			return file_put_contents($path, $data);
+		} else {
+			return $data;
+		}
+	}
 }

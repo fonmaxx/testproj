@@ -30,5 +30,5 @@
  * @version     $Revision: 2761 $
  * @author      Jonathan H. Wage <jwage@mac.com>
  */
-class Doctrine_Task_Exception extends Doctrine_Exception
-{ }
+class Doctrine_Task_Exception extends Doctrine_Exception {
+}

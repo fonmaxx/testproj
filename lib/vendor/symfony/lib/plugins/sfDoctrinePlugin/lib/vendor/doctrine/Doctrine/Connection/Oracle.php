@@ -30,133 +30,124 @@
  * @version     $Revision: 7664 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Connection_Oracle extends Doctrine_Connection_Common
-{
-    /**
-     * @var string $driverName                  the name of this connection driver
-     */
-    protected $driverName = 'Oracle';
+class Doctrine_Connection_Oracle extends Doctrine_Connection_Common {
+	/**
+	 * @var string $driverName                  the name of this connection driver
+	 */
+	protected $driverName = 'Oracle';
 
-    public function __construct(Doctrine_Manager $manager, $adapter)
-    {
-        $this->supported = array(
-                          'sequences'            => true,
-                          'indexes'              => true,
-                          'summary_functions'    => true,
-                          'order_by_text'        => true,
-                          'current_id'           => true,
-                          'affected_rows'        => true,
-                          'transactions'         => true,
-                          'savepoints'           => true,
-                          'limit_queries'        => true,
-                          'LOBs'                 => true,
-                          'replace'              => 'emulated',
-                          'sub_selects'          => true,
-                          'auto_increment'       => false, // implementation is broken
-                          'primary_key'          => true,
-                          'result_introspection' => true,
-                          'prepared_statements'  => true,
-                          'identifier_quoting'   => true,
-                          'pattern_escaping'     => true,
-                          );
-        
-        $this->properties['sql_file_delimiter']    = "\n/\n";
-        $this->properties['number_max_precision']  = 38;
-        $this->properties['max_identifier_length'] = 30;
+	public function __construct(Doctrine_Manager $manager, $adapter) {
+		$this->supported = array('sequences' => true,
+				'indexes' => true, 'summary_functions' => true,
+				'order_by_text' => true, 'current_id' => true,
+				'affected_rows' => true, 'transactions' => true,
+				'savepoints' => true, 'limit_queries' => true,
+				'LOBs' => true, 'replace' => 'emulated',
+				'sub_selects' => true, 'auto_increment' => false,
+				// implementation is broken
+				'primary_key' => true, 'result_introspection' => true,
+				'prepared_statements' => true, 'identifier_quoting' => true,
+				'pattern_escaping' => true,);
 
-        parent::__construct($manager, $adapter);
-        
-        // moving properties to params to make them changeable by user
-        // VARCHAR2 allowed length is 4000 BYTE. For UTF8 strings is better to use 1000 CHAR 
-        $this->setParam('varchar2_max_length', 4000);
-        // Oracle's default unit for char data types is BYTE. For UTF8 string it is better to use CHAR
-        $this->setParam('char_unit', null);
-    }
+		$this->properties['sql_file_delimiter'] = "\n/\n";
+		$this->properties['number_max_precision'] = 38;
+		$this->properties['max_identifier_length'] = 30;
 
-    /**
-     * Sets up the date/time format
-     *
-     */
-    public function setDateFormat($format = 'YYYY-MM-DD HH24:MI:SS')
-    {
-        $this->exec('ALTER SESSION SET NLS_DATE_FORMAT = "' . $format . '"');
-    }
+		parent::__construct($manager, $adapter);
 
-    /**
-     * Adds an driver-specific LIMIT clause to the query
-     *
-     * @param string $query         query to modify
-     * @param integer $limit        limit the number of rows
-     * @param integer $offset       start reading from given offset
-     * @return string               the modified query
-     */
-    public function modifyLimitQuery($query, $limit = false, $offset = false, $isManip = false)
-    {
-        return $this->_createLimitSubquery($query, $limit, $offset);
-    }
-    
-    private function _createLimitSubquery($query, $limit, $offset, $column = null)
-    {
-        $limit = (int) $limit;
-        $offset = (int) $offset;
-        if (preg_match('/^\s*SELECT/i', $query)) {
-            if ( ! preg_match('/\sFROM\s/i', $query)) {
-                $query .= " FROM dual";
-            }
-            if ($limit > 0) {
-                $max = $offset + $limit;
-                $column = $column === null ? '*' : $this->quoteIdentifier($column);
-                if ($offset > 0) {
-                    $min = $offset + 1;
-                    $query = 'SELECT '.$this->quoteIdentifier('b').'.'.$column.' FROM ( '.
-                                 'SELECT '.$this->quoteIdentifier('a').'.*, ROWNUM AS doctrine_rownum FROM ( '
-                                   . $query . ' ) ' . $this->quoteIdentifier('a') . ' '.
-                              ' ) ' . $this->quoteIdentifier('b') . ' '.
-                              'WHERE doctrine_rownum BETWEEN ' . $min .  ' AND ' . $max;
-                } else {
-                    $query = 'SELECT a.'.$column.' FROM ( ' . $query .' ) a WHERE ROWNUM <= ' . $max;
-                }
-            }
-        }
-        return $query;
-    }
-    
-    /**
-     * Creates the SQL for Oracle that can be used in the subquery for the limit-subquery
-     * algorithm.
-     */
-    public function modifyLimitSubquery(Doctrine_Table $rootTable, $query, $limit = false,
-            $offset = false, $isManip = false)
-    {
-        // NOTE: no composite key support
-        $columnNames = $rootTable->getIdentifierColumnNames();
-        if (count($columnNames) > 1) {
-            throw new Doctrine_Connection_Exception("Composite keys in LIMIT queries are "
-                    . "currently not supported.");
-        }
-        $column = $columnNames[0];
-        return $this->_createLimitSubquery($query, $limit, $offset, $column);
-    }
+		// moving properties to params to make them changeable by user
+		// VARCHAR2 allowed length is 4000 BYTE. For UTF8 strings is better to use 1000 CHAR 
+		$this->setParam('varchar2_max_length', 4000);
+		// Oracle's default unit for char data types is BYTE. For UTF8 string it is better to use CHAR
+		$this->setParam('char_unit', null);
+	}
 
-    public function getTmpConnection($info)
-    {
-        return clone $this;
-    }
+	/**
+	 * Sets up the date/time format
+	 *
+	 */
+	public function setDateFormat($format = 'YYYY-MM-DD HH24:MI:SS') {
+		$this->exec('ALTER SESSION SET NLS_DATE_FORMAT = "' . $format . '"');
+	}
 
-    /**
-     * Override quote behaviour for boolean to fix issues with quoting of
-     * boolean values.
-     */
-    public function quote($input, $type = null)
-    {
-        if ($type === 'boolean') {
-            if ($input === null) {
-                return null;
-            } else {
-                return $input ? 1 : 0;    
-            }
-        } else {
-            return parent::quote($input, $type);  
-        }
-    }
+	/**
+	 * Adds an driver-specific LIMIT clause to the query
+	 *
+	 * @param string $query         query to modify
+	 * @param integer $limit        limit the number of rows
+	 * @param integer $offset       start reading from given offset
+	 * @return string               the modified query
+	 */
+	public function modifyLimitQuery($query, $limit = false, $offset = false,
+			$isManip = false) {
+		return $this->_createLimitSubquery($query, $limit, $offset);
+	}
+
+	private function _createLimitSubquery($query, $limit, $offset,
+			$column = null) {
+		$limit = (int) $limit;
+		$offset = (int) $offset;
+		if (preg_match('/^\s*SELECT/i', $query)) {
+			if (!preg_match('/\sFROM\s/i', $query)) {
+				$query .= " FROM dual";
+			}
+			if ($limit > 0) {
+				$max = $offset + $limit;
+				$column = $column === null ? '*'
+						: $this->quoteIdentifier($column);
+				if ($offset > 0) {
+					$min = $offset + 1;
+					$query = 'SELECT ' . $this->quoteIdentifier('b') . '.'
+							. $column . ' FROM ( ' . 'SELECT '
+							. $this->quoteIdentifier('a')
+							. '.*, ROWNUM AS doctrine_rownum FROM ( ' . $query
+							. ' ) ' . $this->quoteIdentifier('a') . ' ' . ' ) '
+							. $this->quoteIdentifier('b') . ' '
+							. 'WHERE doctrine_rownum BETWEEN ' . $min . ' AND '
+							. $max;
+				} else {
+					$query = 'SELECT a.' . $column . ' FROM ( ' . $query
+							. ' ) a WHERE ROWNUM <= ' . $max;
+				}
+			}
+		}
+		return $query;
+	}
+
+	/**
+	 * Creates the SQL for Oracle that can be used in the subquery for the limit-subquery
+	 * algorithm.
+	 */
+	public function modifyLimitSubquery(Doctrine_Table $rootTable, $query,
+			$limit = false, $offset = false, $isManip = false) {
+		// NOTE: no composite key support
+		$columnNames = $rootTable->getIdentifierColumnNames();
+		if (count($columnNames) > 1) {
+			throw new Doctrine_Connection_Exception(
+					"Composite keys in LIMIT queries are "
+							. "currently not supported.");
+		}
+		$column = $columnNames[0];
+		return $this->_createLimitSubquery($query, $limit, $offset, $column);
+	}
+
+	public function getTmpConnection($info) {
+		return clone $this;
+	}
+
+	/**
+	 * Override quote behaviour for boolean to fix issues with quoting of
+	 * boolean values.
+	 */
+	public function quote($input, $type = null) {
+		if ($type === 'boolean') {
+			if ($input === null) {
+				return null;
+			} else {
+				return $input ? 1 : 0;
+			}
+		} else {
+			return parent::quote($input, $type);
+		}
+	}
 }

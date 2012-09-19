@@ -31,175 +31,161 @@
  * @version     $Revision$
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-abstract class Doctrine_Template extends Doctrine_Record_Abstract
-{
-    /**
-     * @var Doctrine_Record $_invoker     the record that invoked the last delegated call
-     */
-    protected $_invoker;
+abstract class Doctrine_Template extends Doctrine_Record_Abstract {
+	/**
+	 * @var Doctrine_Record $_invoker     the record that invoked the last delegated call
+	 */
+	protected $_invoker;
 
-    /**
-     * @var Doctrine_Record_Generator $_plugin
-     */
-    protected $_plugin;
+	/**
+	 * @var Doctrine_Record_Generator $_plugin
+	 */
+	protected $_plugin;
 
-    /**
-     * @var array $_options Template options
-     */
-    protected $_options = array();
+	/**
+	 * @var array $_options Template options
+	 */
+	protected $_options = array();
 
-    /**
-     * __construct
-     *
-     * @param string $array 
-     * @return void
-     */
-    public function __construct(array $options = array())
-    {
-        $this->_options = Doctrine_Lib::arrayDeepMerge($this->_options, $options);
-    }
+	/**
+	 * __construct
+	 *
+	 * @param string $array 
+	 * @return void
+	 */
+	public function __construct(array $options = array()) {
+		$this->_options = Doctrine_Lib::arrayDeepMerge($this->_options,
+				$options);
+	}
 
-    /**
-     * Set the table object that this Template belongs to
-     *
-     * @var Doctrine_Table $table        the table object this Template belongs to
-     */
-    public function setTable(Doctrine_Table $table)
-    {
-        $this->_table = $table;
-    }
+	/**
+	 * Set the table object that this Template belongs to
+	 *
+	 * @var Doctrine_Table $table        the table object this Template belongs to
+	 */
+	public function setTable(Doctrine_Table $table) {
+		$this->_table = $table;
+	}
 
-    /**
-     * returns the associated table object
-     *
-     * @return Doctrine_Table               the associated table object
-     */
-    public function getTable()
-    {
-        return $this->_table;
-    }
+	/**
+	 * returns the associated table object
+	 *
+	 * @return Doctrine_Table               the associated table object
+	 */
+	public function getTable() {
+		return $this->_table;
+	}
 
-    /**
-     * sets the last used invoker
-     *
-     * @param Doctrine_Record $invoker      the record that invoked the last delegated call
-     * @return Doctrine_Template            this object
-     */
-    public function setInvoker(Doctrine_Record_Abstract $invoker)
-    {
-        $this->_invoker = $invoker;
-    }
+	/**
+	 * sets the last used invoker
+	 *
+	 * @param Doctrine_Record $invoker      the record that invoked the last delegated call
+	 * @return Doctrine_Template            this object
+	 */
+	public function setInvoker(Doctrine_Record_Abstract $invoker) {
+		$this->_invoker = $invoker;
+	}
 
-    /**
-     * returns the last used invoker
-     *
-     * @return Doctrine_Record              the record that invoked the last delegated call
-     */
-    public function getInvoker()
-    {
-        return $this->_invoker;
-    }
+	/**
+	 * returns the last used invoker
+	 *
+	 * @return Doctrine_Record              the record that invoked the last delegated call
+	 */
+	public function getInvoker() {
+		return $this->_invoker;
+	}
 
-    /**
-     * Adds a plugin as a child to this plugin
-     * 
-     * @param Doctrine_Template $template 
-     * @return Doctrine_Template. Chainable.
-     */
-    public function addChild(Doctrine_Template $template)
-    {
-        $this->_plugin->addChild($template);
-        
-        return $this;
-    }
+	/**
+	 * Adds a plugin as a child to this plugin
+	 * 
+	 * @param Doctrine_Template $template 
+	 * @return Doctrine_Template. Chainable.
+	 */
+	public function addChild(Doctrine_Template $template) {
+		$this->_plugin->addChild($template);
 
-    /**
-     * Get plugin instance 
-     * 
-     * @return void
-     */
-    public function getPlugin()
-    {
-        return $this->_plugin;
-    }
+		return $this;
+	}
 
-    /**
-     * Check if this template has a generator plugin
-     *
-     * @return boolean
-     */
-    public function hasPlugin()
-    {
-        return isset($this->_plugin) ? true : false;
-    }
+	/**
+	 * Get plugin instance 
+	 * 
+	 * @return void
+	 */
+	public function getPlugin() {
+		return $this->_plugin;
+	}
 
-    /**
-     * getOptions
-     * returns all options of this template and the associated values
-     *
-     * @return array    all options and their values
-     */
-    public function getOptions()
-    {
-        return $this->_options;
-    }
+	/**
+	 * Check if this template has a generator plugin
+	 *
+	 * @return boolean
+	 */
+	public function hasPlugin() {
+		return isset($this->_plugin) ? true : false;
+	}
 
-    /**
-     * getOption
-     * returns the value of given option
-     *
-     * @param string $name   the name of the option
-     * @param mixed $default default value if option is not found
-     * @return mixed         the value of given option
-     */
-    public function getOption($name, $default = null)
-    {
-        if (isset($this->_options[$name])) {
-            return $this->_options[$name];
-        }
-        return $default;
-    }
+	/**
+	 * getOptions
+	 * returns all options of this template and the associated values
+	 *
+	 * @return array    all options and their values
+	 */
+	public function getOptions() {
+		return $this->_options;
+	}
 
-    /**
-     * get 
-     * 
-     * @param mixed $name 
-     * @return void
-     */
-    public function get($name) 
-    {
-        throw new Doctrine_Exception("Templates doesn't support accessors.");
-    }
+	/**
+	 * getOption
+	 * returns the value of given option
+	 *
+	 * @param string $name   the name of the option
+	 * @param mixed $default default value if option is not found
+	 * @return mixed         the value of given option
+	 */
+	public function getOption($name, $default = null) {
+		if (isset($this->_options[$name])) {
+			return $this->_options[$name];
+		}
+		return $default;
+	}
 
-    /**
-     * set 
-     * 
-     * @param mixed $name 
-     * @param mixed $value 
-     * @return void
-     */
-    public function set($name, $value)
-    {
-        throw new Doctrine_Exception("Templates doesn't support accessors.");
-    }
+	/**
+	 * get 
+	 * 
+	 * @param mixed $name 
+	 * @return void
+	 */
+	public function get($name) {
+		throw new Doctrine_Exception("Templates doesn't support accessors.");
+	}
 
-    /**
-     * Blank method for template setup 
-     * 
-     * @return void
-     */
-    public function setUp()
-    {
+	/**
+	 * set 
+	 * 
+	 * @param mixed $name 
+	 * @param mixed $value 
+	 * @return void
+	 */
+	public function set($name, $value) {
+		throw new Doctrine_Exception("Templates doesn't support accessors.");
+	}
 
-    }
+	/**
+	 * Blank method for template setup 
+	 * 
+	 * @return void
+	 */
+	public function setUp() {
 
-    /**
-     * Blank method for template table definition
-     * 
-     * @return void
-     */
-    public function setTableDefinition()
-    {
+	}
 
-    }
+	/**
+	 * Blank method for template table definition
+	 * 
+	 * @return void
+	 */
+	public function setTableDefinition() {
+
+	}
 }

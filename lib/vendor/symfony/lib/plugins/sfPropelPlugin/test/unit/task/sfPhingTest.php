@@ -8,11 +8,13 @@
  * file that was distributed with this source code.
  */
 
-require_once dirname(__FILE__).'/../../bootstrap/unit.php';
+require_once dirname(__FILE__) . '/../../bootstrap/unit.php';
 
 $t = new lime_test(1);
 
 // ::getPhingVersion()
 $t->diag('::getPhingVersion()');
 
-$t->is(sfPhing::getPhingVersion(), 'sfPhing', '::getPhingVersion() returns "sfPhing"');
+$t
+		->is(sfPhing::getPhingVersion(), 'sfPhing',
+				'::getPhingVersion() returns "sfPhing"');

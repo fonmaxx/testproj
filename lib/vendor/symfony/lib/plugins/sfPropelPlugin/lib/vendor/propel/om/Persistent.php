@@ -46,7 +46,6 @@ interface Persistent {
 	 */
 	public function setPrimaryKey($primaryKey);
 
-
 	/**
 	 * Returns whether the object has been modified, since it was
 	 * last retrieved from storage.

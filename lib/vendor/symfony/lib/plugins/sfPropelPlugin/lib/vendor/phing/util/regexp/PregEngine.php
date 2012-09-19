@@ -30,75 +30,75 @@ require_once 'phing/util/regexp/RegexpEngine.php';
  */
 class PregEngine implements RegexpEngine {
 
-    /**
-     * @var boolean
-     */
-    private $ignoreCase = false;
-        
-    /**
-     * Sets whether or not regex operation is case sensitive.
-     * @param boolean $bit
-     * @return void
-     */
-    function setIgnoreCase($bit) {
-        $this->ignoreCase = (boolean) $bit;
-    }
+	/**
+	 * @var boolean
+	 */
+	private $ignoreCase = false;
 
-    /**
-     * Gets whether or not regex operation is case sensitive.
-     * @return boolean
-     */
-    function getIgnoreCase() {
-        return $this->ignoreCase;
-    }
-        
-    /**
-     * The pattern needs to be converted into PREG style -- which includes adding expression delims & any flags, etc.
-     * @param string $pattern
-     * @return string prepared pattern.
-     */
-    private function preparePattern($pattern)
-    {
-        return '/'.$pattern.'/'.($this->ignoreCase ? 'i' : '');
-    }
-    
-    /**
-     * Matches pattern against source string and sets the matches array.
-     * @param string $pattern The regex pattern to match.
-     * @param string $source The source string.
-     * @param array $matches The array in which to store matches.
-     * @return boolean Success of matching operation.
-     */
-    function match($pattern, $source, &$matches) { 
-        return preg_match($this->preparePattern($pattern), $source, $matches);
-    }
+	/**
+	 * Sets whether or not regex operation is case sensitive.
+	 * @param boolean $bit
+	 * @return void
+	 */
+	function setIgnoreCase($bit) {
+		$this->ignoreCase = (boolean) $bit;
+	}
 
-    /**
-     * Matches all patterns in source string and sets the matches array.
-     * @param string $pattern The regex pattern to match.
-     * @param string $source The source string.
-     * @param array $matches The array in which to store matches.
-     * @return boolean Success of matching operation.
-     */        
-    function matchAll($pattern, $source, &$matches) {
-        return preg_match_all($this->preparePattern($pattern), $source, $matches);
-    }
+	/**
+	 * Gets whether or not regex operation is case sensitive.
+	 * @return boolean
+	 */
+	function getIgnoreCase() {
+		return $this->ignoreCase;
+	}
 
-    /**
-     * Replaces $pattern with $replace in $source string.
-     * References to \1 group matches will be replaced with more preg-friendly
-     * $1.
-     * @param string $pattern The regex pattern to match.
-     * @param string $replace The string with which to replace matches.
-     * @param string $source The source string.
-     * @return string The replaced source string.
-     */        
-    function replace($pattern, $replace, $source) {
-        // convert \1 -> $1, because we want to use the more generic \1 in the XML
-        // but PREG prefers $1 syntax.
-        $replace = preg_replace('/\\\(\d+)/', '\$$1', $replace);
-        return preg_replace($this->preparePattern($pattern), $replace, $source);
-    }
+	/**
+	 * The pattern needs to be converted into PREG style -- which includes adding expression delims & any flags, etc.
+	 * @param string $pattern
+	 * @return string prepared pattern.
+	 */
+	private function preparePattern($pattern) {
+		return '/' . $pattern . '/' . ($this->ignoreCase ? 'i' : '');
+	}
+
+	/**
+	 * Matches pattern against source string and sets the matches array.
+	 * @param string $pattern The regex pattern to match.
+	 * @param string $source The source string.
+	 * @param array $matches The array in which to store matches.
+	 * @return boolean Success of matching operation.
+	 */
+	function match($pattern, $source, &$matches) {
+		return preg_match($this->preparePattern($pattern), $source, $matches);
+	}
+
+	/**
+	 * Matches all patterns in source string and sets the matches array.
+	 * @param string $pattern The regex pattern to match.
+	 * @param string $source The source string.
+	 * @param array $matches The array in which to store matches.
+	 * @return boolean Success of matching operation.
+	 */ 
+	function matchAll($pattern, $source, &$matches) {
+		return preg_match_all($this->preparePattern($pattern), $source,
+				$matches);
+	}
+
+	/**
+	 * Replaces $pattern with $replace in $source string.
+	 * References to \1 group matches will be replaced with more preg-friendly
+	 * $1.
+	 * @param string $pattern The regex pattern to match.
+	 * @param string $replace The string with which to replace matches.
+	 * @param string $source The source string.
+	 * @return string The replaced source string.
+	 */ 
+	function replace($pattern, $replace, $source) {
+		// convert \1 -> $1, because we want to use the more generic \1 in the XML
+		// but PREG prefers $1 syntax.
+		$replace = preg_replace('/\\\(\d+)/', '\$$1', $replace);
+		return preg_replace($this->preparePattern($pattern), $replace, $source);
+	}
 
 }
 

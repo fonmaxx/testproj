@@ -107,8 +107,8 @@ class XmlToDataSQL extends AbstractHandler {
 	 * @param      GeneratorConfig $config
 	 * @param      string $encoding Database encoding
 	 */
-	public function __construct(Database $database, GeneratorConfig $config, $encoding = 'iso-8859-1')
-	{
+	public function __construct(Database $database, GeneratorConfig $config,
+			$encoding = 'iso-8859-1') {
 		$this->database = $database;
 		$this->generatorConfig = $config;
 		$this->encoding = $encoding;
@@ -120,19 +120,20 @@ class XmlToDataSQL extends AbstractHandler {
 	 * @param      PhingFile $xmlFile
 	 * @param      Writer $out
 	 */
-	public function transform(PhingFile $xmlFile, Writer $out)
-	{
+	public function transform(PhingFile $xmlFile, Writer $out) {
 		$this->sqlWriter = $out;
 
 		// Reset some vars just in case this is being run multiple times.
 		$this->currTableName = $this->currBuilder = null;
 
-		$this->builderClazz = $this->generatorConfig->getBuilderClassname('datasql');
+		$this->builderClazz = $this->generatorConfig
+				->getBuilderClassname('datasql');
 
 		try {
 			$fr = new FileReader($xmlFile);
 		} catch (Exception $e) {
-			throw new BuildException("XML File not found: " . $xmlFile->getAbsolutePath());
+			throw new BuildException(
+					"XML File not found: " . $xmlFile->getAbsolutePath());
 		}
 
 		$br = new BufferedReader($fr);
@@ -153,13 +154,16 @@ class XmlToDataSQL extends AbstractHandler {
 	/**
 	 * Handles opening elements of the xml file.
 	 */
-	public function startElement($name, $attributes)
-	{
+	public function startElement($name, $attributes) {
 		try {
 			if ($name == "dataset") {
 				// Clear any start/end DLL
 				call_user_func(array($this->builderClazz, 'reset'));
-				$this->sqlWriter->write(call_user_func(array($this->builderClazz, 'getDatabaseStartSql')));
+				$this->sqlWriter
+						->write(
+								call_user_func(
+										array($this->builderClazz,
+												'getDatabaseStartSql')));
 			} else {
 
 				// we're processing a row of data
@@ -170,7 +174,8 @@ class XmlToDataSQL extends AbstractHandler {
 				$columnValues = array();
 				foreach ($attributes as $name => $value) {
 					$col = $table->getColumnByPhpName($name);
-					$columnValues[] = new ColumnValue($col, iconv('utf-8',$this->encoding, $value));
+					$columnValues[] = new ColumnValue($col,
+							iconv('utf-8', $this->encoding, $value));
 				}
 
 				$data = new DataRow($table, $columnValues);
@@ -179,13 +184,16 @@ class XmlToDataSQL extends AbstractHandler {
 					// new table encountered
 
 					if ($this->currBuilder !== null) {
-						$this->sqlWriter->write($this->currBuilder->getTableEndSql());
+						$this->sqlWriter
+								->write($this->currBuilder->getTableEndSql());
 					}
 
 					$this->currTableName = $table->getName();
-					$this->currBuilder = $this->generatorConfig->getConfiguredBuilder($table, 'datasql');
+					$this->currBuilder = $this->generatorConfig
+							->getConfiguredBuilder($table, 'datasql');
 
-					$this->sqlWriter->write($this->currBuilder->getTableStartSql());
+					$this->sqlWriter
+							->write($this->currBuilder->getTableStartSql());
 				}
 
 				// Write the SQL
@@ -201,15 +209,13 @@ class XmlToDataSQL extends AbstractHandler {
 		}
 	}
 
-
 	/**
 	 * Handles closing elements of the xml file.
 	 *
 	 * @param      $name The local name (without prefix), or the empty string if
 	 *         Namespace processing is not being performed.
 	 */
-	public function endElement($name)
-	{
+	public function endElement($name) {
 		if (self::DEBUG) {
 			print("endElement(" . $name . ") called\n");
 		}
@@ -217,7 +223,11 @@ class XmlToDataSQL extends AbstractHandler {
 			if ($this->currBuilder !== null) {
 				$this->sqlWriter->write($this->currBuilder->getTableEndSql());
 			}
-			$this->sqlWriter->write(call_user_func(array($this->builderClazz, 'getDatabaseEndSql')));
+			$this->sqlWriter
+					->write(
+							call_user_func(
+									array($this->builderClazz,
+											'getDatabaseEndSql')));
 		}
 	}
 
@@ -227,24 +237,20 @@ class XmlToDataSQL extends AbstractHandler {
  * "inner class"
  * @package    propel.engine.database.transform
  */
-class DataRow
-{
+class DataRow {
 	private $table;
 	private $columnValues;
 
-	public function __construct(Table $table, $columnValues)
-	{
+	public function __construct(Table $table, $columnValues) {
 		$this->table = $table;
 		$this->columnValues = $columnValues;
 	}
 
-	public function getTable()
-	{
+	public function getTable() {
 		return $this->table;
 	}
 
-	public function getColumnValues()
-	{
+	public function getColumnValues() {
 		return $this->columnValues;
 	}
 }
@@ -258,19 +264,16 @@ class ColumnValue {
 	private $col;
 	private $val;
 
-	public function __construct(Column $col, $val)
-	{
+	public function __construct(Column $col, $val) {
 		$this->col = $col;
 		$this->val = $val;
 	}
 
-	public function getColumn()
-	{
+	public function getColumn() {
 		return $this->col;
 	}
 
-	public function getValue()
-	{
+	public function getValue() {
 		return $this->val;
 	}
 }

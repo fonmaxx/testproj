@@ -31,58 +31,53 @@
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  * @author      Jonathan H. Wage <jonwage@gmail.com>
  */
-class Doctrine_Template_SoftDelete extends Doctrine_Template
-{
-    /**
-     * Array of SoftDelete options
-     *
-     * @var string
-     */
-    protected $_options = array(
-        'name'          =>  'deleted_at',
-        'type'          =>  'timestamp',
-        'length'        =>  null,
-        'options'       =>  array(
-            'notnull' => false
-        ),
-        'hardDelete' => false
-    );
+class Doctrine_Template_SoftDelete extends Doctrine_Template {
+	/**
+	 * Array of SoftDelete options
+	 *
+	 * @var string
+	 */
+	protected $_options = array('name' => 'deleted_at',
+			'type' => 'timestamp', 'length' => null,
+			'options' => array('notnull' => false), 'hardDelete' => false);
 
-    protected $_listener;
+	protected $_listener;
 
-    /**
-     * Set table definition for SoftDelete behavior
-     *
-     * @return void
-     */
-    public function setTableDefinition()
-    {
-        // BC to 1.0.X of SoftDelete behavior
-        if ($this->_options['type'] == 'boolean') {
-            $this->_options['length'] = 1;
-            $this->_options['options'] = array('default' => false, 'notnull' => true);
-        }
-    
-        $this->hasColumn($this->_options['name'], $this->_options['type'], $this->_options['length'], $this->_options['options']);
+	/**
+	 * Set table definition for SoftDelete behavior
+	 *
+	 * @return void
+	 */
+	public function setTableDefinition() {
+		// BC to 1.0.X of SoftDelete behavior
+		if ($this->_options['type'] == 'boolean') {
+			$this->_options['length'] = 1;
+			$this->_options['options'] = array('default' => false,
+					'notnull' => true);
+		}
 
-        $this->_listener = new Doctrine_Template_Listener_SoftDelete($this->_options);
-        $this->addListener($this->_listener);
-    }
+		$this
+				->hasColumn($this->_options['name'], $this->_options['type'],
+						$this->_options['length'], $this->_options['options']);
 
-    /**
-     * Add a hardDelete() method to any of the models who act as SoftDelete behavior
-     *
-     * @param Doctrine_Connection $conn
-     * @return integer $result Number of affected rows.
-     */
-    public function hardDelete($conn = null)
-    {
-        if ($conn === null) {
-            $conn = $this->_table->getConnection();
-        }
-        $this->_listener->hardDelete(true);
-        $result = $this->_invoker->delete();
-        $this->_listener->hardDelete(false);
-        return $result;
-    }
+		$this->_listener = new Doctrine_Template_Listener_SoftDelete(
+				$this->_options);
+		$this->addListener($this->_listener);
+	}
+
+	/**
+	 * Add a hardDelete() method to any of the models who act as SoftDelete behavior
+	 *
+	 * @param Doctrine_Connection $conn
+	 * @return integer $result Number of affected rows.
+	 */
+	public function hardDelete($conn = null) {
+		if ($conn === null) {
+			$conn = $this->_table->getConnection();
+		}
+		$this->_listener->hardDelete(true);
+		$result = $this->_invoker->delete();
+		$this->_listener->hardDelete(false);
+		return $result;
+	}
 }

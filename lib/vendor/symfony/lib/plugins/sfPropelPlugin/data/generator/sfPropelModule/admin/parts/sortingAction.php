@@ -5,7 +5,7 @@
       return;
     }
 
-    $column = <?php echo constant($this->getModelClass().'::PEER') ?>::translateFieldName($sort[0], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_COLNAME);
+    $column = <?php echo constant($this->getModelClass() . '::PEER') ?>::translateFieldName($sort[0], BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_COLNAME);
     if ('asc' == $sort[1])
     {
       $criteria->addAscendingOrderByColumn($column);
@@ -18,7 +18,8 @@
 
   protected function getSort()
   {
-    if (null !== $sort = $this->getUser()->getAttribute('<?php echo $this->getModuleName() ?>.sort', null, 'admin_module'))
+    if (null !== $sort = $this->getUser()->getAttribute('<?php echo $this
+		->getModuleName() ?>.sort', null, 'admin_module'))
     {
       return $sort;
     }
@@ -40,5 +41,6 @@
 
   protected function isValidSortColumn($column)
   {
-    return in_array($column, BasePeer::getFieldnames('<?php echo $this->getModelClass() ?>', BasePeer::TYPE_FIELDNAME));
+    return in_array($column, BasePeer::getFieldnames('<?php echo $this
+		->getModelClass() ?>', BasePeer::TYPE_FIELDNAME));
   }

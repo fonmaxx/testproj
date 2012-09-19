@@ -18,7 +18,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>.
  */
- 
+
 require_once 'phing/BuildListener.php';
 
 /**
@@ -42,156 +42,175 @@ require_once 'phing/BuildListener.php';
  */
 class PearLogListener implements BuildListener {
 
-    /**
-     *  Size of the left column in output. The default char width is 12.
-     *  @var int
-     */
-    const LEFT_COLUMN_SIZE = 12;
+	/**
+	 *  Size of the left column in output. The default char width is 12.
+	 *  @var int
+	 */
+	const LEFT_COLUMN_SIZE = 12;
 
-    /**
-     *  Time that the build started
-     *  @var int
-     */
-    protected $startTime;
-    
-    /**
-     * Maps Phing Project::MSG_* constants to PEAR_LOG_* constants.
-     * @var array
-     */
-    protected static $levelMap = array( Project::MSG_DEBUG => PEAR_LOG_DEBUG,
-                                        Project::MSG_INFO => PEAR_LOG_INFO,
-                                        Project::MSG_VERBOSE => PEAR_LOG_NOTICE,
-                                        Project::MSG_WARN => PEAR_LOG_WARNING,
-                                        Project::MSG_ERR => PEAR_LOG_ERR
-                                       );
-    /**
-     * Whether logging has been configured.
-     * @var boolean
-     */
-    protected $logConfigured = false;
-    
-    /**
-     * @var Log PEAR Log object.
-     */
-   	protected $logger;
-   	
-    /**
-     * Configure the logger.
-     */
-    protected function configureLogging() {
-    	
-        $type = Phing::getDefinedProperty('pear.log.type');
-        $name = Phing::getDefinedProperty('pear.log.name');
-        $ident = Phing::getDefinedProperty('pear.log.ident');
-        $conf = Phing::getDefinedProperty('pear.log.conf');
-        
-        if ($type === null) $type = 'file';
-        if ($name === null) $name = 'phing.log';
-        if ($ident === null) $ident = 'phing';
-        if ($conf === null) $conf = array();
-        
-        include_once 'Log.php';
-        if (!class_exists('Log')) {
-        	throw new BuildException("Cannot find PEAR Log class for use by PearLogger.");
-        }
-        
-        $this->logger = Log::singleton($type, $name, $ident, $conf, self::$levelMap[$this->msgOutputLevel]);
-    }        
-    
-    /**
-     * Get the configured PEAR logger to use.
-     * This method just ensures that logging has been configured and returns the configured logger.
-     * @return Log
-     */
-    protected function logger() {
-        if (!$this->logConfigured) {
-            $this->configureLogging();
-        }
-        return $this->logger;
-    }
+	/**
+	 *  Time that the build started
+	 *  @var int
+	 */
+	protected $startTime;
 
-    /**
-     *  Sets the start-time when the build started. Used for calculating
-     *  the build-time.
-     *
-     * @param  BuildEvent  The BuildEvent
-     */
-    public function buildStarted(BuildEvent $event) {
-        $this->startTime = Phing::currentTimeMillis();
-        $this->logger()->setIdent($event->getProject()->getName());
-        $this->logger()->info("Starting build with buildfile: ". $event->getProject()->getProperty("phing.file"));
-    }
+	/**
+	 * Maps Phing Project::MSG_* constants to PEAR_LOG_* constants.
+	 * @var array
+	 */
+	protected static $levelMap = array(Project::MSG_DEBUG => PEAR_LOG_DEBUG,
+			Project::MSG_INFO => PEAR_LOG_INFO,
+			Project::MSG_VERBOSE => PEAR_LOG_NOTICE,
+			Project::MSG_WARN => PEAR_LOG_WARNING,
+			Project::MSG_ERR => PEAR_LOG_ERR);
+	/**
+	 * Whether logging has been configured.
+	 * @var boolean
+	 */
+	protected $logConfigured = false;
 
-    /**
-     *  Logs whether the build succeeded or failed, and any errors that
-     *  occured during the build. Also outputs the total build-time.
-     *
-     * @param  BuildEvent  The BuildEvent
-     * @see    BuildEvent::getException()
-     */
-    public function buildFinished(BuildEvent $event) {
-        $error = $event->getException();
-        if ($error === null) {
-            $msg = "Finished successful build.";
-        } else {
-            $msg = "Build failed. [reason: " . $error->getMessage() ."]";
-        }
-        $this->logger()->log($msg . " Total time: " . DefaultLogger::formatTime(Phing::currentTimeMillis() - $this->startTime));
-    }
+	/**
+	 * @var Log PEAR Log object.
+	 */
+	protected $logger;
 
-    /**
-     * Logs the current target name
-     *
-     * @param  BuildEvent  The BuildEvent
-     * @see    BuildEvent::getTarget()
-     */
-    public function targetStarted(BuildEvent $event) {}
+	/**
+	 * Configure the logger.
+	 */
+	protected function configureLogging() {
 
-    /**
-     *  Fired when a target has finished. We don't need specific action on this
-     *  event. So the methods are empty.
-     *
-     *  @param  BuildEvent  The BuildEvent
-     *  @access public
-     *  @see    BuildEvent::getException()
-     */
-    public function targetFinished(BuildEvent $event) {}
+		$type = Phing::getDefinedProperty('pear.log.type');
+		$name = Phing::getDefinedProperty('pear.log.name');
+		$ident = Phing::getDefinedProperty('pear.log.ident');
+		$conf = Phing::getDefinedProperty('pear.log.conf');
 
-    /**
-     *  Fired when a task is started. We don't need specific action on this
-     *  event. So the methods are empty.
-     *
-     *  @param  BuildEvent  The BuildEvent
-     *  @access public
-     *  @see    BuildEvent::getTask()
-     */
-    public function taskStarted(BuildEvent $event) {}
+		if ($type === null)
+			$type = 'file';
+		if ($name === null)
+			$name = 'phing.log';
+		if ($ident === null)
+			$ident = 'phing';
+		if ($conf === null)
+			$conf = array();
 
-    /**
-     *  Fired when a task has finished. We don't need specific action on this
-     *  event. So the methods are empty.
-     *
-     * @param  BuildEvent  The BuildEvent
-     * @see    BuildEvent::getException()
-     */
-    public function taskFinished(BuildEvent $event) {}
+		include_once 'Log.php';
+		if (!class_exists('Log')) {
+			throw new BuildException(
+					"Cannot find PEAR Log class for use by PearLogger.");
+		}
 
-    /**
-     *  Logs a message to the configured PEAR logger.
-     *
-     * @param  BuildEvent  The BuildEvent
-     * @see    BuildEvent::getMessage()
-     */
-    public function messageLogged(BuildEvent $event) {
-        if ($event->getPriority() <= $this->msgOutputLevel) {            
-            $msg = "";
-            if ($event->getTask() !== null) {
-                $name = $event->getTask();
-                $name = $name->getTaskName();
-                $msg = str_pad("[$name] ", self::LEFT_COLUMN_SIZE, " ", STR_PAD_LEFT);
-            }
-            $msg .= $event->getMessage();
-            $this->logger()->log($msg, self::$levelMap[$event->getPriority()]);
-        }
-    }
+		$this->logger = Log::singleton($type, $name, $ident, $conf,
+				self::$levelMap[$this->msgOutputLevel]);
+	}
+
+	/**
+	 * Get the configured PEAR logger to use.
+	 * This method just ensures that logging has been configured and returns the configured logger.
+	 * @return Log
+	 */
+	protected function logger() {
+		if (!$this->logConfigured) {
+			$this->configureLogging();
+		}
+		return $this->logger;
+	}
+
+	/**
+	 *  Sets the start-time when the build started. Used for calculating
+	 *  the build-time.
+	 *
+	 * @param  BuildEvent  The BuildEvent
+	 */
+	public function buildStarted(BuildEvent $event) {
+		$this->startTime = Phing::currentTimeMillis();
+		$this->logger()->setIdent($event->getProject()->getName());
+		$this->logger()
+				->info(
+						"Starting build with buildfile: "
+								. $event->getProject()
+										->getProperty("phing.file"));
+	}
+
+	/**
+	 *  Logs whether the build succeeded or failed, and any errors that
+	 *  occured during the build. Also outputs the total build-time.
+	 *
+	 * @param  BuildEvent  The BuildEvent
+	 * @see    BuildEvent::getException()
+	 */
+	public function buildFinished(BuildEvent $event) {
+		$error = $event->getException();
+		if ($error === null) {
+			$msg = "Finished successful build.";
+		} else {
+			$msg = "Build failed. [reason: " . $error->getMessage() . "]";
+		}
+		$this->logger()
+				->log(
+						$msg . " Total time: "
+								. DefaultLogger::formatTime(
+										Phing::currentTimeMillis()
+												- $this->startTime));
+	}
+
+	/**
+	 * Logs the current target name
+	 *
+	 * @param  BuildEvent  The BuildEvent
+	 * @see    BuildEvent::getTarget()
+	 */
+	public function targetStarted(BuildEvent $event) {
+	}
+
+	/**
+	 *  Fired when a target has finished. We don't need specific action on this
+	 *  event. So the methods are empty.
+	 *
+	 *  @param  BuildEvent  The BuildEvent
+	 *  @access public
+	 *  @see    BuildEvent::getException()
+	 */
+	public function targetFinished(BuildEvent $event) {
+	}
+
+	/**
+	 *  Fired when a task is started. We don't need specific action on this
+	 *  event. So the methods are empty.
+	 *
+	 *  @param  BuildEvent  The BuildEvent
+	 *  @access public
+	 *  @see    BuildEvent::getTask()
+	 */
+	public function taskStarted(BuildEvent $event) {
+	}
+
+	/**
+	 *  Fired when a task has finished. We don't need specific action on this
+	 *  event. So the methods are empty.
+	 *
+	 * @param  BuildEvent  The BuildEvent
+	 * @see    BuildEvent::getException()
+	 */
+	public function taskFinished(BuildEvent $event) {
+	}
+
+	/**
+	 *  Logs a message to the configured PEAR logger.
+	 *
+	 * @param  BuildEvent  The BuildEvent
+	 * @see    BuildEvent::getMessage()
+	 */
+	public function messageLogged(BuildEvent $event) {
+		if ($event->getPriority() <= $this->msgOutputLevel) {
+			$msg = "";
+			if ($event->getTask() !== null) {
+				$name = $event->getTask();
+				$name = $name->getTaskName();
+				$msg = str_pad("[$name] ", self::LEFT_COLUMN_SIZE, " ",
+						STR_PAD_LEFT);
+			}
+			$msg .= $event->getMessage();
+			$this->logger()->log($msg, self::$levelMap[$event->getPriority()]);
+		}
+	}
 }

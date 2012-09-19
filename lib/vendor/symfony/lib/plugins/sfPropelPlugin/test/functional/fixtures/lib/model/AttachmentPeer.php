@@ -7,6 +7,5 @@
  *
  * @package lib.model
  */ 
-class AttachmentPeer extends BaseAttachmentPeer
-{
+class AttachmentPeer extends BaseAttachmentPeer {
 }

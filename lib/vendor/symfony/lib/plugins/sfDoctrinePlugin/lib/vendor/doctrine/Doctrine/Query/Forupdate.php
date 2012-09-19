@@ -30,10 +30,8 @@
  * @version     $Revision: 1352 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Query_Forupdate extends Doctrine_Query_Part
-{
-    public function parse($forUpdate) 
-    {
-        return (bool) $forUpdate;
-    }
+class Doctrine_Query_Forupdate extends Doctrine_Query_Part {
+	public function parse($forUpdate) {
+		return (bool) $forUpdate;
+	}
 }

@@ -30,77 +30,73 @@
  * @since       1.0
  * @version     $Revision: 7490 $
  */
-class Doctrine_Transaction_Oracle extends Doctrine_Transaction
-{
-    /**
-     * createSavepoint
-     * creates a new savepoint
-     *
-     * @param string $savepoint     name of a savepoint to set
-     * @return void
-     */
-    protected function createSavePoint($savepoint)
-    {
-        $query = 'SAVEPOINT ' . $savepoint;
+class Doctrine_Transaction_Oracle extends Doctrine_Transaction {
+	/**
+	 * createSavepoint
+	 * creates a new savepoint
+	 *
+	 * @param string $savepoint     name of a savepoint to set
+	 * @return void
+	 */
+	protected function createSavePoint($savepoint) {
+		$query = 'SAVEPOINT ' . $savepoint;
 
-        return $this->conn->execute($query);
-    }
+		return $this->conn->execute($query);
+	}
 
-    /**
-     * releaseSavePoint
-     * releases given savepoint
-     *
-     * @param string $savepoint     name of a savepoint to release
-     * @return void
-     */
-    protected function releaseSavePoint($savepoint)
-    {
-        // oracle doesn't support manual releasing of savepoints
-        return true;
-    }
+	/**
+	 * releaseSavePoint
+	 * releases given savepoint
+	 *
+	 * @param string $savepoint     name of a savepoint to release
+	 * @return void
+	 */
+	protected function releaseSavePoint($savepoint) {
+		// oracle doesn't support manual releasing of savepoints
+		return true;
+	}
 
-    /**
-     * rollbackSavePoint
-     * releases given savepoint
-     *
-     * @param string $savepoint     name of a savepoint to rollback to
-     * @return void
-     */
-    protected function rollbackSavePoint($savepoint)
-    {
-        $query = 'ROLLBACK TO SAVEPOINT ' . $savepoint;
+	/**
+	 * rollbackSavePoint
+	 * releases given savepoint
+	 *
+	 * @param string $savepoint     name of a savepoint to rollback to
+	 * @return void
+	 */
+	protected function rollbackSavePoint($savepoint) {
+		$query = 'ROLLBACK TO SAVEPOINT ' . $savepoint;
 
-        return $this->conn->execute($query);
-    }
+		return $this->conn->execute($query);
+	}
 
-    /**
-     * Set the transacton isolation level.
-     *
-     * @param   string  standard isolation level
-     *                  READ UNCOMMITTED (allows dirty reads)
-     *                  READ COMMITTED (prevents dirty reads)
-     *                  REPEATABLE READ (prevents nonrepeatable reads)
-     *                  SERIALIZABLE (prevents phantom reads)
-     * @throws PDOException                         if something fails at the PDO level
-     * @throws Doctrine_Transaction_Exception       if using unknown isolation level
-     * @return void
-     */
-    public function setIsolation($isolation)
-    {
-        switch ($isolation) {
-            case 'READ UNCOMMITTED':
-                $isolation = 'READ COMMITTED';
-                break;
-            case 'READ COMMITTED':
-            case 'REPEATABLE READ':
-            case 'SERIALIZABLE':
-                $isolation = 'SERIALIZABLE';
-                break;
-            default:
-                throw new Doctrine_Transaction_Exception('Isolation level ' . $isolation . ' is not supported.');
-        }
+	/**
+	 * Set the transacton isolation level.
+	 *
+	 * @param   string  standard isolation level
+	 *                  READ UNCOMMITTED (allows dirty reads)
+	 *                  READ COMMITTED (prevents dirty reads)
+	 *                  REPEATABLE READ (prevents nonrepeatable reads)
+	 *                  SERIALIZABLE (prevents phantom reads)
+	 * @throws PDOException                         if something fails at the PDO level
+	 * @throws Doctrine_Transaction_Exception       if using unknown isolation level
+	 * @return void
+	 */
+	public function setIsolation($isolation) {
+		switch ($isolation) {
+		case 'READ UNCOMMITTED':
+			$isolation = 'READ COMMITTED';
+			break;
+		case 'READ COMMITTED':
+		case 'REPEATABLE READ':
+		case 'SERIALIZABLE':
+			$isolation = 'SERIALIZABLE';
+			break;
+		default:
+			throw new Doctrine_Transaction_Exception(
+					'Isolation level ' . $isolation . ' is not supported.');
+		}
 
-        $query = 'ALTER SESSION SET ISOLATION_LEVEL = ' . $isolation;
-        return $this->conn->execute($query);
-    }
+		$query = 'ALTER SESSION SET ISOLATION_LEVEL = ' . $isolation;
+		return $this->conn->execute($query);
+	}
 }

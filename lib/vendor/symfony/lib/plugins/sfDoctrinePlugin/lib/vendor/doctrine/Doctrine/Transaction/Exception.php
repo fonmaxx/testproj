@@ -30,5 +30,5 @@
  * @version     $Revision: 7490 $
  * @link        www.doctrine-project.org
  */
-class Doctrine_Transaction_Exception extends Doctrine_Exception
-{ }
+class Doctrine_Transaction_Exception extends Doctrine_Exception {
+}

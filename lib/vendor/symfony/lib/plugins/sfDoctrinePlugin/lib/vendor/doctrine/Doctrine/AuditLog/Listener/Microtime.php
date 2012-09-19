@@ -30,62 +30,57 @@
  * @version     $Revision$
  * @author      Lukas Smith <smith@pooteeweet.org>
  */
-class Doctrine_AuditLog_Listener_Microtime extends Doctrine_AuditLog_Listener
-{
-    /**
-     * The numher of digits to use from the float microtime value
-     *
-     * @var int
-     */
-    protected $accuracy = 10;
+class Doctrine_AuditLog_Listener_Microtime extends Doctrine_AuditLog_Listener {
+	/**
+	 * The numher of digits to use from the float microtime value
+	 *
+	 * @var int
+	 */
+	protected $accuracy = 10;
 
-    /**
-     * Instantiate AuditLog listener and set the Doctrine_AuditLog instance to the class
-     *
-     * @param   Doctrine_AuditLog $auditLog
-     * @return  void
-     */
-    public function __construct(Doctrine_AuditLog $auditLog)
-    {
-        parent::__construct($auditLog);
-        $version = $this->_auditLog->getOption('version');
-        if (!empty($version['accuracy'])) {
-            $this->accuracy = $version['accuracy'];
-        }
-    }
+	/**
+	 * Instantiate AuditLog listener and set the Doctrine_AuditLog instance to the class
+	 *
+	 * @param   Doctrine_AuditLog $auditLog
+	 * @return  void
+	 */
+	public function __construct(Doctrine_AuditLog $auditLog) {
+		parent::__construct($auditLog);
+		$version = $this->_auditLog->getOption('version');
+		if (!empty($version['accuracy'])) {
+			$this->accuracy = $version['accuracy'];
+		}
+	}
 
-    /**
-     * Get the initial version number for the audit log
-     *
-     * @param Doctrine_Record $record
-     * @return integer $initialVersion
-     */
-    protected function _getInitialVersion(Doctrine_Record $record)
-    {
-        return $this->_microtime();
-    }
+	/**
+	 * Get the initial version number for the audit log
+	 *
+	 * @param Doctrine_Record $record
+	 * @return integer $initialVersion
+	 */
+	protected function _getInitialVersion(Doctrine_Record $record) {
+		return $this->_microtime();
+	}
 
-    /**
-     * Get the next version number for the audit log
-     *
-     * @param Doctrine_Record $record
-     * @return integer $nextVersion
-     */
-    protected function _getNextVersion(Doctrine_Record $record)
-    {
-        return $this->_microtime();
-    }
+	/**
+	 * Get the next version number for the audit log
+	 *
+	 * @param Doctrine_Record $record
+	 * @return integer $nextVersion
+	 */
+	protected function _getNextVersion(Doctrine_Record $record) {
+		return $this->_microtime();
+	}
 
-    /**
-     * Compute a version out of microtime(true)
-     *
-     * @return string $version
-     */
-    protected function _microtime()
-    {
-        $version = microtime(true) - 1073741824; // 31 bits
-        $version = str_replace('.', '', (string)$version);
-        return substr($version, 0, $this->accuracy);
-    }
+	/**
+	 * Compute a version out of microtime(true)
+	 *
+	 * @return string $version
+	 */
+	protected function _microtime() {
+		$version = microtime(true) - 1073741824; // 31 bits
+		$version = str_replace('.', '', (string) $version);
+		return substr($version, 0, $this->accuracy);
+	}
 
 }

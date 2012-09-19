@@ -39,77 +39,76 @@
  * @package phing.system.util
  */
 class Register {
-    
-    /** Slots that have been registered */
-    private static $slots = array();
-    
-    /**
-     * Returns RegisterSlot for specified key.
-     * 
-     * If not slot exists a new one is created for key.
-     * 
-     * @param string $key
-     * @return RegisterSlot
-     */
-    public static function getSlot($key) {
-        if (!isset(self::$slots[$key])) {
-            self::$slots[$key] = new RegisterSlot($key);
-        }
-        return self::$slots[$key];
-    }    
-}
 
+	/** Slots that have been registered */
+	private static $slots = array();
+
+	/**
+	 * Returns RegisterSlot for specified key.
+	 * 
+	 * If not slot exists a new one is created for key.
+	 * 
+	 * @param string $key
+	 * @return RegisterSlot
+	 */
+	public static function getSlot($key) {
+		if (!isset(self::$slots[$key])) {
+			self::$slots[$key] = new RegisterSlot($key);
+		}
+		return self::$slots[$key];
+	}
+}
 
 /**
  * Represents a slot in the register.
  */
 class RegisterSlot {
-    
-    /** The name of this slot. */
-    private $key;
-    
-    /** The value for this slot. */
-    private $value;
-    
-    /**
-     * Constructs a new RegisterSlot, setting the key to passed param.
-     * @param string $key
-     */
-    public function __construct($key) {
-        $this->key = (string) $key;
-    }
-    
-    /**
-     * Sets the key / name for this slot.
-     * @param string $k
-     */
-    public function setKey($k) {
-        $this->key = (string) $k;
-    }
 
-    /**
-     * Gets the key / name for this slot.
-     * @return string
-     */
-    public function getKey() {
-        return $this->key;
-    }
-    
-    /**
-     * Sets the value for this slot.
-     * @param mixed
-     */
-    public function setValue($v) {
-        $this->value = $v;
-    }
-    
-    /**
-     * Returns the value at this slot.
-     * @return mixed
-     */
-    public function getValue() {
-        return $this->value;
-    }
-    
+	/** The name of this slot. */
+	private $key;
+
+	/** The value for this slot. */
+	private $value;
+
+	/**
+	 * Constructs a new RegisterSlot, setting the key to passed param.
+	 * @param string $key
+	 */
+	public function __construct($key) {
+		$this->key = (string) $key;
+	}
+
+	/**
+	 * Sets the key / name for this slot.
+	 * @param string $k
+	 */
+	public function setKey($k) {
+		$this->key = (string) $k;
+	}
+
+	/**
+	 * Gets the key / name for this slot.
+	 * @return string
+	 */
+	public function getKey() {
+		return $this->key;
+	}
+
+	/**
+	 * Sets the value for this slot.
+	 * @param mixed
+	 */
+	public function setValue($v) {
+		$this->value = $v;
+	}
+
+	/**
+	 * Returns the value at this slot.
+	 * @return mixed
+	 */
+	public function getValue() {
+		return $this->value;
+	}
+
 }
 

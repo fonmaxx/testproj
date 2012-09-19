@@ -30,521 +30,489 @@
  * @link        www.doctrine-project.org
  * @since       0.9
  */
-class Doctrine_Pager
-{
-    /**
-     * @var Doctrine_Query $_query      Doctrine_Query object related to the pager
-     */
-    protected $_query;
+class Doctrine_Pager {
+	/**
+	 * @var Doctrine_Query $_query      Doctrine_Query object related to the pager
+	 */
+	protected $_query;
 
-    /**
-     * @var Doctrine_Query $_countQuery Doctrine_Query object related to the counter of pager
-     */
-    protected $_countQuery;
+	/**
+	 * @var Doctrine_Query $_countQuery Doctrine_Query object related to the counter of pager
+	 */
+	protected $_countQuery;
 
-    /**
-     * @var array $_countQueryParams    Hold the params to be used by Doctrine_Query counter object of pager
-     */
-    protected $_countQueryParams;
+	/**
+	 * @var array $_countQueryParams    Hold the params to be used by Doctrine_Query counter object of pager
+	 */
+	protected $_countQueryParams;
 
-    /**
-     * @var integer $_numResults        Number of results found
-     */
-    protected $_numResults;
+	/**
+	 * @var integer $_numResults        Number of results found
+	 */
+	protected $_numResults;
 
-    /**
-     * @var integer $_maxPerPage        Maximum number of itens per page
-     */
-    protected $_maxPerPage;
+	/**
+	 * @var integer $_maxPerPage        Maximum number of itens per page
+	 */
+	protected $_maxPerPage;
 
-    /**
-     * @var integer $page               Current page
-     */
-    protected $_page;
+	/**
+	 * @var integer $page               Current page
+	 */
+	protected $_page;
 
-    /**
-     * @var integer $_lastPage          Last page (total of pages)
-     */
-    protected $_lastPage;
+	/**
+	 * @var integer $_lastPage          Last page (total of pages)
+	 */
+	protected $_lastPage;
 
-    /**
-     * @var boolean $_executed          Pager was initialized (called "execute" at least once)
-     */
-    protected $_executed;
+	/**
+	 * @var boolean $_executed          Pager was initialized (called "execute" at least once)
+	 */
+	protected $_executed;
 
+	/**
+	 * __construct
+	 *
+	 * @param mixed $query     Accepts either a Doctrine_Query object or a string 
+	 *                        (which does the Doctrine_Query class creation).
+	 * @param int $page     Current page
+	 * @param int $maxPerPage     Maximum itens per page
+	 * @return void
+	 */
+	public function __construct($query, $page, $maxPerPage = 0) {
+		$this->_setExecuted(false);
 
+		$this->_setQuery($query);
+		$this->_setPage($page);
 
-    /**
-     * __construct
-     *
-     * @param mixed $query     Accepts either a Doctrine_Query object or a string 
-     *                        (which does the Doctrine_Query class creation).
-     * @param int $page     Current page
-     * @param int $maxPerPage     Maximum itens per page
-     * @return void
-     */
-    public function __construct($query, $page, $maxPerPage = 0)
-    {
-        $this->_setExecuted(false);
+		$this->setMaxPerPage($maxPerPage);
+	}
 
-        $this->_setQuery($query);
-        $this->_setPage($page);
+	/**
+	 * _initialize
+	 *
+	 * Initialize Pager object calculating number of results
+	 *
+	 * @param $params  Optional parameters to Doctrine_Query::execute
+	 * @return void
+	 */
+	protected function _initialize($params = array()) {
+		// retrieve the number of items found
+		$countQuery = $this->getCountQuery();
+		$count = $countQuery->count($this->getCountQueryParams($params));
 
-        $this->setMaxPerPage($maxPerPage);
-    }
+		$this->_setNumResults($count);
+		$this->_setExecuted(true); // _adjustOffset relies of _executed equals true = getNumResults()
 
-    /**
-     * _initialize
-     *
-     * Initialize Pager object calculating number of results
-     *
-     * @param $params  Optional parameters to Doctrine_Query::execute
-     * @return void
-     */
-    protected function _initialize($params = array())
-    {
-        // retrieve the number of items found
-        $countQuery = $this->getCountQuery();
-        $count = $countQuery->count($this->getCountQueryParams($params));
+		$this->_adjustOffset();
+	}
 
-        $this->_setNumResults($count);
-        $this->_setExecuted(true); // _adjustOffset relies of _executed equals true = getNumResults()
+	/**
+	 * _adjustOffset
+	 *
+	 * Adjusts last page of Doctrine_Pager, offset and limit of Doctrine_Query associated
+	 *
+	 * @return void
+	 */
+	protected function _adjustOffset() {
+		// Define new total of pages
+		$this
+				->_setLastPage(
+						max(1,
+								ceil(
+										$this->getNumResults()
+												/ $this->getMaxPerPage())));
+		$offset = ($this->getPage() - 1) * $this->getMaxPerPage();
 
-        $this->_adjustOffset();
-    }
+		// Assign new offset and limit to Doctrine_Query object
+		$p = $this->getQuery();
+		$p->offset($offset);
+		$p->limit($this->getMaxPerPage());
+	}
 
-    /**
-     * _adjustOffset
-     *
-     * Adjusts last page of Doctrine_Pager, offset and limit of Doctrine_Query associated
-     *
-     * @return void
-     */
-    protected function _adjustOffset()
-    {
-        // Define new total of pages
-        $this->_setLastPage(
-            max(1, ceil($this->getNumResults() / $this->getMaxPerPage()))
-        );
-        $offset = ($this->getPage() - 1) * $this->getMaxPerPage();
+	/**
+	 * getExecuted
+	 *
+	 * Returns the check if Pager was already executed at least once
+	 *
+	 * @return boolen        Pager was executed
+	 */
+	public function getExecuted() {
+		return $this->_executed;
+	}
 
-        // Assign new offset and limit to Doctrine_Query object
-        $p = $this->getQuery();
-        $p->offset($offset);
-        $p->limit($this->getMaxPerPage());
-    }
+	/**
+	 * _setExecuted
+	 *
+	 * Defines if Pager was already executed
+	 *
+	 * @param $executed       Pager was executed
+	 * @return void
+	 */
+	protected function _setExecuted($executed) {
+		$this->_executed = $executed;
+	}
 
-    /**
-     * getExecuted
-     *
-     * Returns the check if Pager was already executed at least once
-     *
-     * @return boolen        Pager was executed
-     */
-    public function getExecuted()
-    {
-        return $this->_executed;
-    }
+	/**
+	 * getRange
+	 *
+	 * Builds and return a Doctrine_Pager_Range_* based on arguments
+	 *
+	 * @param string $rangeStyle Pager Range style
+	 * @param array $options     Custom subclass implementation options.
+	 *                           Default is a blank array
+	 * @return Doctrine_Pager_Range Pager Range
+	 */
+	public function getRange($rangeStyle, $options = array()) {
+		$class = 'Doctrine_Pager_Range_' . ucfirst($rangeStyle);
 
-    /**
-     * _setExecuted
-     *
-     * Defines if Pager was already executed
-     *
-     * @param $executed       Pager was executed
-     * @return void
-     */
-    protected function _setExecuted($executed)
-    {
-        $this->_executed = $executed;
-    }
+		return new $class($options, $this);
+	}
 
-    /**
-     * getRange
-     *
-     * Builds and return a Doctrine_Pager_Range_* based on arguments
-     *
-     * @param string $rangeStyle Pager Range style
-     * @param array $options     Custom subclass implementation options.
-     *                           Default is a blank array
-     * @return Doctrine_Pager_Range Pager Range
-     */
-    public function getRange($rangeStyle, $options = array())
-    {
-        $class = 'Doctrine_Pager_Range_' . ucfirst($rangeStyle);
+	/**
+	 * getNumResults
+	 *
+	 * Returns the number of results found
+	 *
+	 * @return int        the number of results found
+	 */
+	public function getNumResults() {
+		if ($this->getExecuted()) {
+			return $this->_numResults;
+		}
 
-        return new $class($options, $this);
-    }
+		throw new Doctrine_Pager_Exception(
+				'Cannot retrieve the number of results of a not yet executed Pager query');
+	}
 
-    /**
-     * getNumResults
-     *
-     * Returns the number of results found
-     *
-     * @return int        the number of results found
-     */
-    public function getNumResults()
-    {
-        if ($this->getExecuted()) {
-            return $this->_numResults;
-        }
+	/**
+	 * _setNumResults
+	 *
+	 * Defines the number of total results on initial query
+	 *
+	 * @param $nb       Number of results found on initial query fetch
+	 * @return void
+	 */
+	protected function _setNumResults($nb) {
+		$this->_numResults = $nb;
+	}
 
-        throw new Doctrine_Pager_Exception(
-            'Cannot retrieve the number of results of a not yet executed Pager query'
-        );
-    }
+	/**
+	 * getFirstPage
+	 *
+	 * Returns the first page
+	 *
+	 * @return int        first page
+	 */
+	public function getFirstPage() {
+		return 1;
+	}
 
-    /**
-     * _setNumResults
-     *
-     * Defines the number of total results on initial query
-     *
-     * @param $nb       Number of results found on initial query fetch
-     * @return void
-     */
-    protected function _setNumResults($nb)
-    {
-        $this->_numResults = $nb;
-    }
+	/**
+	 * getLastPage
+	 *
+	 * Returns the last page (total of pages)
+	 *
+	 * @return int        last page (total of pages)
+	 */
+	public function getLastPage() {
+		if ($this->getExecuted()) {
+			return $this->_lastPage;
+		}
 
-    /**
-     * getFirstPage
-     *
-     * Returns the first page
-     *
-     * @return int        first page
-     */
-    public function getFirstPage()
-    {
-        return 1;
-    }
+		throw new Doctrine_Pager_Exception(
+				'Cannot retrieve the last page number of a not yet executed Pager query');
+	}
 
-    /**
-     * getLastPage
-     *
-     * Returns the last page (total of pages)
-     *
-     * @return int        last page (total of pages)
-     */
-    public function getLastPage()
-    {
-        if ($this->getExecuted()) {
-            return $this->_lastPage;
-        }
+	/**
+	 * _setLastPage
+	 *
+	 * Defines the last page (total of pages)
+	 *
+	 * @param $page       last page (total of pages)
+	 * @return void
+	 */
+	protected function _setLastPage($page) {
+		$this->_lastPage = $page;
 
-        throw new Doctrine_Pager_Exception(
-            'Cannot retrieve the last page number of a not yet executed Pager query'
-        );
-    }
+		if ($this->getPage() > $page) {
+			$this->_setPage($page);
+		}
+	}
 
-    /**
-     * _setLastPage
-     *
-     * Defines the last page (total of pages)
-     *
-     * @param $page       last page (total of pages)
-     * @return void
-     */
-    protected function _setLastPage($page)
-    {
-        $this->_lastPage = $page;
+	/**
+	 * getLastPage
+	 *
+	 * Returns the current page
+	 *
+	 * @return int        current page
+	 */
+	public function getPage() {
+		return $this->_page;
+	}
 
-        if ($this->getPage() > $page) {
-            $this->_setPage($page);
-        }
-    }
+	/**
+	 * getNextPage
+	 *
+	 * Returns the next page
+	 *
+	 * @return int        next page
+	 */
+	public function getNextPage() {
+		if ($this->getExecuted()) {
+			return min($this->getPage() + 1, $this->getLastPage());
+		}
 
-    /**
-     * getLastPage
-     *
-     * Returns the current page
-     *
-     * @return int        current page
-     */
-    public function getPage()
-    {
-        return $this->_page;
-    }
+		throw new Doctrine_Pager_Exception(
+				'Cannot retrieve the last page number of a not yet executed Pager query');
+	}
 
-    /**
-     * getNextPage
-     *
-     * Returns the next page
-     *
-     * @return int        next page
-     */
-    public function getNextPage()
-    {
-        if ($this->getExecuted()) {
-            return min($this->getPage() + 1, $this->getLastPage());
-        }
+	/**
+	 * getPreviousPage
+	 *
+	 * Returns the previous page
+	 *
+	 * @return int        previous page
+	 */
+	public function getPreviousPage() {
+		if ($this->getExecuted()) {
+			return max($this->getPage() - 1, $this->getFirstPage());
+		}
 
-        throw new Doctrine_Pager_Exception(
-            'Cannot retrieve the last page number of a not yet executed Pager query'
-        );
-    }
+		throw new Doctrine_Pager_Exception(
+				'Cannot retrieve the previous page number of a not yet executed Pager query');
+	}
 
-    /**
-     * getPreviousPage
-     *
-     * Returns the previous page
-     *
-     * @return int        previous page
-     */
-    public function getPreviousPage()
-    {
-        if ($this->getExecuted()) {
-            return max($this->getPage() - 1, $this->getFirstPage());
-        }
+	/**
+	 * getFirstIndice
+	 *
+	 * Return the first indice number for the current page
+	 *
+	 * @return int First indice number
+	 */
+	public function getFirstIndice() {
+		return ($this->getPage() - 1) * $this->getMaxPerPage() + 1;
+	}
 
-        throw new Doctrine_Pager_Exception(
-            'Cannot retrieve the previous page number of a not yet executed Pager query'
-        );
-    }
+	/**
+	 * getLastIndice
+	 *
+	 * Return the last indice number for the current page
+	 *
+	 * @return int Last indice number
+	 */
+	public function getLastIndice() {
+		return min($this->getNumResults(),
+				($this->getPage() * $this->getMaxPerPage()));
+	}
 
-    /**
-     * getFirstIndice
-     *
-     * Return the first indice number for the current page
-     *
-     * @return int First indice number
-     */
-    public function getFirstIndice()
-    {
-        return ($this->getPage() - 1) * $this->getMaxPerPage() + 1;
-    }
+	/**
+	 * haveToPaginate
+	 *
+	 * Return true if it's necessary to paginate or false if not
+	 *
+	 * @return bool        true if it is necessary to paginate, false otherwise
+	 */
+	public function haveToPaginate() {
+		if ($this->getExecuted()) {
+			return $this->getNumResults() > $this->getMaxPerPage();
+		}
 
-    /**
-     * getLastIndice
-     *
-     * Return the last indice number for the current page
-     *
-     * @return int Last indice number
-     */
-    public function getLastIndice()
-    {
-        return min($this->getNumResults(), ($this->getPage() * $this->getMaxPerPage()));
-    }
+		throw new Doctrine_Pager_Exception(
+				'Cannot know if it is necessary to paginate a not yet executed Pager query');
+	}
 
-    /**
-     * haveToPaginate
-     *
-     * Return true if it's necessary to paginate or false if not
-     *
-     * @return bool        true if it is necessary to paginate, false otherwise
-     */
-    public function haveToPaginate()
-    {
-        if ($this->getExecuted()) {
-            return $this->getNumResults() > $this->getMaxPerPage();
-        }
+	/**
+	 * setPage
+	 *
+	 * Defines the current page and automatically adjust offset and limits
+	 *
+	 * @param $page       current page
+	 * @return void
+	 */
+	public function setPage($page) {
+		$this->_setPage($page);
+		$this->_setExecuted(false);
+	}
 
-        throw new Doctrine_Pager_Exception(
-            'Cannot know if it is necessary to paginate a not yet executed Pager query'
-        );
-    }
+	/**
+	 * _setPage
+	 *
+	 * Defines the current page
+	 *
+	 * @param $page       current page
+	 * @return void
+	 */
+	protected function _setPage($page) {
+		$page = intval($page);
+		$this->_page = ($page <= 0) ? 1 : $page;
+	}
 
-    /**
-     * setPage
-     *
-     * Defines the current page and automatically adjust offset and limits
-     *
-     * @param $page       current page
-     * @return void
-     */
-    public function setPage($page)
-    {
-        $this->_setPage($page);
-        $this->_setExecuted(false);
-    }
+	/**
+	 * getLastPage
+	 *
+	 * Returns the maximum number of itens per page
+	 *
+	 * @return int        maximum number of itens per page
+	 */
+	public function getMaxPerPage() {
+		return $this->_maxPerPage;
+	}
 
-    /**
-     * _setPage
-     *
-     * Defines the current page
-     *
-     * @param $page       current page
-     * @return void
-     */
-    protected function _setPage($page)
-    {
-        $page = intval($page);
-        $this->_page = ($page <= 0) ? 1 : $page;
-    }
+	/**
+	 * setMaxPerPage
+	 *
+	 * Defines the maximum number of itens per page and automatically adjust offset and limits
+	 *
+	 * @param $max       maximum number of itens per page
+	 * @return void
+	 */
+	public function setMaxPerPage($max) {
+		if ($max > 0) {
+			$this->_maxPerPage = $max;
+		} else if ($max == 0) {
+			$this->_maxPerPage = 25;
+		} else {
+			$this->_maxPerPage = abs($max);
+		}
 
-    /**
-     * getLastPage
-     *
-     * Returns the maximum number of itens per page
-     *
-     * @return int        maximum number of itens per page
-     */
-    public function getMaxPerPage()
-    {
-        return $this->_maxPerPage;
-    }
+		$this->_setExecuted(false);
+	}
 
-    /**
-     * setMaxPerPage
-     *
-     * Defines the maximum number of itens per page and automatically adjust offset and limits
-     *
-     * @param $max       maximum number of itens per page
-     * @return void
-     */
-    public function setMaxPerPage($max)
-    {
-        if ($max > 0) {
-            $this->_maxPerPage = $max;
-        } else if ($max == 0) {
-            $this->_maxPerPage = 25;
-        } else {
-            $this->_maxPerPage = abs($max);
-        }
+	/**
+	 * getResultsInPage
+	 *
+	 * Returns the number of itens in current page
+	 *
+	 * @return int    Number of itens in current page
+	 */
+	public function getResultsInPage() {
+		$page = $this->getPage();
 
-        $this->_setExecuted(false);
-    }
+		if ($page != $this->getLastPage()) {
+			return $this->getMaxPerPage();
+		}
 
-    /**
-     * getResultsInPage
-     *
-     * Returns the number of itens in current page
-     *
-     * @return int    Number of itens in current page
-     */
-    public function getResultsInPage()
-    {
-        $page = $this->getPage();
+		$offset = ($this->getPage() - 1) * $this->getMaxPerPage();
 
-        if ($page != $this->getLastPage()) {
-            return $this->getMaxPerPage();
-        }
+		return abs($this->getNumResults() - $offset);
+	}
 
-        $offset = ($this->getPage() - 1) * $this->getMaxPerPage();
+	/**
+	 * getQuery
+	 *
+	 * Returns the Doctrine_Query collector object related to the pager
+	 *
+	 * @return Doctrine_Query    Doctrine_Query object related to the pager
+	 */
+	public function getQuery() {
+		return $this->_query;
+	}
 
-        return abs($this->getNumResults() - $offset);
-    }
+	/**
+	 * _setQuery
+	 *
+	 * Defines the collector query to be used by pager
+	 *
+	 * @param Doctrine_Query     Accepts either a Doctrine_Query object or a string 
+	 *                           (which does the Doctrine_Query class creation).
+	 * @return void
+	 */
+	protected function _setQuery($query) {
+		if (is_string($query)) {
+			$query = Doctrine_Query::create()->parseDqlQuery($query);
+		}
 
-    /**
-     * getQuery
-     *
-     * Returns the Doctrine_Query collector object related to the pager
-     *
-     * @return Doctrine_Query    Doctrine_Query object related to the pager
-     */
-    public function getQuery()
-    {
-        return $this->_query;
-    }
+		$this->_query = $query;
+	}
 
-    /**
-     * _setQuery
-     *
-     * Defines the collector query to be used by pager
-     *
-     * @param Doctrine_Query     Accepts either a Doctrine_Query object or a string 
-     *                           (which does the Doctrine_Query class creation).
-     * @return void
-     */
-    protected function _setQuery($query)
-    {
-        if (is_string($query)) {
-            $query = Doctrine_Query::create()
-                ->parseDqlQuery($query);
-        }
+	/**
+	 * getCountQuery
+	 *
+	 * Returns the Doctrine_Query object that is used to make the count results to pager
+	 *
+	 * @return Doctrine_Query     Doctrine_Query object related to the pager
+	 */
+	public function getCountQuery() {
+		return ($this->_countQuery !== null) ? $this->_countQuery
+				: $this->_query;
+	}
 
-        $this->_query = $query;
-    }
+	/**
+	 * setCountQuery
+	 *
+	 * Defines the counter query to be used by pager
+	 *
+	 * @param Doctrine_Query  Accepts either a Doctrine_Query object or a string 
+	 *                        (which does the Doctrine_Query class creation).
+	 * @param array           Optional params to be used by counter Doctrine_Query. 
+	 *                        If not defined, the params passed to execute method will be used.
+	 * @return void
+	 */
+	public function setCountQuery($query, $params = null) {
+		if (is_string($query)) {
+			$query = Doctrine_Query::create()->parseDqlQuery($query);
+		}
 
-    /**
-     * getCountQuery
-     *
-     * Returns the Doctrine_Query object that is used to make the count results to pager
-     *
-     * @return Doctrine_Query     Doctrine_Query object related to the pager
-     */
-    public function getCountQuery()
-    {
-        return ($this->_countQuery !== null) ? $this->_countQuery : $this->_query;
-    }
+		$this->_countQuery = $query;
 
-    /**
-     * setCountQuery
-     *
-     * Defines the counter query to be used by pager
-     *
-     * @param Doctrine_Query  Accepts either a Doctrine_Query object or a string 
-     *                        (which does the Doctrine_Query class creation).
-     * @param array           Optional params to be used by counter Doctrine_Query. 
-     *                        If not defined, the params passed to execute method will be used.
-     * @return void
-     */
-    public function setCountQuery($query, $params = null)
-    {
-        if (is_string($query)) {
-            $query = Doctrine_Query::create()
-                ->parseDqlQuery($query);
-        }
+		$this->setCountQueryParams($params);
 
-        $this->_countQuery = $query;
+		$this->_setExecuted(false);
+	}
 
-        $this->setCountQueryParams($params);
+	/**
+	 * getCountQueryParams
+	 *
+	 * Returns the params to be used by counter Doctrine_Query
+	 *
+	 * @return array     Doctrine_Query counter params
+	 */
+	public function getCountQueryParams($defaultParams = array()) {
+		return ($this->_countQueryParams !== null) ? $this->_countQueryParams
+				: $defaultParams;
+	}
 
-        $this->_setExecuted(false);
-    }
+	/**
+	 * setCountQueryParams
+	 *
+	 * Defines the params to be used by counter Doctrine_Query
+	 *
+	 * @param array       Optional params to be used by counter Doctrine_Query. 
+	 *                    If not defined, the params passed to execute method will be used.
+	 * @param boolean     Optional argument that append the query param instead of overriding the existent ones.
+	 * @return void
+	 */
+	public function setCountQueryParams($params = array(), $append = false) {
+		if ($append && is_array($this->_countQueryParams)) {
+			$this->_countQueryParams = array_merge($this->_countQueryParams,
+					$params);
+		} else {
+			if ($params !== null && !is_array($params)) {
+				$params = array($params);
+			}
 
-    /**
-     * getCountQueryParams
-     *
-     * Returns the params to be used by counter Doctrine_Query
-     *
-     * @return array     Doctrine_Query counter params
-     */
-    public function getCountQueryParams($defaultParams = array())
-    {
-        return ($this->_countQueryParams !== null) ? $this->_countQueryParams : $defaultParams;
-    }
+			$this->_countQueryParams = $params;
+		}
 
-    /**
-     * setCountQueryParams
-     *
-     * Defines the params to be used by counter Doctrine_Query
-     *
-     * @param array       Optional params to be used by counter Doctrine_Query. 
-     *                    If not defined, the params passed to execute method will be used.
-     * @param boolean     Optional argument that append the query param instead of overriding the existent ones.
-     * @return void
-     */
-    public function setCountQueryParams($params = array(), $append = false)
-    {
-        if ($append && is_array($this->_countQueryParams)) {
-            $this->_countQueryParams = array_merge($this->_countQueryParams, $params);
-        } else {
-            if ($params !== null && !is_array($params)) {
-                $params = array($params);
-            }
+		$this->_setExecuted(false);
+	}
 
-            $this->_countQueryParams = $params;
-        }
+	/**
+	 * execute
+	 *
+	 * Executes the query, populates the collection and then return it
+	 *
+	 * @param $params               Optional parameters to Doctrine_Query::execute
+	 * @param $hydrationMode        Hydration Mode of Doctrine_Query::execute returned ResultSet.
+	 * @return Doctrine_Collection  The root collection
+	 */
+	public function execute($params = array(), $hydrationMode = null) {
+		if (!$this->getExecuted()) {
+			$this->_initialize($params);
+		}
 
-        $this->_setExecuted(false);
-    }
-
-    /**
-     * execute
-     *
-     * Executes the query, populates the collection and then return it
-     *
-     * @param $params               Optional parameters to Doctrine_Query::execute
-     * @param $hydrationMode        Hydration Mode of Doctrine_Query::execute returned ResultSet.
-     * @return Doctrine_Collection  The root collection
-     */
-    public function execute($params = array(), $hydrationMode = null)
-    {
-        if ( !$this->getExecuted()) {
-            $this->_initialize($params);
-        }
-        
-        return $this->getQuery()->execute($params, $hydrationMode);
-    }
+		return $this->getQuery()->execute($params, $hydrationMode);
+	}
 }

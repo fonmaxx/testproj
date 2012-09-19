@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-require_once(dirname(__FILE__).'/sfDoctrineBaseTask.class.php');
+require_once(dirname(__FILE__) . '/sfDoctrineBaseTask.class.php');
 
 /**
  * Dumps data to the fixtures directory.
@@ -20,27 +20,33 @@ require_once(dirname(__FILE__).'/sfDoctrineBaseTask.class.php');
  * @author     Jonathan H. Wage <jonwage@gmail.com>
  * @version    SVN: $Id: sfDoctrineDataDumpTask.class.php 23922 2009-11-14 14:58:38Z fabien $
  */
-class sfDoctrineDataDumpTask extends sfDoctrineBaseTask
-{
-  /**
-   * @see sfTask
-   */
-  protected function configure()
-  {
-    $this->addArguments(array(
-      new sfCommandArgument('target', sfCommandArgument::OPTIONAL, 'The target filename'),
-    ));
+class sfDoctrineDataDumpTask extends sfDoctrineBaseTask {
+	/**
+	 * @see sfTask
+	 */
+	protected function configure() {
+		$this
+				->addArguments(
+						array(
+								new sfCommandArgument('target',
+										sfCommandArgument::OPTIONAL,
+										'The target filename'),));
 
-    $this->addOptions(array(
-      new sfCommandOption('application', null, sfCommandOption::PARAMETER_OPTIONAL, 'The application name', true),
-      new sfCommandOption('env', null, sfCommandOption::PARAMETER_REQUIRED, 'The environment', 'dev'),
-    ));
+		$this
+				->addOptions(
+						array(
+								new sfCommandOption('application', null,
+										sfCommandOption::PARAMETER_OPTIONAL,
+										'The application name', true),
+								new sfCommandOption('env', null,
+										sfCommandOption::PARAMETER_REQUIRED,
+										'The environment', 'dev'),));
 
-    $this->namespace = 'doctrine';
-    $this->name = 'data-dump';
-    $this->briefDescription = 'Dumps data to the fixtures directory';
+		$this->namespace = 'doctrine';
+		$this->name = 'data-dump';
+		$this->briefDescription = 'Dumps data to the fixtures directory';
 
-    $this->detailedDescription = <<<EOF
+		$this->detailedDescription = <<<EOF
 The [doctrine:data-dump|INFO] task dumps database data:
 
   [./symfony doctrine:data-dump|INFO]
@@ -52,40 +58,37 @@ the [doctrine:data-load|INFO] task.
 
   [./symfony doctrine:data-load|INFO]
 EOF;
-  }
+	}
 
-  /**
-   * @see sfTask
-   */
-  protected function execute($arguments = array(), $options = array())
-  {
-    $databaseManager = new sfDatabaseManager($this->configuration);
-    $config = $this->getCliConfig();
+	/**
+	 * @see sfTask
+	 */
+	protected function execute($arguments = array(), $options = array()) {
+		$databaseManager = new sfDatabaseManager($this->configuration);
+		$config = $this->getCliConfig();
 
-    $args = array(
-      'data_fixtures_path' => $config['data_fixtures_path'][0],
-    );
+		$args = array('data_fixtures_path' => $config['data_fixtures_path'][0],);
 
-    if (!is_dir($args['data_fixtures_path']))
-    {
-      $this->getFilesystem()->mkdirs($args['data_fixtures_path']);
-    }
+		if (!is_dir($args['data_fixtures_path'])) {
+			$this->getFilesystem()->mkdirs($args['data_fixtures_path']);
+		}
 
-    if ($arguments['target'])
-    {
-      $filename = $arguments['target'];
+		if ($arguments['target']) {
+			$filename = $arguments['target'];
 
-      if (!sfToolkit::isPathAbsolute($filename))
-      {
-        $filename = $args['data_fixtures_path'].'/'.$filename;
-      }
+			if (!sfToolkit::isPathAbsolute($filename)) {
+				$filename = $args['data_fixtures_path'] . '/' . $filename;
+			}
 
-      $this->getFilesystem()->mkdirs(dirname($filename));
+			$this->getFilesystem()->mkdirs(dirname($filename));
 
-      $args['data_fixtures_path'] = $filename;
-    }
+			$args['data_fixtures_path'] = $filename;
+		}
 
-    $this->logSection('doctrine', sprintf('dumping data to fixtures to "%s"', $args['data_fixtures_path']));
-    $this->callDoctrineCli('dump-data', $args);
-  }
+		$this
+				->logSection('doctrine',
+						sprintf('dumping data to fixtures to "%s"',
+								$args['data_fixtures_path']));
+		$this->callDoctrineCli('dump-data', $args);
+	}
 }

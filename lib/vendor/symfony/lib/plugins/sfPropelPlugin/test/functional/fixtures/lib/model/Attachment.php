@@ -7,10 +7,8 @@
  *
  * @package lib.model
  */ 
-class Attachment extends BaseAttachment
-{
-  public function generateFileFilename($file)
-  {
-    return 'uploaded'.$file->getExtension($file->getOriginalExtension());
-  }
+class Attachment extends BaseAttachment {
+	public function generateFileFilename($file) {
+		return 'uploaded' . $file->getExtension($file->getOriginalExtension());
+	}
 }

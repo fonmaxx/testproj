@@ -10,12 +10,11 @@
 
 $app = 'crud';
 $fixtures = 'fixtures/fixtures.yml';
-if (!include(dirname(__FILE__).'/../../bootstrap/functional.php'))
-{
-  return;
+if (!include(dirname(__FILE__) . '/../../bootstrap/functional.php')) {
+	return;
 }
 
-require_once(dirname(__FILE__).'/crudBrowser.class.php');
+require_once(dirname(__FILE__) . '/crudBrowser.class.php');
 
 $b = new CrudBrowser();
 $b->browse(array('generate-in-cache', 'with-show'));

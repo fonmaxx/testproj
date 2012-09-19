@@ -24,61 +24,65 @@
  * @package phing.system.io
  */
 class StringReader extends Reader {
-    
+
 	/**
 	 * @var string
 	 */
-    private $_string;
-    
-    /**
-     * @var int
-     */
-    private $mark = 0;
-    
-    /**
-     * @var int
-     */
-    private $currPos = 0;
-    
-    function __construct($string) {
-        $this->_string = $string;
-    }
+	private $_string;
 
-    function skip($n) {}
+	/**
+	 * @var int
+	 */
+	private $mark = 0;
 
-    function read($len = null) {
-        if ($len === null) {
-            return $this->_string;
-        } else {            
-            if ($this->currPos >= strlen($this->_string)) {
-                return -1;
-            }            
-            $out = substr($this->_string, $this->currPos, $len);
-            $this->currPos += $len;
-            return $out;
-        }
-    }
+	/**
+	 * @var int
+	 */
+	private $currPos = 0;
 
-    function mark() {
-        $this->mark = $this->currPos;
-    }
+	function __construct($string) {
+		$this->_string = $string;
+	}
 
-    function reset() {
-        $this->currPos = $this->mark;
-    }
+	function skip($n) {
+	}
 
-    function close() {}
+	function read($len = null) {
+		if ($len === null) {
+			return $this->_string;
+		} else {
+			if ($this->currPos >= strlen($this->_string)) {
+				return -1;
+			}
+			$out = substr($this->_string, $this->currPos, $len);
+			$this->currPos += $len;
+			return $out;
+		}
+	}
 
-    function open() {}
+	function mark() {
+		$this->mark = $this->currPos;
+	}
 
-    function ready() {}
+	function reset() {
+		$this->currPos = $this->mark;
+	}
 
-    function markSupported() {
-        return true;
-    }
-    
-    function getResource() {
-        return '(string) "'.$this->_string . '"';
-    }
+	function close() {
+	}
+
+	function open() {
+	}
+
+	function ready() {
+	}
+
+	function markSupported() {
+		return true;
+	}
+
+	function getResource() {
+		return '(string) "' . $this->_string . '"';
+	}
 }
 

@@ -68,7 +68,8 @@ class AvailableTask extends Task {
 
 	function main() {
 		if ($this->property === null) {
-			throw new BuildException("property attribute is required", $this->location);
+			throw new BuildException("property attribute is required",
+					$this->location);
 		}
 		if ($this->evaluate()) {
 			$this->project->setProperty($this->property, $this->value);
@@ -77,20 +78,33 @@ class AvailableTask extends Task {
 
 	function evaluate() {
 		if ($this->file === null && $this->resource === null) {
-			throw new BuildException("At least one of (file|resource) is required", $this->location);
+			throw new BuildException(
+					"At least one of (file|resource) is required",
+					$this->location);
 		}
 
-		if ($this->type !== null && ($this->type !== "file" && $this->type !== "dir")) {
-			throw new BuildException("Type must be one of either dir or file", $this->location);
+		if ($this->type !== null
+				&& ($this->type !== "file" && $this->type !== "dir")) {
+			throw new BuildException("Type must be one of either dir or file",
+					$this->location);
 		}
 
 		if (($this->file !== null) && !$this->_checkFile()) {
-			$this->log("Unable to find " . $this->file->__toString() . " to set property " . $this->property, Project::MSG_VERBOSE);
+			$this
+					->log(
+							"Unable to find " . $this->file->__toString()
+									. " to set property " . $this->property,
+							Project::MSG_VERBOSE);
 			return false;
 		}
 
-		if (($this->resource !== null) && !$this->_checkResource($this->resource)) {
-			$this->log("Unable to load resource " . $this->resource . " to set property " . $this->property, Project::MSG_VERBOSE);
+		if (($this->resource !== null)
+				&& !$this->_checkResource($this->resource)) {
+			$this
+					->log(
+							"Unable to load resource " . $this->resource
+									. " to set property " . $this->property,
+							Project::MSG_VERBOSE);
 			return false;
 		}
 
@@ -103,10 +117,10 @@ class AvailableTask extends Task {
 			return $this->_checkFile1($this->file);
 		} else {
 			$paths = $this->filepath->listDir();
-			for($i=0,$pcnt=count($paths); $i < $pcnt; $i++) {
+			for ($i = 0, $pcnt = count($paths); $i < $pcnt; $i++) {
 				$this->log("Searching " . $paths[$i], Project::MSG_VERBOSE);
 				$tmp = new PhingFile($paths[$i], $this->file->getName());
-				if($tmp->isFile()) {
+				if ($tmp->isFile()) {
 					return true;
 				}
 			}
@@ -124,7 +138,7 @@ class AvailableTask extends Task {
 		}
 		return $file->exists();
 	}
-	
+
 	private function _checkResource($resource) {
 		if (null != ($resourcePath = Phing::getResourcePath($resource))) {
 			return $this->_checkFile1(new PhingFile($resourcePath));

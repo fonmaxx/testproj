@@ -33,8 +33,7 @@
  * @version    $Revision: 1262 $
  * @package    propel.map
  */
-class ValidatorMap
-{
+class ValidatorMap {
 	/** rule name of this validator */
 	private $name;
 	/** the dot-path to class to use for validator */
@@ -46,58 +45,47 @@ class ValidatorMap
 	/** related column */
 	private $column;
 
-	public function __construct($containingColumn)
-	{
+	public function __construct($containingColumn) {
 		$this->column = $containingColumn;
 	}
 
-	public function getColumn()
-	{
+	public function getColumn() {
 		return $this->column;
 	}
 
-	public function getColumnName()
-	{
+	public function getColumnName() {
 		return $this->column->getColumnName();
 	}
 
-	public function setName($name)
-	{
+	public function setName($name) {
 		$this->name = $name;
 	}
 
-	public function setClass($classname)
-	{
+	public function setClass($classname) {
 		$this->classname = $classname;
 	}
 
-	public function setValue($value)
-	{
+	public function setValue($value) {
 		$this->value = $value;
 	}
 
-	public function setMessage($message)
-	{
+	public function setMessage($message) {
 		$this->message = $message;
 	}
 
-	public function getName()
-	{
+	public function getName() {
 		return $this->name;
 	}
 
-	public function getClass()
-	{
+	public function getClass() {
 		return $this->classname;
 	}
 
-	public function getValue()
-	{
+	public function getValue() {
 		return $this->value;
 	}
 
-	public function getMessage()
-	{
+	public function getMessage() {
 		return $this->message;
 	}
 }

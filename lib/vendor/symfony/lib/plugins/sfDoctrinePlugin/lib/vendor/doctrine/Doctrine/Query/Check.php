@@ -30,141 +30,131 @@
  * @version     $Revision: 1080 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Query_Check
-{
-    /**
-     * @var Doctrine_Table $table           Doctrine_Table object
-     */
-    protected $table;
+class Doctrine_Query_Check {
+	/**
+	 * @var Doctrine_Table $table           Doctrine_Table object
+	 */
+	protected $table;
 
-    /**
-     * @var string $sql                     database specific sql CHECK constraint definition 
-     *                                      parsed from the given dql CHECK definition
-     */
-    protected $sql;
-    
-    protected $_tokenizer;
+	/**
+	 * @var string $sql                     database specific sql CHECK constraint definition 
+	 *                                      parsed from the given dql CHECK definition
+	 */
+	protected $sql;
 
-    /**
-     * @param Doctrine_Table|string $table  Doctrine_Table object
-     */
-    public function __construct($table)
-    {
-        if ( ! ($table instanceof Doctrine_Table)) {
-            $table = Doctrine_Manager::getInstance()
-                        ->getCurrentConnection()
-                        ->getTable($table);
-        }
-        $this->table = $table;
-        $this->_tokenizer = new Doctrine_Query_Tokenizer();
-    }
+	protected $_tokenizer;
 
-    /**
-     * getTable
-     * returns the table object associated with this object
-     *
-     * @return Doctrine_Connection
-     */
-    public function getTable()
-    {
-        return $this->table;
-    }
+	/**
+	 * @param Doctrine_Table|string $table  Doctrine_Table object
+	 */
+	public function __construct($table) {
+		if (!($table instanceof Doctrine_Table)) {
+			$table = Doctrine_Manager::getInstance()->getCurrentConnection()
+					->getTable($table);
+		}
+		$this->table = $table;
+		$this->_tokenizer = new Doctrine_Query_Tokenizer();
+	}
 
-    /**
-     * parse
-     *
-     * @param string $dql       DQL CHECK constraint definition
-     * @return string
-     */
-    public function parse($dql)
-    {
-        $this->sql = $this->parseClause($dql);
-    }
+	/**
+	 * getTable
+	 * returns the table object associated with this object
+	 *
+	 * @return Doctrine_Connection
+	 */
+	public function getTable() {
+		return $this->table;
+	}
 
-    /**
-     * parseClause
-     *
-     * @param string $alias     component alias
-     * @param string $field     the field name
-     * @param mixed $value      the value of the field
-     * @return void
-     */
-    public function parseClause($dql)
-    {
-        $parts = $this->_tokenizer->sqlExplode($dql, ' AND ');
+	/**
+	 * parse
+	 *
+	 * @param string $dql       DQL CHECK constraint definition
+	 * @return string
+	 */
+	public function parse($dql) {
+		$this->sql = $this->parseClause($dql);
+	}
 
-        if (count($parts) > 1) {
-            $ret = array();
-            foreach ($parts as $part) {
-                $ret[] = $this->parseSingle($part);
-            }
+	/**
+	 * parseClause
+	 *
+	 * @param string $alias     component alias
+	 * @param string $field     the field name
+	 * @param mixed $value      the value of the field
+	 * @return void
+	 */
+	public function parseClause($dql) {
+		$parts = $this->_tokenizer->sqlExplode($dql, ' AND ');
 
-            $r = implode(' AND ', $ret);
-        } else {
-            $parts = $this->_tokenizer->quoteExplode($dql, ' OR ');
-            if (count($parts) > 1) {
-                $ret = array();
-                foreach ($parts as $part) {
-                    $ret[] = $this->parseClause($part);
-                }
+		if (count($parts) > 1) {
+			$ret = array();
+			foreach ($parts as $part) {
+				$ret[] = $this->parseSingle($part);
+			}
 
-                $r = implode(' OR ', $ret);
-            } else {
-                $ret = $this->parseSingle($dql);
-                return $ret;
-            }
-        }
-        return '(' . $r . ')';
-    }
-    
-    public function parseSingle($part)
-    {
-        $e = explode(' ', $part);
-        
-        $e[0] = $this->parseFunction($e[0]);
+			$r = implode(' AND ', $ret);
+		} else {
+			$parts = $this->_tokenizer->quoteExplode($dql, ' OR ');
+			if (count($parts) > 1) {
+				$ret = array();
+				foreach ($parts as $part) {
+					$ret[] = $this->parseClause($part);
+				}
 
-        switch ($e[1]) {
-            case '>':
-            case '<':
-            case '=':
-            case '!=':
-            case '<>':
+				$r = implode(' OR ', $ret);
+			} else {
+				$ret = $this->parseSingle($dql);
+				return $ret;
+			}
+		}
+		return '(' . $r . ')';
+	}
 
-            break;
-            default:
-                throw new Doctrine_Query_Exception('Unknown operator ' . $e[1]);
-        }
+	public function parseSingle($part) {
+		$e = explode(' ', $part);
 
-        return implode(' ', $e);
-    }
+		$e[0] = $this->parseFunction($e[0]);
 
-    public function parseFunction($dql) 
-    {
-        if (($pos = strpos($dql, '(')) !== false) {
-            $func  = substr($dql, 0, $pos);
-            $value = substr($dql, ($pos + 1), -1);
-            
-            $expr  = $this->table->getConnection()->expression;
+		switch ($e[1]) {
+		case '>':
+		case '<':
+		case '=':
+		case '!=':
+		case '<>':
+			break;
+		default:
+			throw new Doctrine_Query_Exception('Unknown operator ' . $e[1]);
+		}
 
-            if ( ! method_exists($expr, $func)) {
-                throw new Doctrine_Query_Exception('Unknown function ' . $func);
-            }
-            
-            $func  = $expr->$func($value);
-        }
-        return $func;
-    }
+		return implode(' ', $e);
+	}
 
-    /**
-     * getSql
-     *
-     * returns database specific sql CHECK constraint definition
-     * parsed from the given dql CHECK definition
-     *
-     * @return string
-     */
-    public function getSql()
-    {
-        return $this->sql;
-    }
+	public function parseFunction($dql) {
+		if (($pos = strpos($dql, '(')) !== false) {
+			$func = substr($dql, 0, $pos);
+			$value = substr($dql, ($pos + 1), -1);
+
+			$expr = $this->table->getConnection()->expression;
+
+			if (!method_exists($expr, $func)) {
+				throw new Doctrine_Query_Exception('Unknown function ' . $func);
+			}
+
+			$func = $expr->$func($value);
+		}
+		return $func;
+	}
+
+	/**
+	 * getSql
+	 *
+	 * returns database specific sql CHECK constraint definition
+	 * parsed from the given dql CHECK definition
+	 *
+	 * @return string
+	 */
+	public function getSql() {
+		return $this->sql;
+	}
 }

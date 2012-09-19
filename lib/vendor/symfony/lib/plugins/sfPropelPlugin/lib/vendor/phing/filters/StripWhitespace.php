@@ -18,7 +18,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information please see
  * <http://phing.info>.
-*/
+ */
 
 include_once 'phing/filters/BaseFilterReader.php';
 include_once 'phing/filters/ChainableReader.php';
@@ -33,63 +33,64 @@ include_once 'phing/filters/ChainableReader.php';
  * @todo -c use new PHP functions to perform this instead of regex.
  */
 class StripWhitespace extends BaseFilterReader implements ChainableReader {
-   	
+
 	private $processed = false;
-	
-    /**
-     * Returns the  stream without Php comments and whitespace.
-     * 
-     * @return the resulting stream, or -1
-     *         if the end of the resulting stream has been reached
-     * 
-     * @throws IOException if the underlying stream throws an IOException
-     *                        during reading     
-     */
-    function read($len = null) {
-    
+
+	/**
+	 * Returns the  stream without Php comments and whitespace.
+	 * 
+	 * @return the resulting stream, or -1
+	 *         if the end of the resulting stream has been reached
+	 * 
+	 * @throws IOException if the underlying stream throws an IOException
+	 *                        during reading     
+	 */
+	function read($len = null) {
+
 		if ($this->processed === true) {
-            return -1; // EOF
-        }
-		
+			return -1; // EOF
+		}
+
 		// Read XML
-        $php = null;
-        while ( ($buffer = $this->in->read($len)) !== -1 ) {
+		$php = null;
+		while (($buffer = $this->in->read($len)) !== -1) {
 			$php .= $buffer;
 		}
-		
-        if ($php === null ) { // EOF?
-            return -1;
-        }
-		
-		if(empty($php)) {
-            $this->log("PHP file is empty!", Project::MSG_WARN);
-            return ''; // return empty string, don't attempt to strip whitespace
-        }
-		        
+
+		if ($php === null) { // EOF?
+			return -1;
+		}
+
+		if (empty($php)) {
+			$this->log("PHP file is empty!", Project::MSG_WARN);
+			return ''; // return empty string, don't attempt to strip whitespace
+		}
+
 		// write buffer to a temporary file, since php_strip_whitespace() needs a filename
-		$file = new PhingFile(tempnam(PhingFile::getTempDir(), 'stripwhitespace'));
+		$file = new PhingFile(
+				tempnam(PhingFile::getTempDir(), 'stripwhitespace'));
 		file_put_contents($file->getAbsolutePath(), $php);
 		$output = php_strip_whitespace($file->getAbsolutePath());
 		unlink($file->getAbsolutePath());
-		
-		$this->processed = true;
-		
-        return $output;
-    }
 
-    /**
-     * Creates a new StripWhitespace using the passed in
-     * Reader for instantiation.
-     * 
-     * @param reader A Reader object providing the underlying stream.
-     *               Must not be <code>null</code>.
-     * 
-     * @return a new filter based on this configuration, but filtering
-     *         the specified reader
-     */
-    public function chain(Reader $reader) {
-        $newFilter = new StripWhitespace($reader);
-        $newFilter->setProject($this->getProject());        
-        return $newFilter;
-    }
+		$this->processed = true;
+
+		return $output;
+	}
+
+	/**
+	 * Creates a new StripWhitespace using the passed in
+	 * Reader for instantiation.
+	 * 
+	 * @param reader A Reader object providing the underlying stream.
+	 *               Must not be <code>null</code>.
+	 * 
+	 * @return a new filter based on this configuration, but filtering
+	 *         the specified reader
+	 */
+	public function chain(Reader $reader) {
+		$newFilter = new StripWhitespace($reader);
+		$newFilter->setProject($this->getProject());
+		return $newFilter;
+	}
 }

@@ -31,14 +31,14 @@ include_once 'propel/engine/builder/om/ClassTools.php';
  */
 class PropelDataDTDTask extends PropelDataModelTemplateTask {
 
-
 	public function main() {
 
 		// check to make sure task received all correct params
 		$this->validate();
 
 		if (!$this->mapperElement) {
-			throw new BuildException("You must use a <mapper/> element to describe how names should be transformed.");
+			throw new BuildException(
+					"You must use a <mapper/> element to describe how names should be transformed.");
 		}
 
 		$basepath = $this->getOutputDirectory();
@@ -60,21 +60,27 @@ class PropelDataDTDTask extends PropelDataModelTemplateTask {
 				$outFile = $this->getMappedFile($dataModel->getName());
 
 				$generator->put("tables", $database->getTables());
-				$generator->parse("data/dtd/dataset.tpl", $outFile->getAbsolutePath());
+				$generator
+						->parse("data/dtd/dataset.tpl",
+								$outFile->getAbsolutePath());
 
-				$this->log("Generating DTD for database: " . $database->getName());
+				$this
+						->log(
+								"Generating DTD for database: "
+										. $database->getName());
 				$this->log("Creating DTD file: " . $outFile->getPath());
 
 				foreach ($database->getTables() as $tbl) {
 					$this->log("\t + " . $tbl->getName());
 					$generator->put("table", $tbl);
-					$generator->parse("data/dtd/table.tpl", $outFile->getAbsolutePath(), true);
+					$generator
+							->parse("data/dtd/table.tpl",
+									$outFile->getAbsolutePath(), true);
 				}
 
 			} // foreach database
 
 		} // foreach dataModel
-
 
 	} // main()
 }

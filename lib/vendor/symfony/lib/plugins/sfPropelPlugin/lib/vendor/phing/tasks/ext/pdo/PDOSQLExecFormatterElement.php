@@ -32,8 +32,7 @@ require_once 'phing/tasks/ext/pdo/XMLPDOResultFormatter.php';
  * @package phing.tasks.ext.pdo
  * @since 2.3.0
  */
-class PDOSQLExecFormatterElement
-{
+class PDOSQLExecFormatterElement {
 	/**
 	 * @var PDOResultFormatter
 	 */
@@ -57,30 +56,30 @@ class PDOSQLExecFormatterElement
 	 */
 	private $outfile;
 
-    /**
-     * Print header columns.
-     * @var boolean
-     */
-    private $showheaders = true;
+	/**
+	 * Print header columns.
+	 * @var boolean
+	 */
+	private $showheaders = true;
 
-    /**
-     * Whether to format XML output.
-     * @var boolean
-     */
-    private $formatoutput = true;
+	/**
+	 * Whether to format XML output.
+	 * @var boolean
+	 */
+	private $formatoutput = true;
 
-    /**
-     * Encoding for XML output.
-     * @var string
-     */
-    private $encoding;
+	/**
+	 * Encoding for XML output.
+	 * @var string
+	 */
+	private $encoding;
 
-    /**
+	/**
 	 * Column delimiter.
 	 * Defaults to ','
 	 * @var string
 	 */
-    private $coldelimiter = ",";
+	private $coldelimiter = ",";
 
 	/**
 	 * Row delimiter.
@@ -89,11 +88,11 @@ class PDOSQLExecFormatterElement
 	 */
 	private $rowdelimiter = PHP_EOL;
 
-    /**
-     * Append to an existing file or overwrite it?
-     * @var boolean
-     */
-    private $append = false;
+	/**
+	 * Append to an existing file or overwrite it?
+	 * @var boolean
+	 */
+	private $append = false;
 
 	/**
 	 * Parameters for a custom formatter.
@@ -110,86 +109,90 @@ class PDOSQLExecFormatterElement
 	 * Construct a new PDOSQLExecFormatterElement with parent task.
 	 * @param  PDOSQLExecTask $parentTask
 	 */
-	public function __construct(PDOSQLExecTask $parentTask)
-	{
+	public function __construct(PDOSQLExecTask $parentTask) {
 		$this->parentTask = $parentTask;
 	}
 
-    /**
-     * Supports nested <param> element (for custom formatter classes).
-     * @return Parameter
-     */
-    public function createParam() {
-    	$num = array_push($this->parameters, new Parameter());
-    	return $this->parameters[$num-1];
-    }
+	/**
+	 * Supports nested <param> element (for custom formatter classes).
+	 * @return Parameter
+	 */
+	public function createParam() {
+		$num = array_push($this->parameters, new Parameter());
+		return $this->parameters[$num - 1];
+	}
 
-    /**
-     * Gets a configured output writer.
-     * @return Writer
-     */
-    private function getOutputWriter()
-    {
-    	if ($this->useFile) {
-    		$of = $this->getOutfile();
-    		if (!$of) {
-    			$of = new PhingFile($this->formatter->getPreferredOutfile());
-    		}
-    		return new FileWriter($of, $this->append);
-    	} else {
-    		return $this->getDefaultOutput();
-    	}
-    }
+	/**
+	 * Gets a configured output writer.
+	 * @return Writer
+	 */
+	private function getOutputWriter() {
+		if ($this->useFile) {
+			$of = $this->getOutfile();
+			if (!$of) {
+				$of = new PhingFile($this->formatter->getPreferredOutfile());
+			}
+			return new FileWriter($of, $this->append);
+		} else {
+			return $this->getDefaultOutput();
+		}
+	}
 
-    /**
-     * Configures wrapped formatter class with any attributes on this element.
-     */
-    public function prepare() {
+	/**
+	 * Configures wrapped formatter class with any attributes on this element.
+	 */
+	public function prepare() {
 
-    	if (!$this->formatter) {
-    		throw new BuildException("No formatter specified (use type or classname attribute)", $this->getLocation());
-    	}
+		if (!$this->formatter) {
+			throw new BuildException(
+					"No formatter specified (use type or classname attribute)",
+					$this->getLocation());
+		}
 
-    	$out = $this->getOutputWriter();
+		$out = $this->getOutputWriter();
 
-    	print "Setting output writer to: " . get_class($out) . "\n";
-    	$this->formatter->setOutput($out);
+		print "Setting output writer to: " . get_class($out) . "\n";
+		$this->formatter->setOutput($out);
 
-    	if ($this->formatter instanceof PlainPDOResultFormatter) {
-    		// set any options that apply to the plain formatter
-    		$this->formatter->setShowheaders($this->showheaders);
-    		$this->formatter->setRowdelim($this->rowdelimiter);
-    		$this->formatter->setColdelim($this->coldelimiter);
-    	} elseif ($this->formatter instanceof XMLPDOResultFormatter) {
-    		// set any options that apply to the xml formatter
-    		$this->formatter->setEncoding($this->encoding);
-    		$this->formatter->setFormatOutput($this->formatoutput);
-    	}
+		if ($this->formatter instanceof PlainPDOResultFormatter) {
+			// set any options that apply to the plain formatter
+			$this->formatter->setShowheaders($this->showheaders);
+			$this->formatter->setRowdelim($this->rowdelimiter);
+			$this->formatter->setColdelim($this->coldelimiter);
+		} elseif ($this->formatter instanceof XMLPDOResultFormatter) {
+			// set any options that apply to the xml formatter
+			$this->formatter->setEncoding($this->encoding);
+			$this->formatter->setFormatOutput($this->formatoutput);
+		}
 
-    	foreach($this->formatterParams as $param) {
-    		$param = new Parameter();
-    		$method = 'set' . $param->getName();
-    		if (!method_exists($this->formatter, $param->getName())) {
-    			throw new BuildException("Formatter " . get_class($this->formatter) . " does not have a $method method.", $this->getLocation());
-    		}
-    		call_user_func(array($this->formatter, $method), $param->getValue());
-    	}
-    }
+		foreach ($this->formatterParams as $param) {
+			$param = new Parameter();
+			$method = 'set' . $param->getName();
+			if (!method_exists($this->formatter, $param->getName())) {
+				throw new BuildException(
+						"Formatter " . get_class($this->formatter)
+								. " does not have a $method method.",
+						$this->getLocation());
+			}
+			call_user_func(array($this->formatter, $method), $param->getValue());
+		}
+	}
 
-    /**
-     * Sets the formatter type.
-     * @param string $type
-     */
-    function setType($type) {
-    	$this->type = $type;
-    	if ($this->type == "xml") {
-    		$this->formatter = new XMLPDOResultFormatter();
-    	} elseif ($this->type == "plain") {
-    		$this->formatter = new PlainPDOResultFormatter();
-    	} else {
-    		throw new BuildException("Formatter '" . $this->type . "' not implemented");
-    	}
-    }
+	/**
+	 * Sets the formatter type.
+	 * @param string $type
+	 */
+	function setType($type) {
+		$this->type = $type;
+		if ($this->type == "xml") {
+			$this->formatter = new XMLPDOResultFormatter();
+		} elseif ($this->type == "plain") {
+			$this->formatter = new PlainPDOResultFormatter();
+		} else {
+			throw new BuildException(
+					"Formatter '" . $this->type . "' not implemented");
+		}
+	}
 
 	/**
 	 * Set classname for a custom formatter (must extend PDOResultFormatter).
@@ -232,36 +235,36 @@ class PDOSQLExecFormatterElement
 		return $this->outfile;
 		/*
 		} else {
-			return new PhingFile($this->formatter->getPreferredOutfile());
+		    return new PhingFile($this->formatter->getPreferredOutfile());
 		}*/
 	}
-	
+
 	/**
-     * whether output should be appended to or overwrite
-     * an existing file.  Defaults to false.
-     * @param boolean $append
-     */
-    public function setAppend($append) {
-    	$this->append = (boolean) $append;
-    }
-    
-    /**
-     * Whether output should be appended to file.
-     * @return boolean
-     */
-    public function getAppend() {
-    	return $this->append;
-    }
-    
+	 * whether output should be appended to or overwrite
+	 * an existing file.  Defaults to false.
+	 * @param boolean $append
+	 */
+	public function setAppend($append) {
+		$this->append = (boolean) $append;
+	}
+
 	/**
-     * Print headers for result sets from the 
-     * statements; optional, default true.
-     * @param boolean $showheaders
-     */
-    public function setShowheaders($showheaders) {
-    	$this->showheaders = (boolean) $showheaders;
-    }
-    
+	 * Whether output should be appended to file.
+	 * @return boolean
+	 */
+	public function getAppend() {
+		return $this->append;
+	}
+
+	/**
+	 * Print headers for result sets from the 
+	 * statements; optional, default true.
+	 * @param boolean $showheaders
+	 */
+	public function setShowheaders($showheaders) {
+		$this->showheaders = (boolean) $showheaders;
+	}
+
 	/**
 	 * Sets the column delimiter.
 	 * @param string $v
@@ -269,7 +272,7 @@ class PDOSQLExecFormatterElement
 	public function setColdelim($v) {
 		$this->coldelimiter = $v;
 	}
-	
+
 	/**
 	 * Sets the row delimiter.
 	 * @param string $v
@@ -277,7 +280,7 @@ class PDOSQLExecFormatterElement
 	public function setRowdelim($v) {
 		$this->rowdelimiter = $v;
 	}
-	
+
 	/**
 	 * Set the DOM document encoding.
 	 * @param string $v
@@ -285,23 +288,22 @@ class PDOSQLExecFormatterElement
 	public function setEncoding($v) {
 		$this->encoding = $v;
 	}
-	
+
 	/**
 	 * @param boolean $v
 	 */
 	public function setFormatOutput($v) {
 		$this->formatOutput = (boolean) $v;
 	}
-    
+
 	/**
-     * Gets a default output writer for this task.
-     * @return Writer
-     */
-    private function getDefaultOutput()
-    {
-    	return new LogWriter($this->parentTask);
-    }
-    
+	 * Gets a default output writer for this task.
+	 * @return Writer
+	 */
+	private function getDefaultOutput() {
+		return new LogWriter($this->parentTask);
+	}
+
 	/**
 	 * Gets the formatter that has been configured based on this element.
 	 * @return PDOResultFormatter
