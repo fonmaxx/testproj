@@ -1,3 +1,108 @@
 [Fri Sep 07 18:56:34 2012] [error] [client 127.0.0.1] PHP Warning:  date(): It is not safe to rely on the system's timezone settings. You are *required* to use the date.timezone setting or the date_default_timezone_set() function. In case you used any of those methods and you are still getting this warning, you most likely misspelled the timezone identifier. We selected the timezone 'UTC' for now, but please set date.timezone to select your timezone. in D:\\projects\\testproj\\lib\\vendor\\symfony\\lib\\config\\sfRootConfigHandler.class.php on line 91
 [Fri Sep 07 18:56:34 2012] [error] [client 127.0.0.1] PHP Warning:  date(): It is not safe to rely on the system's timezone settings. You are *required* to use the date.timezone setting or the date_default_timezone_set() function. In case you used any of those methods and you are still getting this warning, you most likely misspelled the timezone identifier. We selected the timezone 'UTC' for now, but please set date.timezone to select your timezone. in D:\\projects\\testproj\\lib\\vendor\\symfony\\lib\\config\\sfCompileConfigHandler.class.php on line 82
 [Fri Sep 07 18:56:34 2012] [error] [client 127.0.0.1] PHP Warning:  date(): It is not safe to rely on the system's timezone settings. You are *required* to use the date.timezone setting or the date_default_timezone_set() function. In case you used any of those methods and you are still getting this warning, you most likely misspelled the timezone identifier. We selected the timezone 'UTC' for now, but please set date.timezone to select your timezone. in D:\\projects\\testproj\\lib\\vendor\\symfony\\lib\\config\\sfDefineEnvironmentConfigHandler.class.php on line 66
+[Tue Jan 22 20:21:16 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/ru/
+[Tue Jan 22 20:21:34 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/en/
+[Tue Jan 22 20:21:51 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/ru/
+[Tue Jan 22 20:22:01 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/ru/search?query=paris
+[Tue Jan 22 20:22:20 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/ru/search?query=%D0%BF%D0%B0%D1%80%D0%B8%D0%B6
+[Tue Jan 22 20:22:26 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/en/
+[Tue Jan 22 20:22:47 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/en/search?query=paris
+[Tue Jan 22 20:23:07 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/en/search?query=paris
+[Tue Jan 22 20:23:16 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/en/api
+[Tue Jan 22 20:23:24 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/ru/
+[Tue Jan 22 20:23:37 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/ru/
+[Tue Jan 22 20:23:39 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/ru/api
+[Tue Jan 22 20:24:50 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/ru/api
+[Tue Jan 22 20:24:58 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/ru/
+[Tue Jan 22 20:25:27 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/backen_ev.php/ru/" (/).
+[Tue Jan 22 20:25:44 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/ru/" (/).
+[Tue Jan 22 20:25:59 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/symfony.gif" (/)., referer: http://www.jobeet.com/backend_dev.php
+[Tue Jan 22 20:25:59 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/logo.jpg" (/)., referer: http://www.jobeet.com/backend_dev.php
+[Tue Jan 22 20:25:59 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/jobeet-mini.png" (/)., referer: http://www.jobeet.com/backend_dev.php
+[Tue Jan 22 20:26:17 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/logo.jpg" (/)., referer: http://www.jobeet.com/backend_dev.php
+[Tue Jan 22 20:26:17 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/jobeet-mini.png" (/)., referer: http://www.jobeet.com/backend_dev.php
+[Tue Jan 22 20:26:17 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/symfony.gif" (/)., referer: http://www.jobeet.com/backend_dev.php
+[Tue Jan 22 20:26:28 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/jobeet-mini.png" (/)., referer: http://www.jobeet.com/backend_dev.php/job?page=2
+[Tue Jan 22 20:26:28 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/logo.jpg" (/)., referer: http://www.jobeet.com/backend_dev.php/job?page=2
+[Tue Jan 22 20:26:29 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/symfony.gif" (/)., referer: http://www.jobeet.com/backend_dev.php/job?page=2
+[Tue Jan 22 20:26:40 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/symfony.gif" (/)., referer: http://www.jobeet.com/backend_dev.php/
+[Tue Jan 22 20:26:41 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/jobeet-mini.png" (/)., referer: http://www.jobeet.com/backend_dev.php/
+[Tue Jan 22 20:26:41 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/logo.jpg" (/)., referer: http://www.jobeet.com/backend_dev.php/
+[Tue Jan 22 20:26:46 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/jobeet-mini.png" (/)., referer: http://www.jobeet.com/backend_dev.php/
+[Tue Jan 22 20:26:46 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/logo.jpg" (/)., referer: http://www.jobeet.com/backend_dev.php/
+[Tue Jan 22 20:26:46 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/symfony.gif" (/)., referer: http://www.jobeet.com/backend_dev.php/
+[Tue Jan 22 20:27:11 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/ru/
+[Tue Jan 22 20:27:17 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/ru/job/new
+[Tue Jan 22 20:27:41 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/ru/
+[Tue Jan 22 20:27:45 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/ru/job/company-128/paris-france/32/web-developer
+[Tue Jan 22 20:28:32 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/ru/search?query=developer
+[Tue Jan 22 20:28:52 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/ru/search?query=Paris
+[Tue Jan 22 20:29:16 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/ru/search?query=Design
+[Tue Jan 22 20:29:24 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/ru/
+[Tue Jan 22 20:29:41 2013] [error] [client 127.0.0.1] PHP Notice:  iconv(): Detected an illegal character in input string in D:\\projects\\testproj\\lib\\vendor\\zend\\Search\\Lucene\\Analysis\\Analyzer\\Common\\Text.php on line 58, referer: http://www.jobeet.com/frontend_dev.php/ru/
+[Tue Jan 22 20:29:41 2013] [error] [client 127.0.0.1] PHP Notice:  iconv(): Detected an illegal character in input string in D:\\projects\\testproj\\lib\\vendor\\zend\\Search\\Lucene\\Analysis\\Analyzer\\Common\\Text.php on line 58, referer: http://www.jobeet.com/frontend_dev.php/ru/
+[Tue Jan 22 20:29:41 2013] [error] [client 127.0.0.1] PHP Notice:  iconv(): Detected an illegal character in input string in D:\\projects\\testproj\\lib\\vendor\\zend\\Search\\Lucene\\Analysis\\Analyzer\\Common\\Text.php on line 58, referer: http://www.jobeet.com/frontend_dev.php/ru/
+[Tue Jan 22 20:29:41 2013] [error] [client 127.0.0.1] PHP Notice:  iconv(): Detected an illegal character in input string in D:\\projects\\testproj\\lib\\vendor\\zend\\Search\\Lucene\\Analysis\\Analyzer\\Common\\Text.php on line 58, referer: http://www.jobeet.com/frontend_dev.php/ru/
+[Tue Jan 22 20:29:41 2013] [error] [client 127.0.0.1] PHP Notice:  iconv(): Detected an illegal character in input string in D:\\projects\\testproj\\lib\\vendor\\zend\\Search\\Lucene\\Analysis\\Analyzer\\Common\\Text.php on line 58, referer: http://www.jobeet.com/frontend_dev.php/ru/
+[Tue Jan 22 20:29:41 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/ru/search?query=%D0%94%D0%B8%D0%B7%D0%B0%D0%B9%D0%BD
+[Tue Jan 22 20:29:52 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/ru/
+[Tue Jan 22 20:30:05 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/en/
+[Tue Jan 22 20:30:27 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/en/search?query=Design
+[Tue Jan 22 20:30:36 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/en/search?query=design
+[Tue Jan 22 20:30:46 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/en/
+[Fri Jan 25 12:45:52 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://pma/ru/
+[Fri Jan 25 12:56:36 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://pma/ru/
+[Fri Jan 25 13:04:28 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://pma/ru/
+[Fri Jan 25 13:05:27 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://pma/ru/
+[Fri Jan 25 13:07:38 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://pma/ru/
+[Fri Jan 25 13:11:04 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://pma/ru/
+[Fri Jan 25 13:11:31 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://pma/ru/
+[Fri Jan 25 13:11:42 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://project/ru/
+[Fri Jan 25 13:11:53 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://project/ru/
+[Fri Jan 25 13:16:29 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://pma/ru/
+[Fri Jan 25 13:16:40 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/pma" (/).
+[Fri Jan 25 13:19:24 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://pma/ru/
+[Fri Jan 25 14:16:57 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/ru/
+[Fri Jan 25 14:17:09 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://pma/ru/
+[Fri Jan 25 14:17:18 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/pma" (/).
+[Fri Jan 25 15:49:57 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/jquery/jquery-ui-1.8.16.custom.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:49:57 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/jquery/jquery.qtip-1.0.0-rc3.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:49:57 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/cross_framing_protection.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:49:58 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/functions.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:49:58 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/jquery/jquery-1.6.2.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:49:58 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/update-location.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:49:58 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/jquery/jquery-ui-1.8.16.custom.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:49:58 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/update-location.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:49:59 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/functions.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:49:59 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/jquery/jquery.qtip-1.0.0-rc3.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:50:03 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/jquery/jquery-ui-1.8.16.custom.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:50:04 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/cross_framing_protection.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:50:04 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/jquery/jquery.qtip-1.0.0-rc3.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:50:04 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/functions.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:50:04 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/jquery/jquery-1.6.2.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:50:04 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/update-location.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:50:04 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/jquery/jquery-ui-1.8.16.custom.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:50:05 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/update-location.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:50:05 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/functions.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:50:05 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/jquery/jquery.qtip-1.0.0-rc3.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:51:38 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/cross_framing_protection.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:51:38 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/update-location.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:51:38 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/jquery/jquery-ui-1.8.16.custom.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:51:39 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/jquery/jquery-1.6.2.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:51:39 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/functions.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:51:39 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/jquery/jquery.qtip-1.0.0-rc3.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:51:39 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/jquery/jquery-ui-1.8.16.custom.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:51:39 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/update-location.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:51:40 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/functions.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:51:40 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/js/jquery/jquery.qtip-1.0.0-rc3.js" (/)., referer: http://www.jobeet.com/
+[Fri Jan 25 15:51:46 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/ru/
+[Fri Jan 25 15:52:30 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/ru/
+[Fri Jan 25 15:52:39 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/ru/affiliate/new
+[Fri Jan 25 15:53:44 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/ru/affiliate
+[Fri Jan 25 15:54:01 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/ru/affiliate
+[Fri Jan 25 15:54:18 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/ru/affiliate/3/wait
+[Fri Jan 25 15:54:50 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/ru/
+[Fri Jan 25 15:56:19 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/en/
+[Fri Jan 25 15:56:35 2013] [error] [client 127.0.0.1] Empty module and/or action after parsing the URL "/legacy/images/loader.gif" (/)., referer: http://www.jobeet.com/frontend_dev.php/en/affiliate/new
+[Sat Jan 26 11:51:44 2013] [error] [client 127.0.0.1] Action "job/index" does not exist.
